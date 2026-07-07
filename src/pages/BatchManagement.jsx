@@ -410,18 +410,18 @@ export const BatchManagement = () => {
         ) : (
           viewMode === 'grid' ? (
             /* GRID VIEW */
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {filteredBatches.map((batch) => {
                 const progress = getBatchProgress(batch.id);
                 return (
                   <div
                     key={batch.id}
                     onClick={() => navigate(`/batches/${encodeURIComponent(batch.name)}`)}
-                    className="relative group p-5 pt-10 bg-white dark:bg-neutral-900 border transition-all duration-300 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 rounded-3xl border-neutral-200 dark:border-neutral-800 shadow-sm cursor-pointer overflow-hidden"
+                    className="relative group p-4 pt-8 bg-white dark:bg-neutral-900 border transition-all duration-300 flex flex-col justify-between hover:shadow-xl hover:-translate-y-1 rounded-xl border-neutral-200 dark:border-neutral-800 shadow-sm cursor-pointer overflow-hidden"
                   >
                     {/* Absolute Status Badge */}
-                    <div className="absolute top-4 right-4 z-10">
-                      <span className={`inline-block px-3 py-1 font-bold rounded-lg text-[10px] uppercase font-mono shadow-sm ${
+                    <div className="absolute top-3 right-3 z-10">
+                      <span className={`inline-block px-2 py-0.5 font-bold rounded-md text-[9px] uppercase font-mono shadow-sm ${
                         batch.status === 'active' 
                           ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50' 
                           : 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400 border border-red-200 dark:border-red-800/50'
@@ -431,23 +431,23 @@ export const BatchManagement = () => {
                     </div>
 
                     <div>
-                      <div className="flex items-start gap-4 mt-2 pr-20">
-                        <div className="w-14 h-14 shrink-0 bg-purple-50 dark:bg-purple-950/30 rounded-2xl flex items-center justify-center text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900/50 shadow-sm">
+                      <div className="flex items-start gap-3 mt-2 pr-16">
+                        <div className="w-10 h-10 shrink-0 bg-purple-50 dark:bg-purple-950/30 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900/50 shadow-sm text-sm">
                           {renderIcon(batch.icon)}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <h3 className="font-display font-black text-xl text-neutral-900 dark:text-white leading-tight">
+                          <h3 className="font-display font-black text-sm md:text-base text-neutral-900 dark:text-white leading-tight truncate">
                             {batch.name}
                           </h3>
-                          <div className="mt-2 text-sm font-semibold text-neutral-600 dark:text-neutral-400">
+                          <div className="mt-1 text-xs font-semibold text-neutral-600 dark:text-neutral-400 truncate">
                             {batch.course}
                           </div>
                         </div>
                       </div>
 
-                      <div className="mt-4 flex items-center justify-between text-xs text-neutral-600 dark:text-neutral-400">
-                        <span className="flex items-center gap-1.5 font-bold"><Users className="w-4 h-4 text-[#01AC9F]" /> {batch.studentCount} Enrolled</span>
-                        <span className="flex items-center gap-1.5 font-semibold"><Calendar className="w-4 h-4 text-neutral-500" /> {batch.createdAt}</span>
+                      <div className="mt-4 flex items-center justify-between text-[10px] text-neutral-600 dark:text-neutral-400">
+                        <span className="flex items-center gap-1 font-bold"><Users className="w-3.5 h-3.5 text-[#01AC9F]" /> {batch.studentCount} Enrolled</span>
+                        <span className="flex items-center gap-1 font-semibold"><Calendar className="w-3.5 h-3.5 text-neutral-500" /> {batch.createdAt}</span>
                       </div>
                     </div>
 

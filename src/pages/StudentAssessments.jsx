@@ -302,12 +302,12 @@ export const StudentAssessments = () => {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredAssessments.map((as) => {
             const isDraftSub = as.studentSubmission?.status === 'in_progress';
             
             return (
-              <div key={as.id} className="bg-white dark:bg-neutral-900 p-5 rounded-3xl border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+              <div key={as.id} className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div>
                   <div className="flex justify-between items-start gap-1">
                     <span className="px-2 py-0.5 bg-emerald-50 text-[#01AC9F] dark:bg-emerald-950/20 dark:text-emerald-400 font-bold rounded text-[10px] uppercase font-mono">
@@ -318,42 +318,42 @@ export const StudentAssessments = () => {
                     </span>
                   </div>
 
-                  <h4 className="font-display font-bold text-base text-neutral-800 dark:text-white mt-3 leading-tight truncate">
+                  <h4 className="font-display font-bold text-sm text-neutral-800 dark:text-white mt-3 leading-tight truncate">
                     {as.title}
                   </h4>
                   {as.description && (
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1.5 line-clamp-2">
+                    <p className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-1.5 line-clamp-2">
                       {as.description}
                     </p>
                   )}
                 </div>
 
                 <div className="pt-3 border-t border-brand-border/80 dark:border-neutral-700/80 dark:border-neutral-800/50 space-y-3 mt-auto">
-                  <div className="grid grid-cols-2 gap-2 text-xs text-neutral-500 dark:text-neutral-400 font-medium">
-                    <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 shrink-0 text-[#6C1D5F]" /> {String(as.duration).replace(' mins', '')} mins</span>
-                    <span className="flex items-center gap-1.5"><HelpCircle className="w-4 h-4 shrink-0 text-[#01AC9F]" /> {as.questions?.length || 0} Questions</span>
+                  <div className="grid grid-cols-2 gap-2 text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">
+                    <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 shrink-0 text-[#6C1D5F]" /> {String(as.duration).replace(' mins', '')} mins</span>
+                    <span className="flex items-center gap-1.5"><HelpCircle className="w-3.5 h-3.5 shrink-0 text-[#01AC9F]" /> {as.questions?.length || 0} Questions</span>
                   </div>
 
                   {as.computedStatus === 'Active' ? (
                     <button
                       onClick={() => handleStartAttempt(as.id)}
-                      className="w-full py-2 rounded-xl text-xs font-black uppercase shadow-md tracking-wider cursor-pointer flex items-center justify-center gap-1 transition-all bg-[#6C1D5F] hover:bg-[#84117C] text-white shadow-purple-950/10"
+                      className="w-full py-1.5 rounded-lg text-[10px] font-black uppercase shadow-md tracking-wider cursor-pointer flex items-center justify-center gap-1 transition-all bg-[#6C1D5F] hover:bg-[#84117C] text-white shadow-purple-950/10"
                     >
                       <span>{isDraftSub ? 'Resume Draft Attempt' : 'Initialize Assessment'}</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   ) : as.computedStatus === 'Completed' ? (
                     <button
                       onClick={() => as.studentSubmission && handleViewResult(as.studentSubmission.id)}
                       disabled={!as.studentSubmission}
-                      className={`w-full py-2 rounded-xl text-xs font-black uppercase shadow-sm border border-neutral-300 dark:border-neutral-700 tracking-wider flex items-center justify-center gap-1 transition-all bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      className={`w-full py-1.5 rounded-lg text-[10px] font-black uppercase shadow-sm border border-neutral-300 dark:border-neutral-700 tracking-wider flex items-center justify-center gap-1 transition-all bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                       <span>{as.studentSubmission ? 'View Result' : 'Expired'}</span>
                     </button>
                   ) : (
                     <button
                       disabled
-                      className="w-full py-2 rounded-xl text-xs font-black uppercase border border-neutral-200 dark:border-neutral-800 tracking-wider flex items-center justify-center gap-1 transition-all bg-neutral-100 dark:bg-neutral-900 text-neutral-400 dark:text-neutral-600 opacity-60"
+                      className="w-full py-1.5 rounded-lg text-[10px] font-black uppercase border border-neutral-200 dark:border-neutral-800 tracking-wider flex items-center justify-center gap-1 transition-all bg-neutral-100 dark:bg-neutral-900 text-neutral-400 dark:text-neutral-600 opacity-60"
                     >
                       <span>Starts on {new Date(as.startDate).toLocaleDateString()}</span>
                     </button>

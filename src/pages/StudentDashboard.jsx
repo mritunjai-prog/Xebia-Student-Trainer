@@ -113,15 +113,15 @@ export const StudentDashboard = () => {
     <div className="space-y-6">
 
       {/* Student Welcome Card */}
-      <div className="bg-gradient-to-r from-[#4A1E47] via-[#6C1D5F] to-[#84117C] text-white p-8 md:p-10 rounded-[2.5rem] shadow-xl dark:shadow-purple-900/20 border border-white/10 dark:border-white/5 relative overflow-hidden flex flex-col justify-center min-h-[220px]">
+      <div className="bg-gradient-to-r from-[#4A1E47] via-[#6C1D5F] to-[#84117C] text-white p-6 md:p-8 rounded-3xl shadow-xl dark:shadow-purple-900/20 border border-white/10 dark:border-white/5 relative overflow-hidden flex flex-col justify-center min-h-[160px]">
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
         <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl -mb-20 pointer-events-none" />
 
-        <div className="relative z-10 space-y-3 max-w-3xl">
-          <h2 className="font-display font-black text-3xl md:text-5xl tracking-tight text-white flex items-center gap-3 drop-shadow-md">
+        <div className="relative z-10 space-y-1.5 max-w-3xl">
+          <h2 className="font-display font-black text-2xl md:text-4xl tracking-tight text-white flex items-center gap-3 drop-shadow-md">
             Hi, {currentUser.name}!
           </h2>
-          <p className="text-purple-100/90 text-sm md:text-base leading-relaxed font-medium mt-2">
+          <p className="text-purple-100/90 text-xs md:text-sm leading-relaxed font-medium mt-2">
             Ready for your exams? Below is a list of your assigned modules. Review the countdown timers, complete MCQs, upload required code archives, and review your performance instantly.
           </p>
         </div>
@@ -131,53 +131,53 @@ export const StudentDashboard = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
 
         {/* KPI 1 */}
-        <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm p-6 rounded-3xl flex items-center gap-5 hover:-translate-y-1 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-          <div className="p-4 bg-[#01AC9F]/10 dark:bg-emerald-950/20 text-[#01AC9F] rounded-2xl shrink-0">
-            <ClipboardList className="w-7 h-7" />
+        <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm p-4 md:p-5 rounded-2xl flex items-center gap-4 hover:-translate-y-1 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+          <div className="p-3 bg-[#01AC9F]/10 dark:bg-emerald-950/20 text-[#01AC9F] rounded-2xl shrink-0">
+            <ClipboardList className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-neutral-500 dark:text-neutral-300 font-bold">Active Exams</p>
-            <h4 className="text-3xl font-display font-extrabold text-neutral-800 dark:text-white mt-1">
-              {activeAssessments.length} Available
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-300 font-bold uppercase tracking-wider">Active Exams</p>
+            <h4 className="text-2xl font-display font-extrabold text-neutral-800 dark:text-white mt-0.5 flex items-baseline gap-1.5">
+              {activeAssessments.length} <span className='text-xs font-semibold text-neutral-400'>Available</span>
             </h4>
           </div>
         </div>
 
         {/* KPI 2 */}
-        <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm p-6 rounded-3xl flex items-center gap-5 hover:-translate-y-1 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-          <div className="p-4 bg-blue-500/10 text-blue-500 rounded-2xl shrink-0">
-            <CalendarIcon className="w-7 h-7" />
+        <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm p-4 md:p-5 rounded-2xl flex items-center gap-4 hover:-translate-y-1 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+          <div className="p-3 bg-blue-500/10 text-blue-500 rounded-2xl shrink-0">
+            <CalendarIcon className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-neutral-500 dark:text-neutral-300 font-bold">Upcoming</p>
-            <h4 className="text-3xl font-display font-extrabold text-neutral-800 dark:text-white mt-1">
-              {upcomingAssessments.length} scheduled
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-300 font-bold uppercase tracking-wider">Upcoming</p>
+            <h4 className="text-2xl font-display font-extrabold text-neutral-800 dark:text-white mt-0.5 flex items-baseline gap-1.5">
+              {upcomingAssessments.length} <span className='text-xs font-semibold text-neutral-400'>scheduled</span>
             </h4>
           </div>
         </div>
 
         {/* KPI 3 */}
-        <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm p-6 rounded-3xl flex items-center gap-5 hover:-translate-y-1 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-          <div className="p-4 bg-purple-500/10 text-brand-velvet rounded-2xl shrink-0">
-            <Trophy className="w-7 h-7" />
+        <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm p-4 md:p-5 rounded-2xl flex items-center gap-4 hover:-translate-y-1 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+          <div className="p-3 bg-purple-500/10 text-brand-velvet rounded-2xl shrink-0">
+            <Trophy className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-neutral-500 dark:text-neutral-300 font-bold">Leaderboard Rank</p>
-            <h4 className="text-3xl font-display font-extrabold text-neutral-800 dark:text-white mt-1">
-              Rank #{currentRank}
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-300 font-bold uppercase tracking-wider">Leaderboard Rank</p>
+            <h4 className="text-2xl font-display font-extrabold text-neutral-800 dark:text-white mt-0.5 flex items-baseline gap-1.5">
+              {currentRank} <span className='text-xs font-semibold text-neutral-400'>Overall</span>
             </h4>
           </div>
         </div>
 
         {/* KPI 4 */}
-        <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm p-6 rounded-3xl flex items-center gap-5 hover:-translate-y-1 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-          <div className="p-4 bg-emerald-500/10 text-emerald-600 rounded-2xl shrink-0">
-            <TrendingUp className="w-7 h-7" />
+        <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm p-4 md:p-5 rounded-2xl flex items-center gap-4 hover:-translate-y-1 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+          <div className="p-3 bg-emerald-500/10 text-emerald-600 rounded-2xl shrink-0">
+            <TrendingUp className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-sm text-neutral-500 dark:text-neutral-300 font-bold">Assessments Graded</p>
-            <h4 className="text-3xl font-display font-extrabold text-neutral-800 dark:text-white mt-1">
-              {completedAssessments.length} submitted
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-300 font-bold uppercase tracking-wider">Assessments Graded</p>
+            <h4 className="text-2xl font-display font-extrabold text-neutral-800 dark:text-white mt-0.5 flex items-baseline gap-1.5">
+              {completedAssessments.length} <span className='text-xs font-semibold text-neutral-400'>submitted</span>
             </h4>
           </div>
         </div>
@@ -185,16 +185,16 @@ export const StudentDashboard = () => {
       </div>
 
       {/* Grid of assessments & scores graph */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
         {/* Core Assessments available List */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-3 space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="font-display font-black text-sm text-neutral-800 dark:text-white tracking-wider">Available Assessments</h3>
             <span className="text-xs bg-red-50 text-rose-700 font-bold px-2.5 py-1 rounded-full animate-pulse">{activeAssessments.length} Pending Assessment</span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
             {activeAssessments.length === 0 ?
               <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-800 rounded-2xl p-10 text-center text-neutral-500 dark:text-neutral-400 md:col-span-2">
                 Awesome! You have no pending exams. All completed or expired.
@@ -247,7 +247,7 @@ export const StudentDashboard = () => {
         <div className="space-y-4">
           <h3 className="font-display font-black text-sm text-neutral-800 dark:text-white uppercase tracking-wider">Recent Graded Exams</h3>
 
-          <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm rounded-3xl p-6 space-y-4">
+          <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm rounded-2xl p-4 md:p-5 space-y-3">
             {recentScores.length === 0 ?
               <div className="py-8 text-center text-xs text-neutral-500 dark:text-neutral-400">
                 No assessments graded yet.

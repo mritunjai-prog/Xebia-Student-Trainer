@@ -27,7 +27,7 @@ export const AssessmentBuilder = () => {
   // Top-level Navigation and View Modes
   const [activeTab, setActiveTab] = useState('list'); // 'list', 'create', 'edit'
   const [editingAssessmentId, setEditingAssessmentId] = useState(null);
-  const [viewMode, setViewMode] = useState('table'); // 'grid', 'table'
+  const [viewMode, setViewMode] = useState('grid'); // 'grid', 'table'
 
   // Listing / Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -670,7 +670,7 @@ export const AssessmentBuilder = () => {
               </div>
             </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredAssessments.map((as) => {
                   const batchNames = as.batches.map((bId) => batches.find((b) => b.id === bId)?.name || bId).join(', ');
 
@@ -694,72 +694,72 @@ export const AssessmentBuilder = () => {
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       onClick={() => navigate(`/assessment-builder/${as.id}`)}
-                      className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group overflow-hidden relative cursor-pointer"
+                      className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 md:p-5 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group overflow-hidden relative cursor-pointer"
                     >
                       {/* Decorative Background Element */}
                       <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-gradient-to-br from-[#6C1D5F]/5 to-transparent blur-2xl group-hover:bg-[#6C1D5F]/10 transition-colors pointer-events-none" />
 
                       {/* Header Section */}
-                      <div className="flex justify-between items-start gap-4 mb-4">
-                        <div className="flex-1">
-                          <h3 className="font-display font-black text-xl text-neutral-800 dark:text-white leading-tight mb-1">
+                      <div className="flex justify-between items-start gap-3 mb-4">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-display font-black text-sm md:text-base text-neutral-800 dark:text-white leading-tight mb-1 truncate">
                             {as.title}
                           </h3>
-                          <div className="text-xs font-medium text-neutral-500 dark:text-neutral-400 truncate w-full">
+                          <div className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 truncate w-full">
                             {batchNames ? `Batches: ${batchNames}` : 'Not assigned'}
                           </div>
                         </div>
-                        <span className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border shadow-sm ${statusColor} shrink-0`}>
+                        <span className={`inline-block px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide border shadow-sm ${statusColor} shrink-0`}>
                           {as.status}
                         </span>
                       </div>
 
                       {/* Info Chips */}
-                      <div className="flex flex-wrap items-center gap-2 mb-6">
-                        <span className="px-2 py-1 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded text-[11px] font-bold capitalize">
+                      <div className="flex flex-wrap items-center gap-1.5 mb-4 mt-2">
+                        <span className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded text-[10px] font-bold capitalize">
                           {as.type.replace('_', ' ')}
                         </span>
-                        <span className={`px-2 py-1 rounded text-[11px] font-bold border ${difficultyColor}`}>
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${difficultyColor}`}>
                           {as.difficulty}
                         </span>
-                        <span className="px-2 py-1 bg-purple-50 dark:bg-purple-950/30 text-[#6C1D5F] dark:text-purple-400 rounded text-[11px] font-bold font-mono">
+                        <span className="px-1.5 py-0.5 bg-purple-50 dark:bg-purple-950/30 text-[#6C1D5F] dark:text-purple-400 rounded text-[10px] font-bold font-mono">
                           {as.marks} pts
                         </span>
-                        <span className="px-2 py-1 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-500 rounded text-[11px] font-bold">
+                        <span className="px-1.5 py-0.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-500 rounded text-[10px] font-bold">
                           {as.duration} min
                         </span>
                       </div>
 
                       <div className="mt-auto pt-4 border-t border-neutral-100 dark:border-neutral-800">
                         {/* Actions Row */}
-                        <div className="flex items-center gap-2 w-full">
+                        <div className="flex items-center gap-1.5 w-full">
                           {as.status === 'draft' &&
                             <button
                               onClick={(e) => handlePublishNow(e, as.id, as.title)}
-                              className="flex-1 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-600 border border-emerald-200/50 rounded-xl transition-colors font-bold text-xs flex items-center justify-center gap-1.5"
+                              className="flex-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-600 border border-emerald-200/50 rounded-lg transition-colors font-bold text-[11px] flex items-center justify-center gap-1"
                             >
-                              <Send className="w-3.5 h-3.5" /> Publish
+                              <Send className="w-3 h-3" /> Publish
                             </button>
                           }
                           <button
                             onClick={(e) => { e.stopPropagation(); handleOpenEdit(as); }}
-                            className="flex-1 px-3 py-2 bg-[#01AC9F]/10 hover:bg-[#01AC9F]/20 text-[#01AC9F] border border-[#01AC9F]/20 rounded-xl transition-colors font-bold text-xs flex items-center justify-center gap-1.5"
+                            className="flex-1 px-2.5 py-1.5 bg-[#01AC9F]/10 hover:bg-[#01AC9F]/20 text-[#01AC9F] border border-[#01AC9F]/20 rounded-lg transition-colors font-bold text-[11px] flex items-center justify-center gap-1"
                           >
-                            <FileEdit className="w-3.5 h-3.5" /> Edit
+                            <FileEdit className="w-3 h-3" /> Edit
                           </button>
                           <button
                             onClick={(e) => handleDuplicate(e, as.id, as.title)}
-                            className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/30 dark:hover:bg-blue-900/40 rounded-xl transition-colors border border-blue-200/50 shrink-0"
+                            className="p-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-950/30 dark:hover:bg-blue-900/40 rounded-lg transition-colors border border-blue-200/50 shrink-0"
                             title="Duplicate"
                           >
-                            <Copy className="w-4 h-4" />
+                            <Copy className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={(e) => handleDelete(e, as.id, as.title)}
-                            className="p-2 text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/40 rounded-xl transition-colors border border-red-200/50 shrink-0"
+                            className="p-1.5 text-red-600 bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/40 rounded-lg transition-colors border border-red-200/50 shrink-0"
                             title="Delete"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
                       </div>

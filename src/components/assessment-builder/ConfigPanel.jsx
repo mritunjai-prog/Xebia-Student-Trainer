@@ -27,7 +27,7 @@ export const ConfigPanel = ({ config, setConfig }) => {
   };
 
   return (
-    <div className="flex flex-col h-1/2 lg:h-full bg-white dark:bg-neutral-900 lg:border-r border-b lg:border-b-0 border-neutral-200 dark:border-neutral-800 overflow-y-auto w-full lg:w-[650px] shrink-0 shadow-lg z-10">
+    <div className="flex flex-col h-1/2 lg:h-full bg-white dark:bg-neutral-900 lg:border-r border-b lg:border-b-0 border-neutral-200 dark:border-neutral-800 overflow-y-auto custom-scrollbar w-full lg:w-[500px] xl:w-[550px] shrink-0 shadow-lg z-10">
       <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 sticky top-0 bg-white/95 dark:bg-neutral-900/95 backdrop-blur z-10">
         <h2 className="font-display font-black text-lg text-neutral-900 dark:text-white flex items-center gap-2">
           <Settings className="w-5 h-5 text-[#6C1D5F]" /> Configuration
@@ -85,10 +85,10 @@ export const ConfigPanel = ({ config, setConfig }) => {
               <select 
                 value={config.batch} 
                 onChange={(e) => setConfig(prev => ({...prev, batch: e.target.value}))} 
-                className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F] text-neutral-900 dark:text-neutral-100"
+                className={`w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F] ${!config.course ? 'text-neutral-400' : 'text-neutral-900 dark:text-neutral-100'}`}
                 disabled={!config.course}
               >
-                <option value="">Select Batch...</option>
+                <option value="">{config.course ? "Select Batch..." : "Select Course First"}</option>
                 {batches.filter(b => b.course === config.course).map((b, i) => <option key={i} value={b.id}>{b.name}</option>)}
               </select>
             </div>

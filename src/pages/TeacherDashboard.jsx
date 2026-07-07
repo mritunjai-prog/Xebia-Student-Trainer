@@ -126,15 +126,15 @@ export const TeacherDashboard = () => {
     <div className="space-y-6">
       
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-[#4A1E47] via-[#6C1D5F] to-[#84117C] text-white p-8 md:p-10 rounded-[2.5rem] shadow-xl dark:shadow-purple-900/20 border border-white/10 dark:border-white/5 relative overflow-hidden flex flex-col justify-center min-h-[220px]">
+      <div className="bg-gradient-to-r from-[#4A1E47] via-[#6C1D5F] to-[#84117C] text-white p-6 md:p-8 rounded-3xl shadow-xl dark:shadow-purple-900/20 border border-white/10 dark:border-white/5 relative overflow-hidden flex flex-col justify-center min-h-[160px]">
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
         <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl -mb-20 pointer-events-none" />
         
-        <div className="relative z-10 space-y-3 max-w-3xl">
-          <h2 className="font-display font-black text-3xl md:text-5xl tracking-tight text-white flex items-center gap-3 drop-shadow-md">
+        <div className="relative z-10 space-y-1.5 max-w-3xl">
+          <h2 className="font-display font-black text-2xl md:text-4xl tracking-tight text-white flex items-center gap-3 drop-shadow-md">
             Hello, Trainer!
           </h2>
-          <p className="text-purple-100/90 text-sm md:text-base leading-relaxed font-medium mt-2">
+          <p className="text-purple-100/90 text-xs md:text-sm leading-relaxed font-medium mt-2">
             Welcome to your comprehensive LMS Assessment Command Center. Review batch milestones, evaluate pending descriptive submissions, or design multi-question exams instantly.
           </p>
         </div>
@@ -148,13 +148,13 @@ export const TeacherDashboard = () => {
           { label: 'Total Assessments', value: totalAssessments, icon: FileSpreadsheet, color: '#F59E0B', bg: 'bg-amber-500/10 dark:bg-amber-900/30' },
           { label: 'Pending Evaluation', value: pendingEvaluations, icon: FileSignature, color: '#EF4444', bg: 'bg-rose-500/10 dark:bg-rose-900/30' }
         ].map((kpi, idx) => (
-          <div key={idx} className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl border border-neutral-200 dark:border-neutral-800 p-6 rounded-[2rem] flex items-center gap-5 hover:-translate-y-1.5 hover:shadow-xl dark:hover:shadow-purple-900/10 transition-all duration-300 group cursor-default">
-            <div className={`p-4 rounded-2xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${kpi.bg}`}>
-              <kpi.icon className="w-8 h-8" style={{ color: kpi.color }} />
+          <div key={idx} className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl border border-neutral-200 dark:border-neutral-800 p-4 md:p-5 rounded-2xl flex items-center gap-4 hover:-translate-y-1.5 hover:shadow-xl dark:hover:shadow-purple-900/10 transition-all duration-300 group cursor-default">
+            <div className={`p-3 rounded-xl shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 ${kpi.bg}`}>
+              <kpi.icon className="w-6 h-6" style={{ color: kpi.color }} />
             </div>
             <div>
-              <p className="text-sm text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider mb-1">{kpi.label}</p>
-              <h4 className="text-3xl md:text-4xl font-display font-black text-neutral-900 dark:text-white leading-none tracking-tight">
+              <p className="text-[10px] text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider mb-1">{kpi.label}</p>
+              <h4 className="text-2xl md:text-3xl font-display font-black text-neutral-900 dark:text-white leading-none tracking-tight">
                 {kpi.value}
               </h4>
             </div>
@@ -168,7 +168,7 @@ export const TeacherDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Chart 1: Submission Trend */}
-        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-8 rounded-[2rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 lg:col-span-2 flex flex-col h-[400px]">
+        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-6 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 lg:col-span-2 flex flex-col h-[400px]">
           <div className="flex items-start justify-between mb-8">
             <div>
               <h3 className="font-display font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wider">Submission Trend</h3>
@@ -201,7 +201,7 @@ export const TeacherDashboard = () => {
         </div>
 
         {/* Chart 2: Average Scores per Assessment */}
-        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-8 rounded-[2rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-[400px]">
+        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-6 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-[400px]">
           <div className="mb-8">
             <h3 className="font-display font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wider">Assessment Averages</h3>
             <p className="text-[12px] text-neutral-500 dark:text-neutral-400 mt-1 font-medium">Average score (%) across top 5 core modules</p>
@@ -229,7 +229,7 @@ export const TeacherDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Batch Performances */}
-        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-8 rounded-[2rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 lg:col-span-1 flex flex-col h-full">
+        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-6 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 lg:col-span-1 flex flex-col h-full">
           <div className="mb-6">
             <h3 className="font-display font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wider">Batch Performance</h3>
             <p className="text-[12px] text-neutral-500 dark:text-neutral-400 mt-1 font-medium">Compare student density and grades across core groups</p>
@@ -258,7 +258,7 @@ export const TeacherDashboard = () => {
         </div>
 
         {/* Recent Submissions queue */}
-        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-8 rounded-[2rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 lg:col-span-2 flex flex-col h-full">
+        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-6 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 lg:col-span-2 flex flex-col h-full">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="font-display font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wider">Recent Assessment Activity</h3>
@@ -295,7 +295,7 @@ export const TeacherDashboard = () => {
                         <img
                           src={sub.studentAvatar}
                           alt={sub.studentName}
-                          className="w-8 h-8 rounded-full border border-neutral-200 dark:border-neutral-700 shadow-sm group-hover:scale-105 transition-transform"
+                          className="w-6 h-6 rounded-full border border-neutral-200 dark:border-neutral-700 shadow-sm group-hover:scale-105 transition-transform"
                           referrerPolicy="no-referrer" 
                         />
                         <span className="font-bold text-neutral-900 dark:text-neutral-100">{sub.studentName}</span>
