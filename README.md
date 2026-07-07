@@ -19,14 +19,11 @@ Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
 ### Installation
 1. Clone the repository
 2. Navigate to the directory and install dependencies:
-`ash
-npm install
-`
+`npm install`
 
 ### Running Locally
 To start the development server, run:
-`ash
-npm run dev
+`npm run dev
 `
 
 ### Environment Variables
