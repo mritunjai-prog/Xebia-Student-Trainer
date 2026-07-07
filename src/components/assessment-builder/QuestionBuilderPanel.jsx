@@ -208,16 +208,16 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
     <div className="flex-1 flex flex-col bg-neutral-50 dark:bg-[#0a0a0a] overflow-hidden relative">
       
       {/* Header */}
-      <div className="px-6 py-4 flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 backdrop-blur">
-        <div>
-          <h2 className="font-display font-black text-lg text-neutral-900 dark:text-white flex items-center gap-2">
+      <div className="px-4 xl:px-6 py-4 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 border-b border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 backdrop-blur shrink-0 z-10">
+        <div className="shrink-0">
+          <h2 className="font-display font-black text-lg text-neutral-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
             <Library className="w-5 h-5 text-[#6C1D5F]" /> Question Builder
           </h2>
           <p className="text-xs text-neutral-500 mt-0.5">Build your assessment.</p>
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 mr-2">
+        <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-start xl:justify-end">
+          <div className="flex items-center gap-2 shrink-0">
             <span className="text-[10px] uppercase font-bold text-neutral-400 bg-white dark:bg-neutral-800 px-2 py-1 rounded-md border border-neutral-200 dark:border-neutral-700">
               Marks: {questions.reduce((acc, q) => acc + (q.marks || 0), 0)}
             </span>
@@ -225,8 +225,8 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
               Qs: {questions.length}
             </span>
           </div>
-          <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-800" />
-          <div className="flex items-center gap-2">
+          <div className="hidden sm:block h-6 w-px bg-neutral-200 dark:bg-neutral-800" />
+          <div className="flex flex-wrap items-center gap-2">
             <button 
               onClick={() => { setAddingManual(true); setTimeout(() => document.querySelector('.overflow-y-auto')?.scrollTo({top: 0, behavior: 'smooth'}), 100); }}
               disabled={!isConfigComplete}

@@ -1,45 +1,104 @@
-# Xebia LMS - Frontend
+<h1 align="center">
+  <img src="https://img.icons8.com/clouds/100/000000/learning.png" alt="Portal Logo" width="100"/>
+  <br/>
+  <b>Xebia Assessment Portal</b>
+</h1>
 
-This is the frontend codebase for the Xebia Learning Management System (LMS) and Assessment Module. 
-It provides a fully responsive interface for both **Teachers** and **Students** to manage batches, create complex assessments (including a built-in code editor), and evaluate submissions with AI assistance.
+<p align="center">
+  <strong>A modern, AI-powered assessment platform for Students and Trainers</strong><br/>
+  Built with React 18, Vite, Tailwind CSS, and Groq AI.
+</p>
 
-## Tech Stack
-- **Framework:** React 19 + Vite
-- **Styling:** TailwindCSS 4 (Dark mode supported)
-- **Icons:** Lucide React
-- **Code Editor:** Monaco Editor
-- **Routing:** React Router DOM
-- **Charting:** Recharts
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18-00D8FF?style=for-the-badge&logo=react&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Groq_AI-FF6B35?style=for-the-badge&logo=ai&logoColor=white"/>
+  <img src="https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white"/>
+</p>
 
-## Getting Started
+---
 
-### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) installed on your machine.
+## 📋 Table of Contents
 
-### Installation
-1. Clone the repository
-2. Navigate to the directory and install dependencies:
-`ash
+- [About the Project](#-about-the-project)
+- [Key Features](#-key-features)
+- [Tech Stack](#-tech-stack)
+- [Portal Walkthroughs](#-portal-walkthroughs)
+  - [Trainer Portal](#trainer-portal)
+  - [Student Portal](#student-portal)
+- [Quick Start](#-quick-start)
+
+---
+
+## 🌟 About the Project
+
+**Xebia Assessment Portal** is a sophisticated frontend application designed to facilitate seamless assessment creation, distribution, and evaluation. It features **two distinct user portals** — a comprehensive **Trainer Portal** for instructors to build and manage exams, and a focused **Student Portal** for learners to take coding challenges, quizzes, and view their performance.
+
+The platform integrates directly with the **Groq AI API** to power automated assessment generation, intelligent test descriptions, and instant automated grading with feedback for student submissions.
+
+---
+
+## 🔥 Key Features
+
+### 👨‍🏫 Trainer Portal
+- **AI-Powered Assessment Builder** — Automatically generate questions and assessment instructions using Groq AI based on a simple topic prompt.
+- **Rich Question Types** — Build tests using multiple formats: MCQ, Multiple Select, True/False, Short Answer, Paragraph, File Upload, and integrated Coding Challenges.
+- **Batch & Course Management** — Assign assessments to specific student batches with configurable schedules, durations, and passing marks.
+- **Automated AI Grading (Evaluation)** — Instantly grade student coding and text submissions with AI-driven feedback identifying logic errors and areas for improvement.
+- **Comprehensive Dashboards & Analytics** — Track student performance, leaderboard rankings, and assessment completion rates with modern visual charts.
+
+### 🎓 Student Portal
+- **Interactive Dashboard** — Quick-action cards showing active exams, upcoming schedules, and personal leaderboard ranking.
+- **Live Coding Environment** — Take coding assessments in a dedicated IDE-like interface tailored for technical evaluations.
+- **Instant Results & Feedback** — Review graded assessments immediately with specific insights and feedback provided by the automated AI evaluation system.
+- **Responsive Design** — Fully optimized for desktop and responsive across various screen sizes.
+
+---
+
+## 💻 Tech Stack
+
+- **Framework**: React 18 & Vite
+- **Styling**: Tailwind CSS & Vanilla CSS (Custom Scrollbars, Glassmorphism)
+- **Icons**: Lucide React
+- **Routing**: React Router DOM
+- **State Management**: React Context API (`useLMS`)
+- **AI Integration**: Groq API (Chat Completions)
+- **Animations**: Framer Motion (motion/react)
+
+---
+
+## 🚀 Quick Start
+
+Follow these steps to run the portal locally:
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/your-username/Xebia-Student-Trainer.git
+cd Xebia-Student-Trainer
+```
+
+### 2. Install dependencies
+```bash
 npm install
-`
+```
 
-### Running Locally
-To start the development server, run:
-`ash
+### 3. Configure AI Integration
+Create a `.env` file in the root directory and add your Groq API key:
+```env
+VITE_GROQ_API_KEY=your_groq_api_key_here
+```
+
+### 4. Start the Development Server
+```bash
 npm run dev
-`
+```
 
-### Environment Variables
-This project requires a Gemini API Key to enable the AI Evaluation and Autograding features.
-1. Copy .env.example to .env or .env.local
-2. Add your key:
-`env
-GEMINI_API_KEY=your_api_key_here
-`
+The application will automatically launch and be available at `http://localhost:3000`. 
+*(Note: Use the dropdown in the sidebar to simulate logging in as a "Student" or "Trainer".)*
 
-## Features
-- **Role-based Dashboards:** Separate experiences for students and teachers.
-- **Assessment Builder:** Drag-and-drop creation for multiple-choice, subjective, and coding questions.
-- **IDE Sandbox:** Built-in code execution interface for programming assessments.
-- **AI Autograding:** Automated grading and feedback using Gemini.
-- **Responsive Layout:** Optimized for desktop, tablet, and mobile viewing.
+---
+
+<p align="center">
+  <i>Built to modernize and streamline technical assessments and learning evaluation.</i>
+</p>
