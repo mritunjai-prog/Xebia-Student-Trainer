@@ -58,13 +58,13 @@ ${typeInstruction}
 
 Return ONLY a JSON object with a "questions" array containing the questions.
 Each question object MUST have the following structure based on the type:
-If type is "mcq": { "id": "q_timestamp_index", "type": "mcq", "text": "Question text", "options": ["opt1", "opt2", "opt3", "opt4"], "correctAnswer": "opt2", "marks": 2 }
-If type is "true_false": { "id": "q_timestamp_index", "type": "true_false", "text": "Question text", "options": ["True", "False"], "correctAnswer": "True", "marks": 2 }
-If type is "multiple_select": { "id": "q_timestamp_index", "type": "multiple_select", "text": "Question text", "options": ["opt1", "opt2", "opt3", "opt4"], "correctAnswers": ["opt1", "opt3"], "marks": 3 }
-If type is "short_answer": { "id": "q_timestamp_index", "type": "short_answer", "text": "Question text", "correctAnswer": "Expected answer concept", "marks": 5 }
-If type is "paragraph": { "id": "q_timestamp_index", "type": "paragraph", "text": "Question text", "marks": 10 }
-If type is "file_upload": { "id": "q_timestamp_index", "type": "file_upload", "text": "Upload instructions text", "marks": 10 }
-If type is "coding": { "id": "q_timestamp_index", "type": "coding", "text": "Problem description", "starterCode": "function solve() {\\n\\n}", "testCases": [{"input": "args", "output": "expected"}], "marks": 15 }
+If type is "mcq": { "id": "q_timestamp_index", "type": "mcq", "question": "Question text", "options": ["opt1", "opt2", "opt3", "opt4"], "correctAnswer": "opt2", "marks": 2 }
+If type is "true_false": { "id": "q_timestamp_index", "type": "true_false", "question": "Question text", "options": ["True", "False"], "correctAnswer": "True", "marks": 2 }
+If type is "multiple_select": { "id": "q_timestamp_index", "type": "multiple_select", "question": "Question text", "options": ["opt1", "opt2", "opt3", "opt4"], "correctAnswers": ["opt1", "opt3"], "marks": 3 }
+If type is "short_answer": { "id": "q_timestamp_index", "type": "short_answer", "question": "Question text", "correctAnswer": "Expected answer concept", "marks": 5 }
+If type is "paragraph": { "id": "q_timestamp_index", "type": "paragraph", "question": "Question text", "marks": 10 }
+If type is "file_upload": { "id": "q_timestamp_index", "type": "file_upload", "question": "Upload instructions text", "marks": 10 }
+If type is "coding": { "id": "q_timestamp_index", "type": "coding", "question": "Problem description", "starterCode": "function solve() {\\n\\n}", "testCases": [{"input": "args", "output": "expected"}], "marks": 15 }
 
 Output MUST be strictly valid JSON.`;
 
@@ -80,7 +80,7 @@ Output MUST be strictly valid JSON.`;
     const dummyQuestions = Array.from({ length: count }).map((_, i) => ({
       id: `q_dummy_${Date.now()}_${i}`,
       type: type === 'Mixed Types (All)' ? 'mcq' : type,
-      text: `Mock AI Question ${i + 1} about ${topic} (${taxonomy})`,
+      question: `Mock AI Question ${i + 1} about ${topic} (${taxonomy})`,
       options: ['Option A', 'Option B', 'Option C', 'Option D'],
       correctAnswer: 'Option B',
       marks: 2
@@ -263,7 +263,7 @@ Example Output Format:
     {
       "id": "q_ai_123",
       "type": "mcq",
-      "text": "What is 2+2?",
+      "question": "What is 2+2?",
       "options": ["2", "3", "4", "5"],
       "correctAnswer": "4",
       "marks": 2

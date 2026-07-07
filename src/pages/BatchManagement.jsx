@@ -139,7 +139,7 @@ export const BatchManagement = () => {
     setIsCreateModalOpen(true);
   };
 
-  const handleCreateSubmit = (e) => {
+  const handleCreateSubmit = async (e) => {
     e.preventDefault();
     if (!batchName.trim() || !course.trim()) {
       toast.add('Please enter all required fields', 'warning');
@@ -147,7 +147,7 @@ export const BatchManagement = () => {
     }
     try {
       const finalIcon = getFinalIcon();
-      const created = createBatch(batchName.trim(), course.trim(), finalIcon, batchStatus);
+      const created = await createBatch(batchName.trim(), course.trim(), finalIcon, batchStatus);
       toast.add(`Batch "${created.name}" created successfully!`, 'success');
       setIsCreateModalOpen(false);
     } catch (error) {

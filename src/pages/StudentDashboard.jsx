@@ -128,7 +128,7 @@ export const StudentDashboard = () => {
       </div>
 
       {/* KPI Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
         {/* KPI 1 */}
         <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm p-4 md:p-5 rounded-2xl flex items-center gap-4 hover:-translate-y-1 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">

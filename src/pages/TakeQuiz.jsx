@@ -6,8 +6,11 @@ import {
   Clock,
   ArrowRight,
   ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
   CheckCircle,
   AlertCircle,
+  AlertTriangle,
   CheckSquare,
   Upload,
   Bot,
@@ -17,7 +20,9 @@ import {
   Sun,
   LayoutGrid,
   List,
-  LogOut
+  LogOut,
+  Flag,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -29,13 +34,7 @@ export const TakeQuiz = () => {
 
   const assessment = assessments.find((a) => (a.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'assessment') === slug);
 
-  if (!currentUser || !assessment) {
-    return (
-      <div className="p-8 text-center bg-white rounded-2xl border">
-        Assessment template not found.
-      </div>);
-
-  }
+  // ---- ALL HOOKS MUST BE DECLARED BEFORE ANY CONDITIONAL RETURN ----
 
   // Active submission
   const [submission, setSubmission] = useState(null);
@@ -50,7 +49,7 @@ export const TakeQuiz = () => {
   const [flaggedQIds, setFlaggedQIds] = useState([]);
 
   // Timer State (in seconds)
-  const [secondsLeft, setSecondsLeft] = useState(assessment.duration * 60);
+  const [secondsLeft, setSecondsLeft] = useState(() => (assessment?.duration || 0) * 60);
 
   // Fullscreen state
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -65,6 +64,7 @@ export const TakeQuiz = () => {
 
   // Initialize assessment attempt
   useEffect(() => {
+    if (!assessment || !currentUser) return;
     const attempt = startAssessment(assessment.id, currentUser.id);
     setSubmission(attempt);
 
@@ -78,11 +78,20 @@ export const TakeQuiz = () => {
     // Calculate elapsed time from start if draft
     if (attempt.startedAt) {
       const elapsedSecs = Math.floor((Date.now() - new Date(attempt.startedAt).getTime()) / 1000);
-      const totalSecs = assessment.duration * 60;
+      const totalSecs = (assessment.duration || 0) * 60;
       const remaining = Math.max(0, totalSecs - elapsedSecs);
       setSecondsLeft(remaining);
     }
-  }, [assessment.id, currentUser.id, startAssessment, assessment.duration]);
+  }, [assessment?.id, currentUser?.id]);
+
+  // ---- EARLY RETURN AFTER HOOKS ----
+  if (!currentUser || !assessment) {
+    return (
+      <div className="p-8 text-center bg-white rounded-2xl border">
+        Assessment not found or you are not logged in.
+      </div>
+    );
+  }
 
   // Countdown timer clock ticks
   useEffect(() => {
@@ -373,7 +382,7 @@ export const TakeQuiz = () => {
 
             {/* Prompt description */}
             <p className="text-base md:text-lg font-semibold text-neutral-900 dark:text-neutral-100 mt-6 leading-relaxed">
-              {currentQ.text || currentQ.question}
+              {currentQ.text || currentQ.questionText || currentQ['Question Text'] || currentQ.question || 'Untitled Question'}
             </p>
 
             {/* Form Input fields depending on type */}

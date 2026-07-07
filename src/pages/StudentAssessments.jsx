@@ -36,7 +36,7 @@ export const StudentAssessments = () => {
     return a.status === 'published' && a.batches && a.batches.some((bId) => currentUser.batches?.includes(bId));
   });
 
-  const nowStr = new Date().toISOString().split('T')[0];
+  const now = new Date();
 
   // Map each assessment with its computed status for the student
   const mappedAssessments = studentAssessments.map((a) => {
@@ -47,9 +47,12 @@ export const StudentAssessments = () => {
     
     let computedStatus = 'Active';
 
-    if (a.endDate < nowStr) {
+    const startDateTime = new Date(`${a.startDate}T${a.startTime || '00:00'}`);
+    const endDateTime = a.endDate ? new Date(`${a.endDate}T${a.endTime || '23:59'}`) : new Date('2099-12-31');
+
+    if (now > endDateTime) {
       computedStatus = 'Completed';
-    } else if (a.startDate > nowStr) {
+    } else if (now < startDateTime) {
       computedStatus = 'Upcoming';
     } else if (completedSubs.length >= maxAttempts) {
       computedStatus = 'Completed';
@@ -313,39 +316,66 @@ export const StudentAssessments = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAssessments.map((as) => {
-            return (
-              <div key={as.id} className="bg-white dark:bg-neutral-900 p-5 rounded-3xl border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                <div>
-                  <div className="flex justify-between items-start gap-1">
-                    <span className="px-2 py-0.5 bg-emerald-50 text-[#01AC9F] dark:bg-emerald-950/20 dark:text-emerald-400 font-bold rounded text-[10px] uppercase font-mono">
-                      {as.type.replace('_', ' ')}
-                    </span>
-                    <span className={`text-[10px] font-bold ${as.difficulty === 'Easy' ? 'text-green-500' : as.difficulty === 'Medium' ? 'text-amber-500' : 'text-rose-500'}`}>
-                      {as.difficulty}
-                    </span>
-                  </div>
+            const difficultyColor = {
+              Easy: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/50',
+              Medium: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/50',
+              Hard: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border-red-100 dark:border-red-900/50'
+            }[as.difficulty] || 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/50';
+            
+            const statusColor = as.computedStatus === 'Active' 
+              ? 'text-emerald-700 bg-emerald-50 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800'
+              : as.computedStatus === 'Completed'
+                ? 'text-blue-700 bg-blue-50 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800'
+                : 'text-neutral-700 bg-neutral-50 border-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:border-neutral-700';
 
-                  <h4 className="font-display font-bold text-base text-neutral-800 dark:text-white mt-3 leading-tight truncate">
-                    {as.title}
-                  </h4>
-                  {as.description && (
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1.5 line-clamp-2">
-                      {as.description}
-                    </p>
-                  )}
+            return (
+              <div key={as.id} className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 md:p-5 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group overflow-hidden relative">
+                {/* Decorative Background Element */}
+                <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-gradient-to-br from-[#6C1D5F]/5 to-transparent blur-2xl group-hover:bg-[#6C1D5F]/10 transition-colors pointer-events-none" />
+
+                {/* Header Section */}
+                <div className="flex justify-between items-start gap-3 mb-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-display font-black text-sm md:text-base text-neutral-800 dark:text-white leading-tight mb-1 truncate">
+                      {as.title}
+                    </h3>
+                    <div className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400 truncate w-full">
+                      {as.subject || as.course || 'General'}
+                    </div>
+                  </div>
+                  <span className={`inline-block px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide border shadow-sm ${statusColor} shrink-0`}>
+                    {as.computedStatus}
+                  </span>
                 </div>
 
-                <div className="pt-3 border-t border-brand-border/80 dark:border-neutral-700/80 dark:border-neutral-800/50 space-y-3 mt-auto">
-                  <div className="grid grid-cols-2 gap-2 text-xs text-neutral-500 dark:text-neutral-400 font-medium">
-                    <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 shrink-0 text-[#6C1D5F]" /> {String(as.duration).replace(' mins', '')} mins</span>
-                    <span className="flex items-center gap-1.5"><HelpCircle className="w-4 h-4 shrink-0 text-[#01AC9F]" /> {as.questions?.length || 0} Questions</span>
-                  </div>
+                {as.description && (
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-4 line-clamp-2">
+                    {as.description}
+                  </p>
+                )}
 
+                {/* Info Chips */}
+                <div className="flex flex-wrap items-center gap-1.5 mb-4">
+                  <span className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded text-[10px] font-bold capitalize">
+                    {(as.type || '').replace('_', ' ')}
+                  </span>
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${difficultyColor}`}>
+                    {as.difficulty}
+                  </span>
+                  <span className="px-1.5 py-0.5 bg-purple-50 dark:bg-purple-950/30 text-[#6C1D5F] dark:text-purple-400 rounded text-[10px] font-bold font-mono">
+                    {as.marks} pts
+                  </span>
+                  <span className="px-1.5 py-0.5 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-500 rounded text-[10px] font-bold">
+                    {String(as.duration).replace(' mins', '')} min
+                  </span>
+                </div>
+
+                <div className="mt-auto pt-4 border-t border-neutral-100 dark:border-neutral-800 relative z-10">
                   {as.computedStatus === 'Active' ? (
                     <button
                       onClick={() => handleStartAttempt(as.id)}
                       disabled={as.attemptsMade >= as.maxAttempts}
-                      className={`w-full py-2 rounded-xl text-xs font-black uppercase shadow-md tracking-wider cursor-pointer flex items-center justify-center gap-1 transition-all ${as.attemptsMade >= as.maxAttempts ? 'bg-neutral-400 cursor-not-allowed' : 'bg-[#6C1D5F] hover:bg-[#84117C]'} text-white shadow-purple-950/10`}
+                      className={`w-full py-2 rounded-lg text-xs font-black uppercase shadow-sm tracking-wider cursor-pointer flex items-center justify-center gap-1 transition-all ${as.attemptsMade >= as.maxAttempts ? 'bg-neutral-400 text-white cursor-not-allowed' : 'bg-[#6C1D5F] hover:bg-[#84117C] text-white shadow-purple-950/10'}`}
                     >
                       <span>{as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Initialize Assessment'}</span>
                       <ArrowRight className="w-4 h-4" />
@@ -354,16 +384,16 @@ export const StudentAssessments = () => {
                     <button
                       onClick={() => as.studentSubmission && handleViewResult(as.studentSubmission.id)}
                       disabled={!as.studentSubmission}
-                      className={`w-full py-2 rounded-xl text-xs font-black uppercase shadow-sm border border-neutral-300 dark:border-neutral-700 tracking-wider flex items-center justify-center gap-1 transition-all bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      className={`w-full py-2 rounded-lg text-xs font-black uppercase shadow-sm border tracking-wider flex items-center justify-center gap-1 transition-all bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                       <span>{as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Expired')}</span>
                     </button>
                   ) : (
                     <button
                       disabled
-                      className="w-full py-2 rounded-xl text-xs font-black uppercase border border-neutral-200 dark:border-neutral-800 tracking-wider flex items-center justify-center gap-1 transition-all bg-neutral-100 dark:bg-neutral-900 text-neutral-400 dark:text-neutral-600 opacity-60"
+                      className="w-full py-2 rounded-lg text-xs font-black uppercase border tracking-wider flex items-center justify-center gap-1 transition-all bg-neutral-100 dark:bg-neutral-900 text-neutral-400 dark:text-neutral-600 border-neutral-200 dark:border-neutral-800 opacity-60 cursor-not-allowed"
                     >
-                      <span>Starts on {new Date(as.startDate).toLocaleDateString()}</span>
+                      <span>Starts on {new Date(`${as.startDate}T${as.startTime || '00:00'}`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} at {as.startTime || '00:00'}</span>
                     </button>
                   )}
                 </div>

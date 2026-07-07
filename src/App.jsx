@@ -26,7 +26,15 @@ const AppContent = () => {
   const { currentUser, theme } = useLMS();
   const location = useLocation();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] = useState(false);
 
+  const handleToggleSidebar = () => {
+    if (window.innerWidth < 1024) {
+      setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    } else {
+      setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
+    }
+  };
   // Handle Loading/Login state
   if (!currentUser) {
     return (
@@ -48,10 +56,22 @@ const AppContent = () => {
         {/* Render sidebar only if not taking quiz */}
         {!isTakingQuiz &&
         <>
-            {/* Desktop Sidebar (permanently fixed on the left) */}
-            <div className="hidden lg:flex lg:flex-col lg:w-64 lg:h-full lg:shrink-0">
-              <Sidebar />
-            </div>
+            {/* Desktop Sidebar (toggleable) */}
+            <AnimatePresence>
+              {!isDesktopSidebarCollapsed && (
+                <motion.div 
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 256, opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ type: 'tween', duration: 0.3 }}
+                  className="hidden lg:flex lg:flex-col lg:h-full lg:shrink-0"
+                >
+                  <div className="w-64 h-full shrink-0">
+                    <Sidebar />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Mobile Sidebar (Collapsible drawer overlays) */}
             <AnimatePresence>
@@ -85,7 +105,7 @@ const AppContent = () => {
         <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
           {/* Render header only if not taking quiz */}
           {!isTakingQuiz &&
-          <Header onToggleMobileSidebar={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)} />
+          <Header onToggleSidebar={handleToggleSidebar} />
           }
 
           {/* Render Active View Canvas */}

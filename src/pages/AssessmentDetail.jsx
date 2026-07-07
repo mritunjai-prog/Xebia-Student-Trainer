@@ -56,7 +56,7 @@ export const AssessmentDetail = () => {
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-neutral-900 rounded-3xl p-8 border border-neutral-200 dark:border-neutral-800 shadow-sm relative overflow-hidden"
+        className="bg-white dark:bg-neutral-900 rounded-3xl p-6 border border-neutral-200 dark:border-neutral-800 shadow-sm relative overflow-hidden"
       >
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-gradient-to-br from-[#6C1D5F]/10 to-transparent blur-3xl pointer-events-none" />
 
@@ -85,7 +85,7 @@ export const AssessmentDetail = () => {
         </div>
 
         {/* Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-neutral-100 dark:border-neutral-800">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-5 pt-5 border-t border-neutral-100 dark:border-neutral-800">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-purple-50 dark:bg-purple-950/30 text-[#6C1D5F] rounded-xl">
               <FileText className="w-5 h-5" />
@@ -149,7 +149,9 @@ export const AssessmentDetail = () => {
                     </span>
                     {q.required && <span className="text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/30 px-2 py-0.5 rounded">Required</span>}
                   </div>
-                  <h4 className="font-bold text-neutral-800 dark:text-neutral-200 text-base">{q.question || q.text || 'Untitled Question'}</h4>
+                  <h4 className="font-bold text-neutral-900 dark:text-white text-base">
+                    {q.text || q.questionText || q['Question Text'] || q.question || "Untitled Question"}
+                  </h4>
                 </div>
                 <div className="shrink-0 text-right">
                   <span className="text-sm font-black font-mono text-[#01AC9F] bg-[#01AC9F]/10 px-3 py-1 rounded-xl">
@@ -159,15 +161,13 @@ export const AssessmentDetail = () => {
               </div>
 
               {/* Options rendering for MCQ / Multi Select */}
-              {(q.type === 'mcq' || q.type === 'true_false' || q.type === 'multi_select') && q.options && (
+              {(q.type === 'mcq' || q.type === 'true_false' || q.type === 'multi_select' || q.type === 'multiple_select') && q.options && (
                 <div className="space-y-2 mt-4">
                   {q.options.map((opt, optIdx) => {
-                    let isCorrect = false;
-                    if (q.type === 'multi_select') {
-                      isCorrect = Array.isArray(q.correctAnswer) && q.correctAnswer.includes(optIdx.toString());
-                    } else {
-                      isCorrect = parseInt(q.correctAnswer) === optIdx;
-                    }
+                    const isCorrect = q.correctAnswer === opt || 
+                                    (Array.isArray(q.correctAnswer) && q.correctAnswer.includes(opt)) ||
+                                    parseInt(q.correctAnswer) === optIdx ||
+                                    (Array.isArray(q.correctAnswer) && q.correctAnswer.includes(optIdx.toString()));
 
                     return (
                       <div 

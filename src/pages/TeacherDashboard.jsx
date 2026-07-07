@@ -81,7 +81,7 @@ export const TeacherDashboard = () => {
   // 3. Batch Student count & Performance
   const batchPerformanceData = batches.slice(0, 5).map((b) => {
     // find all students of this batch
-    const bStudents = students.filter((s) => s.batches.includes(b.id));
+    const bStudents = students.filter((s) => (s.batches || []).includes(b.id));
     const avgScore = bStudents.length > 0 ?
     Math.round(bStudents.reduce((sum, s) => sum + (s.averageScore || 0), 0) / bStudents.length) :
     80;

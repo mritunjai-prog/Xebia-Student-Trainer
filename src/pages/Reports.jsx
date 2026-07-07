@@ -60,7 +60,7 @@ export const Reports = () => {
   // 2. Batch Comparison Data
   const batchComparisonData = batches.map((b) => {
     // Find students enrolled
-    const bStudents = students.filter((s) => s.batches.includes(b.id));
+    const bStudents = students.filter((s) => (s.batches || []).includes(b.id));
 
     // Average score of batch students
     const bAvg = bStudents.length > 0 ?
@@ -68,7 +68,7 @@ export const Reports = () => {
     75;
 
     // Submissions completed for assessments assigned to this batch
-    const bAssessments = assessments.filter((a) => a.batches.includes(b.id));
+    const bAssessments = assessments.filter((a) => (a.batches || []).includes(b.id));
     const bAsIds = bAssessments.map((a) => a.id);
     const bSubs = submissions.filter((s) => bAsIds.includes(s.assessmentId) && s.status === 'submitted');
 
@@ -97,7 +97,7 @@ export const Reports = () => {
   // 4. Student performance table filters
   const filteredStudents = students.filter((s) => {
     const matchesSearch = s.name.toLowerCase().includes(studentSearch.toLowerCase()) || s.email.toLowerCase().includes(studentSearch.toLowerCase());
-    const matchesBatch = selectedBatchId === 'all' || s.batches.includes(selectedBatchId);
+    const matchesBatch = selectedBatchId === 'all' || (s.batches || []).includes(selectedBatchId);
     return matchesSearch && matchesBatch;
   });
 
@@ -290,7 +290,7 @@ export const Reports = () => {
                 </tr> :
 
               filteredStudents.slice(0, 15).map((stud, idx) => {
-                const bName = batches.find((b) => (sId) => stud.batches.includes(b.id))?.name || stud.batches.join(', ');
+                const bName = batches.find((b) => (stud.batches || []).includes(b.id))?.name || (stud.batches || []).join(', ') || 'Unassigned';
                 const score = stud.averageScore || 80;
 
                 return (

@@ -20,8 +20,10 @@ export const DateTimePicker = ({ type = 'date', value, onChange }) => {
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   const handleDateSelect = (day) => {
-    const d = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-    onChange(d.toISOString().split('T')[0]);
+    const y = currentMonth.getFullYear();
+    const m = (currentMonth.getMonth() + 1).toString().padStart(2, '0');
+    const d = day.toString().padStart(2, '0');
+    onChange(`${y}-${m}-${d}`);
     setIsOpen(false);
   };
 

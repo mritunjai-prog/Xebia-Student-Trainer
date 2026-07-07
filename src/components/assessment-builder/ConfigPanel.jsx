@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Calendar, Clock, Sparkles, BookOpen, Layers, Loader2, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
+import { Settings, Calendar, Clock, Wand2, Sparkles, BookOpen, Layers, Loader2, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { toast } from '../Toast';
 import { generateAssessmentDescription } from '../../utils/aiService';
@@ -28,12 +28,12 @@ export const ConfigPanel = ({ config, setConfig }) => {
   };
 
   return (
-    <div className="flex flex-col h-1/2 lg:h-full bg-white dark:bg-neutral-900 lg:border-r border-b lg:border-b-0 border-neutral-200 dark:border-neutral-800 overflow-y-auto w-full lg:w-[650px] shrink-0 shadow-lg z-10">
+    <div className="flex flex-col h-full w-full bg-white dark:bg-neutral-900 overflow-y-auto shrink-0 z-10">
       <div className="p-4 border-b border-neutral-200 dark:border-neutral-800 sticky top-0 bg-white/95 dark:bg-neutral-900/95 backdrop-blur z-10">
         <h2 className="font-display font-black text-lg text-neutral-900 dark:text-white flex items-center gap-2">
-          <Settings className="w-5 h-5 text-[#6C1D5F]" /> Configuration
+          <Settings className="w-5 h-5 text-[#6C1D5F]" /> Assessment Details
         </h2>
-        <p className="text-xs text-neutral-500 mt-1">Set up the core rules and settings for this assessment.</p>
+        <p className="text-xs text-neutral-500 mt-1">Define the core properties and parameters for this assessment.</p>
       </div>
 
       <div className="p-5 space-y-6">
@@ -100,6 +100,25 @@ export const ConfigPanel = ({ config, setConfig }) => {
 
               {isBatchDropdownOpen && (
                 <div className="absolute z-20 top-full left-0 mt-1 w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-lg max-h-48 overflow-y-auto p-2">
+                  {batches.length > 0 && (
+                    <label className="flex items-center gap-2 px-2 py-1.5 mb-1 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-lg cursor-pointer border-b border-neutral-100 dark:border-neutral-800">
+                      <input 
+                        type="checkbox"
+                        checked={config.batches?.length === batches.length && batches.length > 0}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setConfig(prev => ({...prev, batches: batches.map(b => b.id)}));
+                          } else {
+                            setConfig(prev => ({...prev, batches: []}));
+                          }
+                        }}
+                        className="w-4 h-4 text-[#6C1D5F] rounded"
+                      />
+                      <span className="text-sm font-bold text-neutral-800 dark:text-neutral-200">
+                        Select All
+                      </span>
+                    </label>
+                  )}
                   {batches.map((b, i) => (
                     <label key={i} className="flex items-center gap-2 px-2 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-lg cursor-pointer">
                       <input 
@@ -269,10 +288,10 @@ export const ConfigPanel = ({ config, setConfig }) => {
                 type="button"
                 onClick={handleGenerateAI}
                 disabled={isGenerating}
-                className="flex items-center gap-1 px-3 py-1 text-[10px] font-bold rounded-md transition-colors bg-[#6C1D5F] hover:bg-[#84117C] text-white disabled:opacity-50"
+                className={`flex items-center justify-center p-1.5 rounded-md transition-all duration-300 text-white disabled:opacity-50 ${isGenerating ? 'bg-fuchsia-600 scale-110' : 'bg-[#6C1D5F] hover:bg-fuchsia-600 hover:shadow-lg hover:shadow-fuchsia-900/30'}`}
+                title="Generate with AI"
               >
-                {isGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                Generate with AI
+                <Wand2 className={`w-3.5 h-3.5 ${isGenerating ? 'animate-bounce text-pink-200' : ''}`} />
               </button>
             </div>
           </div>

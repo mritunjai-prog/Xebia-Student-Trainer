@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Plus, Sparkles, Trash2, Code2, Text, FileText, CheckCircle, Brain, Library, Loader2, ListChecks, GripVertical, Monitor, Tablet, Smartphone, UserCheck, Edit, Upload, Download } from 'lucide-react';
+import { Plus, Wand2, Sparkles, Trash2, Code2, Text, FileText, CheckCircle, Brain, Library, Loader2, ListChecks, GripVertical, Monitor, Tablet, Smartphone, UserCheck, Edit, Upload, Download, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { motion, AnimatePresence } from 'motion/react';
 import { generateQuestions, parseExcelToQuestions } from '../../utils/aiService';
 import { toast } from '../Toast';
 
-export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
+export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDesktopConfigOpen, setIsDesktopConfigOpen }) => {
   const [addingManual, setAddingManual] = useState(false);
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
   const fileInputRef = useRef(null);
@@ -94,7 +94,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
     const newQuestion = {
       id: `q_manual_${Date.now()}`,
       type: config?.type || 'mcq',
-      text: draftText,
+      question: draftText,
       marks: 1,
       options: ['mcq', 'multiple_select', 'true_false'].includes(config?.type) 
         ? draftOptions.filter(o => o.trim() !== '') 
@@ -205,7 +205,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-neutral-50 dark:bg-[#0a0a0a] overflow-hidden relative">
+    <div className="h-full w-full flex flex-col bg-neutral-50 dark:bg-[#0a0a0a] overflow-hidden relative">
       
       {/* Header */}
       <div className="px-4 xl:px-6 py-4 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-4 border-b border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 backdrop-blur shrink-0 z-10">
@@ -217,6 +217,14 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
         </div>
         
         <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-start xl:justify-end">
+          <button
+            onClick={() => setIsDesktopConfigOpen(!isDesktopConfigOpen)}
+            className="hidden lg:flex items-center justify-center p-2 rounded-lg text-neutral-500 hover:text-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
+            title={isDesktopConfigOpen ? "Hide Assessment Details" : "Show Assessment Details"}
+          >
+            {isDesktopConfigOpen ? <PanelLeftClose className="w-5 h-5" /> : <PanelLeftOpen className="w-5 h-5" />}
+          </button>
+          
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-[10px] uppercase font-bold text-neutral-400 bg-white dark:bg-neutral-800 px-2 py-1 rounded-md border border-neutral-200 dark:border-neutral-700">
               Marks: {questions.reduce((acc, q) => acc + (q.marks || 0), 0)}
@@ -236,18 +244,17 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
             </button>
             <input 
               type="file" 
-              accept=".xlsx, .xls" 
+              accept=".xlsx, .xls, .csv" 
+              onChange={handleFileUpload} 
               className="hidden" 
               ref={fileInputRef} 
-              onChange={handleFileUpload} 
             />
             <button 
               onClick={() => fileInputRef.current?.click()}
-              disabled={!isConfigComplete}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#4A1E47] hover:bg-[#6C1D5F] text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-bold transition-colors shadow-sm"
-              title="Import Excel"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-xs font-bold transition-colors"
+              title="Upload Excel or CSV"
             >
-              <Upload className="w-3.5 h-3.5" /> Import
+              <Upload className="w-3.5 h-3.5" /> Upload
             </button>
             <button 
               onClick={handleDownloadTemplate}
@@ -259,18 +266,18 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
             <button 
               onClick={() => setQuestions([])}
               disabled={questions.length === 0}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-bold transition-colors"
+              className="flex items-center justify-center p-2 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
               title="Remove All"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <Trash2 className="w-4 h-4" />
             </button>
             <button 
               onClick={handleGenerateQuestions}
               disabled={!isConfigComplete || isGeneratingAi}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#6C1D5F] hover:bg-[#84117C] text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-bold shadow-sm transition-transform hover:-translate-y-0.5"
+              className={`flex items-center justify-center p-2 rounded-lg text-white disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all duration-300 ${isGeneratingAi ? 'bg-fuchsia-600 scale-110' : 'bg-[#6C1D5F] hover:bg-fuchsia-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-fuchsia-900/30'}`}
+              title="Generate with AI"
             >
-              {isGeneratingAi ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-              {isGeneratingAi ? 'Generating...' : 'Generate with AI'}
+              <Wand2 className={`w-4 h-4 ${isGeneratingAi ? 'animate-bounce text-pink-200' : ''}`} />
             </button>
           </div>
         </div>
@@ -313,7 +320,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
                 <div className="flex items-start justify-between gap-4">
                   <p className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
                     <span className="text-[#6C1D5F] font-bold mr-2">{idx + 1}.</span>
-                    {q.text}
+                    {q.text || q.questionText || q['Question Text'] || q.question || "Untitled Question"}
                   </p>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="text-xs font-bold text-neutral-400 bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded">
@@ -326,23 +333,31 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
                 
                 {(q.type === 'mcq' || q.type === 'true_false') && q.options && (
                   <div className="space-y-2 pl-6">
-                    {q.options.map((opt, oIdx) => (
-                      <div key={oIdx} className="flex items-center gap-3 p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors cursor-pointer text-sm text-neutral-700 dark:text-neutral-300">
-                        <input type="radio" disabled className="w-4 h-4 text-[#6C1D5F]" />
-                        {opt}
-                      </div>
-                    ))}
+                    {q.options.map((opt, oIdx) => {
+                      const isCorrect = q.correctAnswer === opt || (Array.isArray(q.correctAnswer) && q.correctAnswer.includes(opt));
+                      return (
+                        <div key={oIdx} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors cursor-pointer text-sm ${isCorrect ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100 ring-1 ring-emerald-500' : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-700 dark:text-neutral-300'}`}>
+                          <input type="radio" disabled checked={isCorrect} className="w-4 h-4 text-emerald-600" />
+                          <span className="flex-1">{opt}</span>
+                          {isCorrect && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
 
                 {q.type === 'multiple_select' && q.options && (
                   <div className="space-y-2 pl-6">
-                    {q.options.map((opt, oIdx) => (
-                      <div key={oIdx} className="flex items-center gap-3 p-3 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors cursor-pointer text-sm text-neutral-700 dark:text-neutral-300">
-                        <input type="checkbox" disabled className="w-4 h-4 text-[#6C1D5F] rounded" />
-                        {opt}
-                      </div>
-                    ))}
+                    {q.options.map((opt, oIdx) => {
+                      const isCorrect = q.correctAnswer === opt || (Array.isArray(q.correctAnswer) && q.correctAnswer.includes(opt));
+                      return (
+                        <div key={oIdx} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors cursor-pointer text-sm ${isCorrect ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100 ring-1 ring-emerald-500' : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-700 dark:text-neutral-300'}`}>
+                          <input type="checkbox" disabled checked={isCorrect} className="w-4 h-4 text-emerald-600 rounded" />
+                          <span className="flex-1">{opt}</span>
+                          {isCorrect && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
 

@@ -19,7 +19,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 
 
-export const Header = ({ onToggleMobileSidebar }) => {
+export const Header = ({ onToggleSidebar }) => {
   const { currentUser, theme, toggleTheme, notifications, markNotificationAsRead, markAllNotificationsAsRead, logout } = useLMS();
   const location = useLocation();
   const navigate = useNavigate();
@@ -86,8 +86,8 @@ export const Header = ({ onToggleMobileSidebar }) => {
       {/* Mobile Toggle & Title */}
       <div className="flex items-center gap-3">
         <button
-          onClick={onToggleMobileSidebar}
-          className="lg:hidden p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-500 dark:text-neutral-400">
+          onClick={onToggleSidebar}
+          className="p-1.5 rounded-lg text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-500 dark:text-neutral-400">
 
           <Menu className="w-6 h-6" />
         </button>
@@ -132,7 +132,7 @@ export const Header = ({ onToggleMobileSidebar }) => {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="absolute right-0 mt-2 w-80 bg-white dark:bg-neutral-900 rounded-2xl border border-brand-border dark:border-neutral-800 shadow-xl overflow-hidden glass-panel">
+                className="absolute right-0 sm:right-0 mt-2 w-[calc(100vw-3rem)] sm:w-80 bg-white dark:bg-neutral-900 rounded-2xl border border-brand-border dark:border-neutral-800 shadow-xl overflow-hidden glass-panel -mr-2 sm:mr-0 z-50">
 
                 <div className="flex items-center justify-between px-4 py-3 bg-[#6C1D5F]/5 dark:bg-neutral-800/50 border-b border-brand-border dark:border-neutral-800">
                   <span className="font-display font-semibold text-sm text-brand-velvet dark:text-purple-300">Notifications</span>

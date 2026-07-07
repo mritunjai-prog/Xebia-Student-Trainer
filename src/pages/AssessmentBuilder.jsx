@@ -310,7 +310,7 @@ export const AssessmentBuilder = () => {
   };
 
   // Submit full form
-  const handleSaveAssessment = (e) => {
+  const handleSaveAssessment = async (e) => {
     e.preventDefault();
     if (!title.trim()) {
       toast.add('Please supply assessment title', 'warning');
@@ -349,13 +349,23 @@ export const AssessmentBuilder = () => {
       negativeMarking,
       negativeMarksValue,
       type: asType,
-      questions,
+      questions: questions.map(({ id, ...q }) => {
+        // Strip temporary frontend IDs
+        if (id && (id.startsWith('Q-') || id.startsWith('q_'))) return q;
+        return { id, ...q };
+      }),
       createdBy: 'T1' // fallback trainer
     };
 
     if (activeTab === 'create') {
-      createAssessment(assessmentPayload);
-      toast.add(`Assessment "${title}" created successfully!`, 'success');
+      try {
+        await createAssessment(assessmentPayload);
+        toast.add(`Assessment "${title}" created successfully!`, 'success');
+        setActiveTab('list');
+        resetForm();
+      } catch (err) {
+        toast.add('Failed to create assessment.', 'error');
+      }
     } else if (activeTab === 'edit' && editingAssessmentId) {
       editAssessment(editingAssessmentId, assessmentPayload);
       toast.add(`Assessment updated!`, 'success');
@@ -373,11 +383,15 @@ export const AssessmentBuilder = () => {
   };
 
   // Delete assessment
-  const handleDelete = (e, id, label) => {
+  const handleDelete = async (e, id, label) => {
     e.stopPropagation();
     if (confirm(`Delete assessment "${label}"? This will delete all associated student submissions!`)) {
-      deleteAssessment(id);
-      toast.add(`Deleted "${label}".`, 'error');
+      try {
+        await deleteAssessment(id);
+        toast.add(`Deleted "${label}".`, 'error');
+      } catch (err) {
+        toast.add('Failed to delete assessment', 'error');
+      }
     }
   };
 
@@ -672,7 +686,7 @@ export const AssessmentBuilder = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {filteredAssessments.map((as) => {
-                  const batchNames = as.batches.map((bId) => batches.find((b) => b.id === bId)?.name || bId).join(', ');
+                  const batchNames = (as.batches || []).map((bId) => batches.find((b) => b.id === bId)?.name || bId).join(', ');
 
                   const statusColor = {
                     published: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
@@ -717,7 +731,7 @@ export const AssessmentBuilder = () => {
                       {/* Info Chips */}
                       <div className="flex flex-wrap items-center gap-1.5 mb-4 mt-2">
                         <span className="px-1.5 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded text-[10px] font-bold capitalize">
-                          {as.type.replace('_', ' ')}
+                          {(as.type || '').replace('_', ' ')}
                         </span>
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${difficultyColor}`}>
                           {as.difficulty}

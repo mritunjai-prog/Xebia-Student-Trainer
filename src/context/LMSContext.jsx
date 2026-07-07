@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-import { initialTeachers, initialBatches, initialStudents, initialAssessments, initialSubmissions, initialNotifications } from '../data/dummyData';
-import { initialCodingAssessments, initialCodingSubmissions, initialCodingLeaderboard } from '../data/codingData';
+import { apiClient } from '../api/client';
 
 
 
@@ -43,77 +42,65 @@ import { initialCodingAssessments, initialCodingSubmissions, initialCodingLeader
 const LMSContext = createContext(undefined);
 
 export const LMSProvider = ({ children }) => {
-  // One-time database migration check for clean compact data and new Java/C++ assessment
-  const existingAssessmentsStr = localStorage.getItem('assessments');
-  if (existingAssessmentsStr) {
-    try {
-      const parsed = JSON.parse(existingAssessmentsStr);
-      const hasACode3 = parsed.some((a) => a.id === 'A-CODE3');
-      if (!hasACode3) {
-        localStorage.clear();
-      }
-    } catch (e) {
-      localStorage.clear();
-    }
-  }
 
-  // Initialize States from LocalStorage or preloaded dummy data
-  const [teachers, setTeachers] = useState(() => {
-    const data = localStorage.getItem('teachers');
-    if (data) return JSON.parse(data);
-    localStorage.setItem('teachers', JSON.stringify(initialTeachers));
-    return initialTeachers;
-  });
-
-  const [batches, setBatches] = useState(() => {
-    const data = localStorage.getItem('batches');
-    if (data) return JSON.parse(data);
-    localStorage.setItem('batches', JSON.stringify(initialBatches));
-    return initialBatches;
-  });
-
-  const [students, setStudents] = useState(() => {
-    const data = localStorage.getItem('students');
-    if (data) return JSON.parse(data);
-    localStorage.setItem('students', JSON.stringify(initialStudents));
-    return initialStudents;
-  });
-
-  const [assessments, setAssessments] = useState(() => {
-    const data = localStorage.getItem('assessments');
-    if (data) return JSON.parse(data);
-    const combined = [...initialAssessments, ...initialCodingAssessments];
-    localStorage.setItem('assessments', JSON.stringify(combined));
-    return combined;
-  });
-
-  const [submissions, setSubmissions] = useState(() => {
-    const data = localStorage.getItem('submissions');
-    if (data) return JSON.parse(data);
-    localStorage.setItem('submissions', JSON.stringify(initialSubmissions));
-    return initialSubmissions;
-  });
-
+  // Initialize States from Backend API
+  const [teachers, setTeachers] = useState([]);
+  const [batches, setBatches] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [assessments, setAssessments] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
+  
+  // Local coding states
   const [codingSubmissions, setCodingSubmissions] = useState(() => {
     const data = localStorage.getItem('codingSubmissions');
-    if (data) return JSON.parse(data);
-    localStorage.setItem('codingSubmissions', JSON.stringify(initialCodingSubmissions));
-    return initialCodingSubmissions;
+    return data ? JSON.parse(data) : [];
   });
 
   const [codingLeaderboard, setCodingLeaderboard] = useState(() => {
     const data = localStorage.getItem('codingLeaderboard');
-    if (data) return JSON.parse(data);
-    localStorage.setItem('codingLeaderboard', JSON.stringify(initialCodingLeaderboard));
-    return initialCodingLeaderboard;
+    return data ? JSON.parse(data) : [];
   });
 
   const [notifications, setNotifications] = useState(() => {
     const data = localStorage.getItem('notifications');
-    if (data) return JSON.parse(data);
-    localStorage.setItem('notifications', JSON.stringify(initialNotifications));
-    return initialNotifications;
+    return data ? JSON.parse(data) : [];
   });
+
+  useEffect(() => {
+    const fetchBackendData = async () => {
+      try {
+        const users = await apiClient.getUsers();
+        const b = await apiClient.getBatches();
+        
+        const enrichedUsers = users.map(u => {
+          if (u.role === 'student') {
+            const studentBatches = b.filter(batch => (batch.students || []).includes(u.id)).map(batch => batch.id);
+            return { ...u, batches: studentBatches };
+          }
+          return u;
+        });
+
+        setTeachers(enrichedUsers.filter(u => u.role === 'teacher'));
+        setStudents(enrichedUsers.filter(u => u.role === 'student'));
+        setBatches(b);
+
+        setCurrentUser(prev => {
+          if (!prev) return prev;
+          const updated = enrichedUsers.find(u => u.id === prev.id);
+          return updated || prev;
+        });
+        
+        const a = await apiClient.getAssessments();
+        setAssessments(a);
+        
+        const s = await apiClient.getSubmissions();
+        setSubmissions(s);
+      } catch (err) {
+        console.error("Backend connection failed.", err);
+      }
+    };
+    fetchBackendData();
+  }, []);
 
   const [currentUser, setCurrentUser] = useState(() => {
     const data = localStorage.getItem('session');
@@ -138,6 +125,14 @@ export const LMSProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem('teachers', JSON.stringify(teachers));
+
+    // Sync currentUser if they are a teacher
+    if (currentUser?.role === 'teacher') {
+      const updated = teachers.find(t => t.id === currentUser.id);
+      if (updated && JSON.stringify(updated) !== JSON.stringify(currentUser)) {
+        setCurrentUser(updated);
+      }
+    }
   }, [teachers]);
 
   useEffect(() => {
@@ -146,6 +141,14 @@ export const LMSProvider = ({ children }) => {
 
   useEffect(() => {
     localStorage.setItem('students', JSON.stringify(students));
+    
+    // Sync currentUser if they are a student
+    if (currentUser?.role === 'student') {
+      const updated = students.find(s => s.id === currentUser.id);
+      if (updated && JSON.stringify(updated) !== JSON.stringify(currentUser)) {
+        setCurrentUser(updated);
+      }
+    }
   }, [students]);
 
   useEffect(() => {
@@ -271,14 +274,13 @@ export const LMSProvider = ({ children }) => {
   };
 
   // Batch Operations
-  const createBatch = (name, course, icon = '📦', status = 'active') => {
+  const createBatch = async (name, course, icon = '📦', status = 'active') => {
     // Check for duplicates
     if (batches.some(b => b.name.toLowerCase() === name.toLowerCase())) {
       throw new Error(`A batch with the name "${name}" already exists.`);
     }
 
     const newBatch = {
-      id: `B-${Date.now()}`,
       name,
       course,
       icon,
@@ -287,51 +289,69 @@ export const LMSProvider = ({ children }) => {
       status,
       createdAt: new Date().toISOString().split('T')[0]
     };
-    setBatches((prev) => [...prev, newBatch]);
-    addNotification('New Batch Created', `Batch ${name} for course "${course}" has been established.`, 'system', 'all_teachers');
-    return newBatch;
+    
+    try {
+      const savedBatch = await apiClient.createBatch(newBatch);
+      setBatches((prev) => [...prev, savedBatch]);
+      addNotification('New Batch Created', `Batch ${name} for course "${course}" has been established.`, 'system', 'all_teachers');
+      return savedBatch;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   };
 
-  const editBatch = (id, name, course, studentIds, icon, status) => {
+  const editBatch = async (id, name, course, studentIds, icon, status) => {
+    const updatedBatch = {
+      name,
+      course,
+      icon: icon || '📦',
+      status: status || 'active',
+      students: studentIds,
+      studentCount: studentIds.length
+    };
+
+    // Optimistically update local state immediately
     setBatches((prev) => prev.map((b) => {
       if (b.id === id) {
-        // Find students that are added or removed to keep their batches array synced
-        const originalStudents = b.students;
-
-        // Update student states
+        // Update student states in memory
         setStudents((currentStudents) => currentStudents.map((s) => {
           const isSelected = studentIds.includes(s.id);
-          const hadBatch = s.batches.includes(id);
+          const hadBatch = (s.batches || []).includes(id);
           if (isSelected && !hadBatch) {
-            return { ...s, batches: [...s.batches, id] };
+            return { ...s, batches: [...(s.batches || []), id] };
           } else if (!isSelected && hadBatch) {
-            return { ...s, batches: s.batches.filter((bid) => bid !== id) };
+            return { ...s, batches: (s.batches || []).filter((bid) => bid !== id) };
           }
           return s;
         }));
-
-        return {
-          ...b,
-          name,
-          course,
-          icon: icon || b.icon || '📦',
-          status: status || b.status || 'active',
-          students: studentIds,
-          studentCount: studentIds.length
-        };
+        return { ...b, ...updatedBatch };
       }
       return b;
     }));
+
+    // Persist to backend so it survives page refresh
+    try {
+      await apiClient.updateBatch(id, updatedBatch);
+    } catch (err) {
+      console.error('Failed to persist batch update to backend:', err);
+    }
   };
 
-  const deleteBatch = (id) => {
-    // Remove batch from students
+  const deleteBatch = async (id) => {
+    // Remove batch from students in local state
     setStudents((prev) => prev.map((s) => ({
       ...s,
       batches: s.batches ? s.batches.filter((bid) => bid !== id) : []
     })));
-    // Delete the batch
+    // Delete from local state
     setBatches((prev) => prev.filter((b) => b.id !== id));
+    // Persist to backend
+    try {
+      await apiClient.deleteBatch(id);
+    } catch (err) {
+      console.error('Failed to delete batch from backend:', err);
+    }
   };
 
   const getBatchProgress = (batchId) => {
@@ -356,61 +376,84 @@ export const LMSProvider = ({ children }) => {
   };
 
   // Assessment Operations
-  const createAssessment = (newAs) => {
+  const createAssessment = async (newAs) => {
+    // Backend generates the ID
     const newAssessment = {
       ...newAs,
-      id: `A-${Date.now()}`,
       createdAt: new Date().toISOString().split('T')[0]
     };
-    setAssessments((prev) => [newAssessment, ...prev]);
+    
+    try {
+      const savedAssessment = await apiClient.createAssessment(newAssessment);
+      setAssessments((prev) => [savedAssessment, ...prev]);
 
-    if (newAssessment.status === 'published') {
-      newAssessment.batches.forEach((bId) => {
-        addNotification(
-          'Assessment Published',
-          `New assessment "${newAssessment.title}" published for your batch. Duration: ${newAssessment.duration}m.`,
-          'publish',
-          bId
-        );
-      });
-    }
-
-    return newAssessment;
-  };
-
-  const editAssessment = (id, updated) => {
-    setAssessments((prev) => prev.map((a) => {
-      if (a.id === id) {
-        const merged = { ...a, ...updated };
-        // If changing status from draft to published, send notification
-        if (a.status !== 'published' && updated.status === 'published') {
-          merged.batches.forEach((bId) => {
-            addNotification(
-              'Assessment Published',
-              `New assessment "${merged.title}" is now available. Complete it soon!`,
-              'publish',
-              bId
-            );
-          });
-        } else if (updated.status === 'published') {
-          merged.batches.forEach((bId) => {
-            addNotification(
-              'Assessment Updated',
-              `Assessment "${merged.title}" has been updated by the trainer.`,
-              'update',
-              bId
-            );
-          });
-        }
-        return merged;
+      if (savedAssessment.status === 'published') {
+        savedAssessment.batches.forEach((bId) => {
+          addNotification(
+            'Assessment Published',
+            `New assessment "${savedAssessment.title}" published for your batch. Duration: ${savedAssessment.duration}m.`,
+            'publish',
+            bId
+          );
+        });
       }
-      return a;
-    }));
+      return savedAssessment;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
   };
 
-  const deleteAssessment = (id) => {
-    setAssessments((prev) => prev.filter((a) => a.id !== id));
-    setSubmissions((prev) => prev.filter((s) => s.assessmentId !== id));
+  const editAssessment = async (id, updated) => {
+    try {
+      const targetAs = assessments.find(a => a.id === id);
+      if (!targetAs) return;
+      
+      const merged = { ...targetAs, ...updated };
+      const res = await apiClient.updateAssessment(id, merged);
+      
+      setAssessments((prev) => prev.map((a) => {
+        if (a.id === id) {
+          // If changing status from draft to published, send notification
+          if (a.status !== 'published' && updated.status === 'published') {
+            merged.batches.forEach((bId) => {
+              addNotification(
+                'Assessment Published',
+                `New assessment "${merged.title}" is now available. Complete it soon!`,
+                'publish',
+                bId
+              );
+            });
+          } else if (updated.status === 'published') {
+            merged.batches.forEach((bId) => {
+              addNotification(
+                'Assessment Updated',
+                `Assessment "${merged.title}" has been updated by the trainer.`,
+                'update',
+                bId
+              );
+            });
+          }
+          return res;
+        }
+        return a;
+      }));
+      return res;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+
+  const deleteAssessment = async (id) => {
+    try {
+      await apiClient.deleteAssessment(id);
+      setAssessments((prev) => prev.filter((a) => a.id !== id));
+      setSubmissions((prev) => prev.filter((s) => s.assessmentId !== id));
+    } catch (err) {
+      console.error("Failed to delete assessment", err);
+      throw err;
+    }
   };
 
   const duplicateAssessment = (id) => {
@@ -458,6 +501,7 @@ export const LMSProvider = ({ children }) => {
     };
 
     setSubmissions((prev) => [newSub, ...prev]);
+    apiClient.createSubmission(newSub).catch(console.error);
     return newSub;
   };
 
@@ -535,6 +579,7 @@ export const LMSProvider = ({ children }) => {
       };
 
       finalSubmission = updatedSub;
+      apiClient.createSubmission(updatedSub).catch(console.error);
 
       const newSubs = [...currentSubs];
       newSubs[index] = updatedSub;
