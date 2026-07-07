@@ -4,26 +4,27 @@ import { useLMS } from '../context/LMSContext';
 import { toast } from '../components/Toast';
 import {
   Clock,
-  ChevronLeft,
-  ChevronRight,
-  Flag,
-
+  ArrowRight,
+  ArrowLeft,
+  CheckCircle,
+  AlertCircle,
+  CheckSquare,
   Upload,
-  FileText,
-  X,
-  AlertTriangle,
+  Bot,
   Maximize2,
   Minimize2,
-  CheckCircle } from
-
-
-'lucide-react';
+  Moon,
+  Sun,
+  LayoutGrid,
+  List,
+  LogOut
+} from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 
 export const TakeQuiz = () => {
   const { slug } = useParams();
-  const { assessments, currentUser, startAssessment, submitAssessment } = useLMS();
+  const { assessments, currentUser, startAssessment, submitAssessment, theme, toggleTheme } = useLMS();
   const navigate = useNavigate();
 
   const assessment = assessments.find((a) => (a.title.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'assessment') === slug);
@@ -81,7 +82,7 @@ export const TakeQuiz = () => {
       const remaining = Math.max(0, totalSecs - elapsedSecs);
       setSecondsLeft(remaining);
     }
-  }, [id]);
+  }, [assessment.id, currentUser.id, startAssessment, assessment.duration]);
 
   // Countdown timer clock ticks
   useEffect(() => {
@@ -128,6 +129,32 @@ export const TakeQuiz = () => {
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
+
+  const isSubmittedRef = useRef(false);
+
+  // Monitor unmount / browser close for auto-submit
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (!isSubmittedRef.current) {
+        e.preventDefault();
+        e.returnValue = ''; // Required for browser to show confirmation dialog
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // If component unmounts and we haven't submitted yet, force submit
+      if (!isSubmittedRef.current && submission) {
+        isSubmittedRef.current = true;
+        const answersPayload = assessment.questions.map((q) => ({
+          questionId: q.id,
+          answer: answers[q.id] !== undefined ? answers[q.id] : ''
+        }));
+        submitAssessment(submission.id, answersPayload);
+      }
+    };
+  }, [answers, submission, assessment, submitAssessment]);
 
   // Set response selection
   const handleSelectAnswer = (qId, value) => {
@@ -213,6 +240,7 @@ export const TakeQuiz = () => {
       };
     });
 
+    isSubmittedRef.current = true;
     const completed = submitAssessment(submission.id, answersPayload);
     setShowConfirmModal(false);
 
@@ -227,7 +255,7 @@ export const TakeQuiz = () => {
 
   const handleAutoSubmit = () => {
     if (!submission) return;
-    toast.add(`Time limit reached! System is autosubmitting your answers.`, 'warning', 6000);
+    toast.add(`System is submitting your answers.`, 'warning', 6000);
 
     const answersPayload = assessment.questions.map((q) => {
       return {
@@ -236,6 +264,7 @@ export const TakeQuiz = () => {
       };
     });
 
+    isSubmittedRef.current = true;
     const completed = submitAssessment(submission.id, answersPayload);
     if (document.fullscreenElement) {
       document.exitFullscreen();
@@ -268,6 +297,31 @@ export const TakeQuiz = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          {/* Exit Assessment button */}
+          <button
+            onClick={() => {
+              if (window.confirm("Are you sure you want to exit? Your attempt will be submitted automatically and consumed.")) {
+                handleAutoSubmit();
+              }
+            }}
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-xl text-xs font-bold transition-colors cursor-pointer border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600"
+            title="Exit Assessment"
+          >
+            <LogOut className="w-3.5 h-3.5" /> Exit
+          </button>
+
+          {/* Theme Toggle button */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-2xl text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 dark:text-neutral-500 dark:text-neutral-400 dark:hover:text-white dark:hover:bg-neutral-800 transition-all duration-150 cursor-pointer"
+            title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}>
+            
+            {theme === 'light' ?
+              <Moon className="w-5 h-5 text-[#6C1D5F]" /> :
+              <Sun className="w-5 h-5 text-amber-500" />
+            }
+          </button>
+
           {/* Fullscreen button */}
           <button
             onClick={toggleFullscreenMode}
@@ -319,7 +373,7 @@ export const TakeQuiz = () => {
 
             {/* Prompt description */}
             <p className="text-base md:text-lg font-semibold text-neutral-900 dark:text-neutral-100 mt-6 leading-relaxed">
-              {currentQ.question}
+              {currentQ.text || currentQ.question}
             </p>
 
             {/* Form Input fields depending on type */}

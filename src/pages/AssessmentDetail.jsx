@@ -149,7 +149,7 @@ export const AssessmentDetail = () => {
                     </span>
                     {q.required && <span className="text-xs font-bold text-red-500 bg-red-50 dark:bg-red-950/30 px-2 py-0.5 rounded">Required</span>}
                   </div>
-                  <h4 className="font-bold text-neutral-800 dark:text-neutral-200 text-base">{q.question}</h4>
+                  <h4 className="font-bold text-neutral-800 dark:text-neutral-200 text-base">{q.question || q.text || 'Untitled Question'}</h4>
                 </div>
                 <div className="shrink-0 text-right">
                   <span className="text-sm font-black font-mono text-[#01AC9F] bg-[#01AC9F]/10 px-3 py-1 rounded-xl">

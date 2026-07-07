@@ -7,27 +7,38 @@ import { initialAssessments, initialBatches } from '../../data/dummyData';
 import { toast } from '../Toast';
 import { useLMS } from '../../context/LMSContext';
 
-export const EnterpriseBuilderLayout = ({ onBack }) => {
-  const { createAssessment } = useLMS();
+export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
+  const { createAssessment, editAssessment, batches } = useLMS();
   const [saveState, setSaveState] = useState('saved'); // 'saved', 'saving', 'unsaved'
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState(initialAssessment?.questions || []);
   const [showPublishModal, setShowPublishModal] = useState(false);
+  
+  const initialCourse = initialAssessment?.batches?.length > 0
+    ? batches.find(b => b.id === initialAssessment.batches[0])?.course || ''
+    : '';
+
   const [config, setConfig] = useState({
-    title: '',
-    topic: '',
-    course: '',
-    batch: '',
-    type: '',
-    difficulty: 'Easy',
-    duration: '',
-    marks: '',
-    startDate: '',
-    startTime: '',
-    endDate: '',
-    endTime: '',
-    description: '',
+    title: initialAssessment?.title || '',
+    topic: initialAssessment?.topic || '',
+    course: initialCourse,
+    batches: initialAssessment?.batches || [],
+    type: initialAssessment?.type || '',
+    difficulty: initialAssessment?.difficulty || 'Easy',
+    duration: initialAssessment?.duration ? parseInt(initialAssessment.duration) : '',
+    marks: initialAssessment?.marks || '',
+    startDate: initialAssessment?.startDate || '',
+    startTime: initialAssessment?.startTime || '',
+    endDate: initialAssessment?.endDate || '',
+    endTime: initialAssessment?.endTime || '',
+    description: initialAssessment?.description || '',
     aiCount: 5,
-    aiTaxonomy: 'Understanding'
+    aiTaxonomy: 'Understanding',
+    quickSettings: {
+      negativeMarking: initialAssessment?.negativeMarking || false,
+      negativeMarksValue: initialAssessment?.negativeMarksValue || 25,
+      shuffleQuestions: initialAssessment?.shuffleQuestions || false,
+      autoSubmit: false
+    }
   });
 
   // Dummy auto-save simulator
@@ -57,7 +68,7 @@ export const EnterpriseBuilderLayout = ({ onBack }) => {
             <Save className="w-4 h-4" /> Save Draft
           </button>
           <button onClick={() => {
-            const isConfigComplete = config && config.title && config.topic && config.course && config.batch && config.difficulty && config.duration && config.marks;
+            const isConfigComplete = config && config.title && config.topic && config.course && config.batches?.length > 0 && config.difficulty && config.duration && config.marks;
             if (!isConfigComplete) {
               toast.add('Please fill all mandatory configuration fields before publishing.', 'error');
               return;
@@ -139,21 +150,29 @@ export const EnterpriseBuilderLayout = ({ onBack }) => {
                     type: config.type === 'Mixed Types (All)' ? 'mixed' : config.type,
                     status: 'published',
                     questions: questions,
-                    duration: `${config.duration} mins`,
+                    duration: parseInt(config.duration) || 0,
                     marks: parseInt(config.marks) || questions.reduce((sum, q) => sum + (q.marks || 1), 0),
                     difficulty: config.difficulty || 'Easy',
                     startDate: config.startDate || nowStr,
                     endDate: config.endDate || '2099-12-31',
                     dueDate: config.endDate || '2099-12-31',
-                    batches: config.batch ? [config.batch] : [],
-                    submissions: 0,
-                    averageScore: 0,
+                    batches: config.batches || [],
+                    maxAttempts: parseInt(config.maxAttempts) || 1,
                     negativeMarking: config.quickSettings?.negativeMarking || false,
                     negativeMarksValue: config.quickSettings?.negativeMarksValue || 25
                   };
-                  createAssessment(newAssessment);
+
+                  if (!initialAssessment) {
+                    newAssessment.submissions = 0;
+                    newAssessment.averageScore = 0;
+                  }
+                  if (initialAssessment) {
+                    editAssessment(initialAssessment.id, newAssessment);
+                  } else {
+                    createAssessment(newAssessment);
+                  }
                   
-                  toast.add('Assessment published successfully!', 'success');
+                  toast.add(initialAssessment ? 'Assessment updated successfully!' : 'Assessment published successfully!', 'success');
                   setShowPublishModal(false); 
                   onBack(); 
                 }} className="px-6 py-2 text-sm font-bold text-white bg-[#6C1D5F] hover:bg-[#84117C] rounded-xl flex items-center gap-2 shadow-md hover:-translate-y-0.5 transition-all">

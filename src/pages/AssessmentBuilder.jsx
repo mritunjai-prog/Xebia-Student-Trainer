@@ -770,7 +770,11 @@ export const AssessmentBuilder = () => {
             )}
           </motion.div> :
 
-          <EnterpriseBuilderLayout key="wizard" onBack={() => setActiveTab('list')} />
+          <EnterpriseBuilderLayout 
+            key={editingAssessmentId || "wizard"} 
+            onBack={() => { setActiveTab('list'); setEditingAssessmentId(null); }} 
+            initialAssessment={editingAssessmentId ? assessments.find(a => a.id === editingAssessmentId) : null}
+          />
         }
       </AnimatePresence>
 

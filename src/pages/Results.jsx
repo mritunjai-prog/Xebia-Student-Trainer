@@ -255,30 +255,31 @@ export const Results = () => {
                   </div>
 
                   {/* Correct Answer comparison */}
-                  <div className="p-3 bg-emerald-500/5 dark:bg-emerald-950/10 rounded-2xl space-y-1.5 border border-emerald-100/40">
-                    <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wide">Correct Template Answer</p>
-                    
-                    <div className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
-                      {q.type === 'file_upload' ?
-                      <span className="text-neutral-500 dark:text-neutral-400 font-medium">Trainer manual validation required</span> :
-                      q.type === 'short_answer' || q.type === 'paragraph' ?
-                      <span className="text-neutral-500 dark:text-neutral-400 font-medium">Manual semantic validation required</span> :
-                      q.type === 'multi_select' && Array.isArray(q.correctAnswer) ?
-                      <ul className="list-disc pl-4 space-y-1 text-[#01AC9F]">
-                          {q.correctAnswer.map((idxStr, optI) =>
-                        <li key={optI}>{q.options?.[Number(idxStr)] || `Option ${idxStr}`}</li>
-                        )}
-                        </ul> :
-                      q.type === 'mcq' || q.type === 'true_false' ?
-                      <span className="text-[#01AC9F]">{q.options?.[Number(q.correctAnswer)] || q.correctAnswer}</span> :
-                      null}
+                  {isEvaluated && (
+                    <div className="p-3 bg-emerald-500/5 dark:bg-emerald-950/10 rounded-2xl space-y-1.5 border border-emerald-100/40">
+                      <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wide">Correct Template Answer</p>
+                      
+                      <div className="text-xs font-bold text-neutral-700 dark:text-neutral-300">
+                        {q.type === 'file_upload' ?
+                        <span className="text-neutral-500 dark:text-neutral-400 font-medium">Trainer manual validation required</span> :
+                        q.type === 'short_answer' || q.type === 'paragraph' ?
+                        <span className="text-neutral-500 dark:text-neutral-400 font-medium">Manual semantic validation required</span> :
+                        q.type === 'multi_select' && Array.isArray(q.correctAnswer) ?
+                        <ul className="list-disc pl-4 space-y-1 text-[#01AC9F]">
+                            {q.correctAnswer.map((idxStr, optI) =>
+                          <li key={optI}>{q.options?.[Number(idxStr)] || `Option ${idxStr}`}</li>
+                          )}
+                          </ul> :
+                        q.type === 'mcq' || q.type === 'true_false' ?
+                        <span className="text-[#01AC9F]">{q.options?.[Number(q.correctAnswer)] || q.correctAnswer}</span> :
+                        null}
+                      </div>
                     </div>
-                  </div>
-
+                  )}
                 </div>
 
                 {/* Submitting Answer Explanation and review comments */}
-                {(q.explanation || ansObj?.remarks) &&
+                {((isEvaluated && q.explanation) || ansObj?.remarks) &&
                 <div className="pt-3 border-t border-dashed border-neutral-100 dark:border-neutral-800 space-y-1.5">
                     {ansObj?.remarks &&
                   <p className="text-[11px] text-[#6C1D5F] dark:text-purple-300 font-medium flex items-start gap-1">
@@ -286,7 +287,7 @@ export const Results = () => {
                         <span>Teacher Grade Remarks: "{ansObj.remarks}"</span>
                       </p>
                   }
-                    {q.explanation &&
+                    {isEvaluated && q.explanation &&
                   <p className="text-[11px] text-[#01AC9F] font-medium flex items-start gap-1">
                         <CornerDownRight className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                         <span>Explanation: {q.explanation}</span>

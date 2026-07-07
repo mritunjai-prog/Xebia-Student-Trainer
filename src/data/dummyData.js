@@ -2,42 +2,42 @@
 
 // Pre-defined Teachers
 export const initialTeachers = [
-{ id: 'T1', name: 'Dr. Evelyn Stone', email: 'evelyn.stone@xebia-academy.com', role: 'teacher', department: 'Computer Science', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150' },
-{ id: 'T2', name: 'Prof. Marcus Vance', email: 'marcus.vance@xebia-academy.com', role: 'teacher', department: 'Data Science', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150' },
-{ id: 'T3', name: 'Dr. Sarah Jenkins', email: 'sarah.jenkins@xebia-academy.com', role: 'teacher', department: 'UI/UX Design', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150' },
-{ id: 'T4', name: 'Prof. Alan Turing', email: 'alan.turing@xebia-academy.com', role: 'teacher', department: 'Software Engineering', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150' },
-{ id: 'T5', name: 'Dr. Grace Hopper', email: 'grace.hopper@xebia-academy.com', role: 'teacher', department: 'Database Systems', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150' }];
+  { id: 'T1', name: 'Dr. Evelyn Stone', email: 'evelyn.stone@xebia-academy.com', role: 'teacher', department: 'Computer Science', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150' },
+  { id: 'T2', name: 'Prof. Marcus Vance', email: 'marcus.vance@xebia-academy.com', role: 'teacher', department: 'Data Science', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150' },
+  { id: 'T3', name: 'Dr. Sarah Jenkins', email: 'sarah.jenkins@xebia-academy.com', role: 'teacher', department: 'UI/UX Design', avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150' },
+  { id: 'T4', name: 'Prof. Alan Turing', email: 'alan.turing@xebia-academy.com', role: 'teacher', department: 'Software Engineering', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150' },
+  { id: 'T5', name: 'Dr. Grace Hopper', email: 'grace.hopper@xebia-academy.com', role: 'teacher', department: 'Database Systems', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150' }];
 
 
 // Pre-defined 10 Batches
 export const initialBatches = [
-{ id: 'B1', name: 'Batch-2026A', course: 'Full-Stack Web Dev', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-10' },
-{ id: 'B2', name: 'Batch-2026B', course: 'AI & Machine Learning', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-12' },
-{ id: 'B3', name: 'Batch-2026C', course: 'Human-Computer Interaction', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-15' },
-{ id: 'B4', name: 'Batch-2026D', course: 'Cybersecurity Systems', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-18' },
-{ id: 'B5', name: 'Batch-2026E', course: 'Cloud Architecture', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-20' },
-{ id: 'B6', name: 'Batch-2026F', course: 'Mobile App Design', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-22' },
-{ id: 'B7', name: 'Batch-2026G', course: 'Database Administration', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-25' },
-{ id: 'B8', name: 'Batch-2026H', course: 'Data Analytics Foundation', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-28' },
-{ id: 'B9', name: 'Batch-2026I', course: 'Advanced DevOps Core', studentCount: 10, students: [], status: 'active', createdAt: '2026-02-01' },
-{ id: 'B10', name: 'Batch-2026J', course: 'Product Management', studentCount: 10, students: [], status: 'active', createdAt: '2026-02-05' }];
+  { id: 'B1', name: 'Batch-2026A', course: 'Full-Stack Web Dev', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-10' },
+  { id: 'B2', name: 'Batch-2026B', course: 'AI & Machine Learning', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-12' },
+  { id: 'B3', name: 'Batch-2026C', course: 'Human-Computer Interaction', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-15' },
+  { id: 'B4', name: 'Batch-2026D', course: 'Cybersecurity Systems', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-18' },
+  { id: 'B5', name: 'Batch-2026E', course: 'Cloud Architecture', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-20' },
+  { id: 'B6', name: 'Batch-2026F', course: 'Mobile App Design', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-22' },
+  { id: 'B7', name: 'Batch-2026G', course: 'Database Administration', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-25' },
+  { id: 'B8', name: 'Batch-2026H', course: 'Data Analytics Foundation', studentCount: 10, students: [], status: 'active', createdAt: '2026-01-28' },
+  { id: 'B9', name: 'Batch-2026I', course: 'Advanced DevOps Core', studentCount: 10, students: [], status: 'active', createdAt: '2026-02-01' },
+  { id: 'B10', name: 'Batch-2026J', course: 'Product Management', studentCount: 10, students: [], status: 'active', createdAt: '2026-02-05' }];
 
 
 // Names list for generating 100 students
 const firstNames = [
-'Liam', 'Noah', 'Oliver', 'Elijah', 'William', 'James', 'Benjamin', 'Lucas', 'Henry', 'Alexander',
-'Mason', 'Michael', 'Ethan', 'Daniel', 'Jacob', 'Logan', 'Jackson', 'Levi', 'Sebastian', 'Mateo',
-'Emma', 'Olivia', 'Ava', 'Isabella', 'Sophia', 'Charlotte', 'Mia', 'Amelia', 'Harper', 'Evelyn',
-'Abigail', 'Emily', 'Ella', 'Elizabeth', 'Camila', 'Luna', 'Sofia', 'Avery', 'Mila', 'Aria',
-'Aiden', 'Gabriel', 'Carter', 'Grayson', 'Leo', 'Jayden', 'John', 'Wyatt', 'Luke', 'Owen',
-'Scarlett', 'Victoria', 'Madison', 'Eleanor', 'Grace', 'Hazel', 'Aurora', 'Penelope', 'Layla', 'Riley'];
+  'Liam', 'Noah', 'Oliver', 'Elijah', 'William', 'James', 'Benjamin', 'Lucas', 'Henry', 'Alexander',
+  'Mason', 'Michael', 'Ethan', 'Daniel', 'Jacob', 'Logan', 'Jackson', 'Levi', 'Sebastian', 'Mateo',
+  'Emma', 'Olivia', 'Ava', 'Isabella', 'Sophia', 'Charlotte', 'Mia', 'Amelia', 'Harper', 'Evelyn',
+  'Abigail', 'Emily', 'Ella', 'Elizabeth', 'Camila', 'Luna', 'Sofia', 'Avery', 'Mila', 'Aria',
+  'Aiden', 'Gabriel', 'Carter', 'Grayson', 'Leo', 'Jayden', 'John', 'Wyatt', 'Luke', 'Owen',
+  'Scarlett', 'Victoria', 'Madison', 'Eleanor', 'Grace', 'Hazel', 'Aurora', 'Penelope', 'Layla', 'Riley'];
 
 
 const lastNames = [
-'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
-'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
-'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson',
-'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores'];
+  'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
+  'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
+  'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson',
+  'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores'];
 
 
 // Generate 100 Students
@@ -83,98 +83,98 @@ export const initialStudents = generateStudents();
 export const generateAssessments = () => {
   const assessments = [];
   const subjects = [
-  { title: 'Intro to React & JSX', type: 'mcq', dept: 'Computer Science', t: 'T1' },
-  { title: 'AI Ethics & Guidelines', type: 'true_false', dept: 'Data Science', t: 'T2' },
-  { title: 'Responsive Layouts Design', type: 'file_upload', dept: 'UI/UX Design', t: 'T3' },
-  { title: 'Web Application Vulnerabilities', type: 'mcq', dept: 'Cybersecurity Systems', t: 'T4' },
-  { title: 'Advanced SQL Query Design', type: 'assignment', dept: 'Database Systems', t: 'T5' },
-  { title: 'Docker Container Deployment', type: 'mixed', dept: 'Computer Science', t: 'T1' },
-  { title: 'Linear Regression Modeling', type: 'mcq', dept: 'Data Science', t: 'T2' },
-  { title: 'Figma Prototyping Essentials', type: 'short_answer', dept: 'UI/UX Design', t: 'T3' },
-  { title: 'CI/CD Pipeline Security', type: 'assignment', dept: 'Software Engineering', t: 'T4' },
-  { title: 'NoSQL Database Modeling', type: 'mixed', dept: 'Database Systems', t: 'T5' }];
+    { title: 'Intro to React & JSX', type: 'mcq', dept: 'Computer Science', t: 'T1' },
+    { title: 'AI Ethics & Guidelines', type: 'true_false', dept: 'Data Science', t: 'T2' },
+    { title: 'Responsive Layouts Design', type: 'file_upload', dept: 'UI/UX Design', t: 'T3' },
+    { title: 'Web Application Vulnerabilities', type: 'mcq', dept: 'Cybersecurity Systems', t: 'T4' },
+    { title: 'Advanced SQL Query Design', type: 'assignment', dept: 'Database Systems', t: 'T5' },
+    { title: 'Docker Container Deployment', type: 'mixed', dept: 'Computer Science', t: 'T1' },
+    { title: 'Linear Regression Modeling', type: 'mcq', dept: 'Data Science', t: 'T2' },
+    { title: 'Figma Prototyping Essentials', type: 'short_answer', dept: 'UI/UX Design', t: 'T3' },
+    { title: 'CI/CD Pipeline Security', type: 'assignment', dept: 'Software Engineering', t: 'T4' },
+    { title: 'NoSQL Database Modeling', type: 'mixed', dept: 'Database Systems', t: 'T5' }];
 
 
   // Helper questions
   const mcqQuestions = [
-  {
-    id: 'Q1',
-    type: 'mcq',
-    question: 'Which Hook is used to perform side effects in React functional components?',
-    marks: 5,
-    required: true,
-    options: ['useState', 'useEffect', 'useContext', 'useRef'],
-    correctAnswer: '1', // index 1 (useEffect)
-    explanation: 'useEffect Hook lets you perform side effects in functional components, similar to componentDidMount and componentDidUpdate in classes.'
-  },
-  {
-    id: 'Q2',
-    type: 'mcq',
-    question: 'In Tailwind CSS, which class is used to apply a background blur effect?',
-    marks: 5,
-    required: true,
-    options: ['blur-sm', 'bg-blur', 'backdrop-blur', 'overlay-blur'],
-    correctAnswer: '2', // backdrop-blur
-    explanation: 'The backdrop-blur class is used to apply a blur filter to the area behind an element.'
-  }];
+    {
+      id: 'Q1',
+      type: 'mcq',
+      question: 'Which Hook is used to perform side effects in React functional components?',
+      marks: 5,
+      required: true,
+      options: ['useState', 'useEffect', 'useContext', 'useRef'],
+      correctAnswer: '1', // index 1 (useEffect)
+      explanation: 'useEffect Hook lets you perform side effects in functional components, similar to componentDidMount and componentDidUpdate in classes.'
+    },
+    {
+      id: 'Q2',
+      type: 'mcq',
+      question: 'In Tailwind CSS, which class is used to apply a background blur effect?',
+      marks: 5,
+      required: true,
+      options: ['blur-sm', 'bg-blur', 'backdrop-blur', 'overlay-blur'],
+      correctAnswer: '2', // backdrop-blur
+      explanation: 'The backdrop-blur class is used to apply a blur filter to the area behind an element.'
+    }];
 
 
   const tfQuestions = [
-  {
-    id: 'Q3',
-    type: 'true_false',
-    question: 'React elements are immutable. Once created, they cannot be modified directly.',
-    marks: 5,
-    required: true,
-    options: ['True', 'False'],
-    correctAnswer: '0', // True
-    explanation: 'An element is like a single frame in a movie: it represents the UI at a certain point in time.'
-  },
-  {
-    id: 'Q4',
-    type: 'true_false',
-    question: 'Next.js is a client-side only library built by Facebook.',
-    marks: 5,
-    required: true,
-    options: ['True', 'False'],
-    correctAnswer: '1', // False
-    explanation: 'Next.js is a full-stack framework created by Vercel, which supports server-side rendering.'
-  }];
+    {
+      id: 'Q3',
+      type: 'true_false',
+      question: 'React elements are immutable. Once created, they cannot be modified directly.',
+      marks: 5,
+      required: true,
+      options: ['True', 'False'],
+      correctAnswer: '0', // True
+      explanation: 'An element is like a single frame in a movie: it represents the UI at a certain point in time.'
+    },
+    {
+      id: 'Q4',
+      type: 'true_false',
+      question: 'Next.js is a client-side only library built by Facebook.',
+      marks: 5,
+      required: true,
+      options: ['True', 'False'],
+      correctAnswer: '1', // False
+      explanation: 'Next.js is a full-stack framework created by Vercel, which supports server-side rendering.'
+    }];
 
 
   const multiSelectQuestions = [
-  {
-    id: 'Q5',
-    type: 'multi_select',
-    question: 'Which of the following are valid lifecycle phases in React? (Select all that apply)',
-    marks: 10,
-    required: true,
-    options: ['Mounting', 'Updating', 'Unmounting', 'Compiling', 'Rendering'],
-    correctAnswer: ['0', '1', '2'], // Mounting, Updating, Unmounting
-    explanation: 'React components go through three main phases: Mounting (creation), Updating (props/state changes), and Unmounting (destruction).'
-  }];
+    {
+      id: 'Q5',
+      type: 'multi_select',
+      question: 'Which of the following are valid lifecycle phases in React? (Select all that apply)',
+      marks: 10,
+      required: true,
+      options: ['Mounting', 'Updating', 'Unmounting', 'Compiling', 'Rendering'],
+      correctAnswer: ['0', '1', '2'], // Mounting, Updating, Unmounting
+      explanation: 'React components go through three main phases: Mounting (creation), Updating (props/state changes), and Unmounting (destruction).'
+    }];
 
 
   const shortAnswerQuestions = [
-  {
-    id: 'Q6',
-    type: 'short_answer',
-    question: 'Explain what Virtual DOM is and how React optimizes rendering.',
-    marks: 10,
-    required: true,
-    explanation: 'The Virtual DOM is a lightweight, in-memory representation of the real DOM. React updates the virtual representation first, diffs it with the previous state, and batched-updates only the changed elements in the real DOM.'
-  }];
+    {
+      id: 'Q6',
+      type: 'short_answer',
+      question: 'Explain what Virtual DOM is and how React optimizes rendering.',
+      marks: 10,
+      required: true,
+      explanation: 'The Virtual DOM is a lightweight, in-memory representation of the real DOM. React updates the virtual representation first, diffs it with the previous state, and batched-updates only the changed elements in the real DOM.'
+    }];
 
 
   const fileUploadQuestions = [
-  {
-    id: 'Q7',
-    type: 'file_upload',
-    question: 'Create a responsive navigation bar using HTML and Tailwind. Export as a zip or pdf containing your code and screenshots.',
-    marks: 20,
-    required: true,
-    explanation: 'Requires a standard file submission containing CSS layout classes, mobile-responsive hamburger drawer, and proper grid/flex setups.'
-  }];
+    {
+      id: 'Q7',
+      type: 'file_upload',
+      question: 'Create a responsive navigation bar using HTML and Tailwind. Export as a zip or pdf containing your code and screenshots.',
+      marks: 20,
+      required: true,
+      explanation: 'Requires a standard file submission containing CSS layout classes, mobile-responsive hamburger drawer, and proper grid/flex setups.'
+    }];
 
 
   // Let's generate 10 assessments
@@ -183,8 +183,8 @@ export const generateAssessments = () => {
 
     // Choose status distribution
     let status = 'published';
-    if (i % 8 === 0) status = 'draft';else
-    if (i % 12 === 0) status = 'archived';
+    if (i % 8 === 0) status = 'draft'; else
+      if (i % 12 === 0) status = 'archived';
 
     // Dates
     const startDayOffset = i % 5 - 2; // -2 to +2 days from now
@@ -284,7 +284,7 @@ export const generateSubmissions = (assessments, students) => {
 
     // Find students belonging to the assigned batches
     const eligibleStudents = students.filter((s) =>
-    s.batches.some((b) => assessment.batches.includes(b))
+      s.batches.some((b) => assessment.batches.includes(b))
     );
 
     if (eligibleStudents.length === 0) continue;
@@ -401,8 +401,8 @@ export const initialSubmissions = generateSubmissions(initialAssessments, initia
 
 // Preload real-time demo notifications
 export const initialNotifications = [
-{ id: 'N1', title: 'New Assessment Published', message: 'Dr. Evelyn Stone published "Intro to React & JSX [V1]". Complete before Friday.', type: 'publish', createdAt: '2026-07-06T08:00:00-07:00', isRead: false, recipientId: 'all_students' },
-{ id: 'N2', title: 'Evaluation Completed', message: 'Your submission for "Figma Prototyping Essentials [V1]" has been graded.', type: 'evaluation', createdAt: '2026-07-05T16:30:00-07:00', isRead: true, recipientId: 'S1' },
-{ id: 'N3', title: 'Urgent Deadline Reminder', message: 'The assessment "Advanced SQL Query Design [V1]" closes tomorrow at midnight!', type: 'warning', createdAt: '2026-07-06T09:15:00-07:00', isRead: false, recipientId: 'all_students' },
-{ id: 'N4', title: 'Submission Evaluated', message: 'Marcus Vance marked your Cloud Architecture project.', type: 'evaluation', createdAt: '2026-07-04T11:00:00-07:00', isRead: true, recipientId: 'S5' },
-{ id: 'N5', title: 'Platform Scheduled Maintenance', message: 'Xebia Academy systems will undergo brief maintenance this Sunday at 2 AM UTC.', type: 'system', createdAt: '2026-07-03T10:00:00-07:00', isRead: true, recipientId: 'all_students' }];
+  { id: 'N1', title: 'New Assessment Published', message: 'Dr. Evelyn Stone published "Intro to React & JSX [V1]". Complete before Friday.', type: 'publish', createdAt: '2026-07-06T08:00:00-07:00', isRead: false, recipientId: 'all_students' },
+  { id: 'N2', title: 'Evaluation Completed', message: 'Your submission for "Figma Prototyping Essentials [V1]" has been graded.', type: 'evaluation', createdAt: '2026-07-05T16:30:00-07:00', isRead: true, recipientId: 'S1' },
+  { id: 'N3', title: 'Urgent Deadline Reminder', message: 'The assessment "Advanced SQL Query Design [V1]" closes tomorrow at midnight!', type: 'warning', createdAt: '2026-07-06T09:15:00-07:00', isRead: false, recipientId: 'all_students' },
+  { id: 'N4', title: 'Submission Evaluated', message: 'Marcus Vance marked your Cloud Architecture project.', type: 'evaluation', createdAt: '2026-07-04T11:00:00-07:00', isRead: true, recipientId: 'S5' },
+  { id: 'N5', title: 'Platform Scheduled Maintenance', message: 'Xebia Academy systems will undergo brief maintenance this Sunday at 2 AM UTC.', type: 'system', createdAt: '2026-07-03T10:00:00-07:00', isRead: true, recipientId: 'all_students' }];

@@ -9,6 +9,7 @@ import { useLMS } from '../../context/LMSContext';
 export const ConfigPanel = ({ config, setConfig }) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isBatchDropdownOpen, setIsBatchDropdownOpen] = useState(false);
   
   const { batches } = useLMS();
   const uniqueCourses = Array.from(new Set(batches.map(b => b.course).filter(Boolean)));
@@ -71,26 +72,59 @@ export const ConfigPanel = ({ config, setConfig }) => {
               </label>
               <select 
                 value={config.course} 
-                onChange={(e) => setConfig(prev => ({...prev, course: e.target.value, batch: ''}))} 
+                onChange={(e) => {
+                  setConfig(prev => ({...prev, course: e.target.value}));
+                }} 
                 className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F] text-neutral-900 dark:text-neutral-100"
               >
                 <option value="">Select Course...</option>
                 {uniqueCourses.map((c, i) => <option key={i} value={c}>{c}</option>)}
               </select>
             </div>
-            <div>
+            <div className="relative">
               <label className="flex items-center gap-1 text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1.5">
-                Batch <span className="text-red-500">*</span>
+                Batches <span className="text-red-500">*</span>
               </label>
-              <select 
-                value={config.batch} 
-                onChange={(e) => setConfig(prev => ({...prev, batch: e.target.value}))} 
-                className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F] text-neutral-900 dark:text-neutral-100"
-                disabled={!config.course}
+              
+              <div 
+                onClick={() => setIsBatchDropdownOpen(!isBatchDropdownOpen)}
+                className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm flex justify-between items-center cursor-pointer transition-all hover:border-[#6C1D5F]"
               >
-                <option value="">Select Batch...</option>
-                {batches.filter(b => b.course === config.course).map((b, i) => <option key={i} value={b.id}>{b.name}</option>)}
-              </select>
+                <span className="text-neutral-700 dark:text-neutral-300 truncate">
+                  {config.batches && config.batches.length > 0 
+                    ? `${config.batches.length} batch(es) selected` 
+                    : 'Select Batches...'}
+                </span>
+                {isBatchDropdownOpen ? <ChevronUp className="w-4 h-4 text-neutral-500" /> : <ChevronDown className="w-4 h-4 text-neutral-500" />}
+              </div>
+
+              {isBatchDropdownOpen && (
+                <div className="absolute z-20 top-full left-0 mt-1 w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl shadow-lg max-h-48 overflow-y-auto p-2">
+                  {batches.map((b, i) => (
+                    <label key={i} className="flex items-center gap-2 px-2 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-lg cursor-pointer">
+                      <input 
+                        type="checkbox"
+                        checked={config.batches?.includes(b.id) || false}
+                        onChange={(e) => {
+                          const current = config.batches || [];
+                          if (e.target.checked) {
+                            setConfig(prev => ({...prev, batches: [...current, b.id]}));
+                          } else {
+                            setConfig(prev => ({...prev, batches: current.filter(id => id !== b.id)}));
+                          }
+                        }}
+                        className="w-4 h-4 text-[#6C1D5F] rounded"
+                      />
+                      <span className="text-sm text-neutral-700 dark:text-neutral-300">
+                        {b.name} <span className="text-neutral-400 text-xs">({b.course})</span>
+                      </span>
+                    </label>
+                  ))}
+                  {batches.length === 0 && (
+                    <p className="text-xs text-neutral-500 text-center py-2">No batches found.</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -110,7 +144,7 @@ export const ConfigPanel = ({ config, setConfig }) => {
             </select>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <div>
               <label className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-1.5">
                 Difficulty <span className="text-red-500">*</span>
@@ -140,6 +174,19 @@ export const ConfigPanel = ({ config, setConfig }) => {
                   setConfig(prev => ({...prev, marks: val, passingMarks: val ? Math.round(Number(val) * 0.4) : 40}));
                 }} 
                 className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none" 
+              />
+            </div>
+            <div>
+              <label className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-1.5">
+                Attempts <span className="text-red-500">*</span>
+              </label>
+              <input 
+                type="number" 
+                placeholder="Limit" 
+                value={config.maxAttempts || 1} 
+                onChange={(e) => setConfig(prev => ({...prev, maxAttempts: e.target.value}))} 
+                className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none" 
+                min={1}
               />
             </div>
           </div>

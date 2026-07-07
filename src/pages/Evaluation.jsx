@@ -84,7 +84,14 @@ export const Evaluation = () => {
       for (const q of currentAssessment.questions) {
         const answerObj = currentSub.answers.find(a => a.questionId === q.id);
         const answerText = answerObj ? answerObj.answer : '';
-        const aiResult = await evaluateSubmissionAI(q.text, answerText, q.marks, currentAssessment.type);
+        const formattedAnswerText = getAnswerString(q, answerText);
+        
+        let formattedCorrectAnswer = q.correctAnswer;
+        if (Array.isArray(q.correctAnswer)) {
+          formattedCorrectAnswer = q.correctAnswer.join(', ');
+        }
+        
+        const aiResult = await evaluateSubmissionAI(q.text, formattedAnswerText, q.marks, currentAssessment.type, formattedCorrectAnswer);
         
         newMarks[q.id] = aiResult.suggestedMarks;
         newRemarks[q.id] = `[AI Auto-Scored]: ${aiResult.remarks}`;
@@ -102,6 +109,48 @@ export const Evaluation = () => {
   const currentSub = submissions.find((s) => s.id === selectedSubId);
   const currentStudent = currentSub ? students.find((s) => s.id === currentSub.studentId) : null;
   const currentAssessment = currentSub ? assessments.find((a) => a.id === currentSub.assessmentId) : null;
+
+  const formatAnswerText = (q, answerVal) => {
+    if (answerVal === undefined || answerVal === null || answerVal === '') return <span className="italic text-neutral-400">No answer provided</span>;
+    if (typeof answerVal === 'boolean') return answerVal ? 'True' : 'False';
+    if (typeof answerVal === 'object' && !Array.isArray(answerVal)) return answerVal.name || 'File Uploaded';
+    
+    if (q.type === 'mcq' || q.type === 'true_false') {
+      const idx = Number(answerVal);
+      if (!isNaN(idx) && q.options && q.options[idx]) return q.options[idx];
+      return answerVal;
+    }
+    
+    if (q.type === 'multiple_select' || q.type === 'multi_select') {
+      if (Array.isArray(answerVal)) {
+        return answerVal.map(idx => q.options && q.options[Number(idx)] ? q.options[Number(idx)] : idx).join(', ');
+      }
+      return answerVal;
+    }
+    
+    return answerVal;
+  };
+
+  const getAnswerString = (q, answerVal) => {
+    if (answerVal === undefined || answerVal === null || answerVal === '') return 'No answer provided';
+    if (typeof answerVal === 'boolean') return answerVal ? 'True' : 'False';
+    if (typeof answerVal === 'object' && !Array.isArray(answerVal)) return answerVal.name || 'File Uploaded';
+    
+    if (q.type === 'mcq' || q.type === 'true_false') {
+      const idx = Number(answerVal);
+      if (!isNaN(idx) && q.options && q.options[idx]) return q.options[idx];
+      return String(answerVal);
+    }
+    
+    if (q.type === 'multiple_select' || q.type === 'multi_select') {
+      if (Array.isArray(answerVal)) {
+        return answerVal.map(idx => q.options && q.options[Number(idx)] ? q.options[Number(idx)] : idx).join(', ');
+      }
+      return String(answerVal);
+    }
+    
+    return String(answerVal);
+  };
 
   return (
     <div className="h-[calc(100vh-6rem)] -mt-6 -mx-6 bg-neutral-100 dark:bg-[#0a0a0a] flex flex-col lg:flex-row overflow-hidden">
@@ -224,7 +273,7 @@ export const Evaluation = () => {
                         <div className="flex justify-between items-start gap-4">
                           <h4 className="font-bold text-sm text-neutral-800 dark:text-neutral-200 flex-1">
                             <span className="text-neutral-400 mr-2">{idx + 1}.</span> 
-                            {q.text}
+                            {q.text || q.question || 'Untitled Question'}
                           </h4>
                           <div className="shrink-0 text-xs font-bold text-neutral-500 bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded">
                             {q.marks} Marks
@@ -236,13 +285,33 @@ export const Evaluation = () => {
                         <p className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-2">Student's Answer:</p>
                         {currentAssessment.type === 'coding' ? (
                           <div className="bg-[#1e1e1e] rounded-xl p-4 overflow-x-auto shadow-inner border border-neutral-800 text-neutral-300 font-mono text-xs whitespace-pre-wrap">
-                            {answerObj?.answer ? (typeof answerObj.answer === 'object' ? answerObj.answer.code : answerObj.answer) : 'No code submitted.'}
+                            {answerObj?.answer ? (typeof answerObj.answer === 'object' && !Array.isArray(answerObj.answer) ? answerObj.answer.code : answerObj.answer) : 'No code submitted.'}
                           </div>
                         ) : (
                           <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm text-sm text-neutral-700 dark:text-neutral-300">
-                            {answerObj ? (typeof answerObj.answer === 'object' ? answerObj.answer.name || 'File Uploaded' : answerObj.answer) : <span className="italic text-neutral-400">No answer provided</span>}
+                            {answerObj ? formatAnswerText(q, answerObj.answer) : <span className="italic text-neutral-400">No answer provided</span>}
                           </div>
                         )}
+
+                        <div className="mt-4">
+                          <p className="text-xs font-bold text-[#01AC9F] uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <CheckCircle className="w-3.5 h-3.5" /> Expected Correct Answer:
+                          </p>
+                          <div className="bg-emerald-50 dark:bg-emerald-950/20 p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/30 shadow-sm text-sm text-emerald-700 dark:text-emerald-300">
+                            {((q.correctAnswer !== undefined && q.correctAnswer !== null && q.correctAnswer !== '') || (q.correctAnswers && q.correctAnswers.length > 0))
+                              ? formatAnswerText(q, q.correctAnswer !== undefined ? q.correctAnswer : q.correctAnswers) 
+                              : q.type === 'coding' && (q.codingTestCases || q.testCases) ? (
+                                <div className="space-y-1.5 mt-1">
+                                  <span className="text-xs font-bold text-emerald-800 dark:text-emerald-400">Code must pass {(q.codingTestCases || q.testCases).length} test cases</span>
+                                  {(q.codingTestCases || q.testCases).map((tc, i) => (
+                                    <div key={i} className="text-[10px] font-mono bg-emerald-100/50 dark:bg-emerald-900/40 p-1.5 rounded border border-emerald-200/50 dark:border-emerald-800/50 text-emerald-900 dark:text-emerald-200">
+                                      <span className="opacity-70">IN:</span> {tc.input} <span className="opacity-70 ml-2">OUT:</span> {tc.output}
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : <span className="italic opacity-60">Manual evaluation required / No strict rubric defined</span>}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );

@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
-import { Plus, Sparkles, Trash2, Code2, Text, FileText, CheckCircle, Brain, Library, Loader2, ListChecks, GripVertical, Monitor, Tablet, Smartphone, UserCheck, Edit } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Plus, Sparkles, Trash2, Code2, Text, FileText, CheckCircle, Brain, Library, Loader2, ListChecks, GripVertical, Monitor, Tablet, Smartphone, UserCheck, Edit, Upload, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { motion, AnimatePresence } from 'motion/react';
-import { generateQuestions } from '../../utils/aiService';
+import { generateQuestions, parseExcelToQuestions } from '../../utils/aiService';
 import { toast } from '../Toast';
 
 export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
   const [addingManual, setAddingManual] = useState(false);
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const fileInputRef = useRef(null);
 
   // Manual Question Draft State
   const [draftText, setDraftText] = useState('');
   const [draftOptions, setDraftOptions] = useState(['', '', '', '']);
   
   // Enforce configuration completeness
-  const isConfigComplete = config && config.title && config.topic && config.course && config.batch && config.type && config.difficulty && config.duration && config.marks;
+  const isConfigComplete = config && config.title && config.topic && config.batches?.length > 0 && config.type && config.difficulty && config.duration && config.marks;
 
   // Filter available question types based on config
   const questionTypes = [
@@ -105,6 +107,103 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
     toast.add('Question added successfully', 'success');
   };
 
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      try {
+        setIsGeneratingAi(true);
+        toast.add('Parsing Excel file using AI...', 'info');
+
+        const bstr = evt.target.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+
+        if (data.length === 0) {
+          toast.add('No data found in the Excel file.', 'error');
+          setIsGeneratingAi(false);
+          return;
+        }
+
+        const parsedQuestions = await parseExcelToQuestions(data);
+
+        setQuestions([...questions, ...parsedQuestions]);
+        toast.add(`Successfully imported ${parsedQuestions.length} questions!`, 'success');
+      } catch (error) {
+        console.error("Excel Parsing Error: ", error);
+        toast.add('Failed to parse Excel file. Please ensure it follows the template format.', 'error');
+      } finally {
+        setIsGeneratingAi(false);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const handleDownloadTemplate = () => {
+    const templateData = [
+      {
+        'Type': 'mcq',
+        'Question Text': 'What is the capital of France?',
+        'Option 1': 'London',
+        'Option 2': 'Berlin',
+        'Option 3': 'Paris',
+        'Option 4': 'Madrid',
+        'Correct Answer': 'Paris',
+        'Marks': 2
+      },
+      {
+        'Type': 'multiple_select',
+        'Question Text': 'Which of these are programming languages?',
+        'Option 1': 'Python',
+        'Option 2': 'HTML',
+        'Option 3': 'Java',
+        'Option 4': 'CSS',
+        'Correct Answer': 'Python, Java',
+        'Marks': 3
+      },
+      {
+        'Type': 'true_false',
+        'Question Text': 'The earth is flat.',
+        'Option 1': '',
+        'Option 2': '',
+        'Option 3': '',
+        'Option 4': '',
+        'Correct Answer': 'False',
+        'Marks': 1
+      },
+      {
+        'Type': 'short_answer',
+        'Question Text': 'What does CPU stand for?',
+        'Option 1': '',
+        'Option 2': '',
+        'Option 3': '',
+        'Option 4': '',
+        'Correct Answer': 'Central Processing Unit',
+        'Marks': 5
+      },
+      {
+        'Type': 'coding',
+        'Problem Description': 'Write a function that returns the sum of a and b.',
+        'Starter Code': 'function add(a, b) {\n  \n}',
+        'Test Input': '1, 2',
+        'Test Output': '3',
+        'Marks': 15
+      }
+    ];
+
+    const ws = XLSX.utils.json_to_sheet(templateData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Template");
+    XLSX.writeFile(wb, "Assessment_Template_Complete.xlsx");
+  };
+
   return (
     <div className="flex-1 flex flex-col bg-neutral-50 dark:bg-[#0a0a0a] overflow-hidden relative">
       
@@ -133,14 +232,37 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
               disabled={!isConfigComplete}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#6C1D5F] hover:bg-[#84117C] text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-bold transition-colors"
             >
-              <Plus className="w-3.5 h-3.5" /> Add Question
+              <Plus className="w-3.5 h-3.5" /> Add
+            </button>
+            <input 
+              type="file" 
+              accept=".xlsx, .xls" 
+              className="hidden" 
+              ref={fileInputRef} 
+              onChange={handleFileUpload} 
+            />
+            <button 
+              onClick={() => fileInputRef.current?.click()}
+              disabled={!isConfigComplete}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#4A1E47] hover:bg-[#6C1D5F] text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-bold transition-colors shadow-sm"
+              title="Import Excel"
+            >
+              <Upload className="w-3.5 h-3.5" /> Import
+            </button>
+            <button 
+              onClick={handleDownloadTemplate}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-lg text-xs font-bold transition-colors"
+              title="Download Excel Template"
+            >
+              <Download className="w-3.5 h-3.5" /> Template
             </button>
             <button 
               onClick={() => setQuestions([])}
               disabled={questions.length === 0}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#6C1D5F] hover:bg-[#84117C] text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-bold transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-bold transition-colors"
+              title="Remove All"
             >
-              <Trash2 className="w-3.5 h-3.5" /> Remove All
+              <Trash2 className="w-3.5 h-3.5" />
             </button>
             <button 
               onClick={handleGenerateQuestions}
@@ -164,7 +286,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config }) => {
               </div>
               <h3 className="font-bold text-neutral-900 dark:text-white">Configuration Required</h3>
               <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                Please complete all mandatory fields in the Configuration panel (Title, Topic, Course, Batch, Type, Difficulty, Duration, Marks) before adding questions.
+                Please complete all mandatory fields in the Configuration panel (Title, Topic, Course, Batches, Type, Difficulty, Duration, Marks) before adding questions.
               </p>
             </div>
           </div>

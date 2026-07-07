@@ -33,25 +33,35 @@ export const StudentAssessments = () => {
 
   // All assessments assigned to the student's batch(es)
   const studentAssessments = assessments.filter((a) => {
-    return a.batches && a.batches.some((bId) => currentUser.batches?.includes(bId));
+    return a.status === 'published' && a.batches && a.batches.some((bId) => currentUser.batches?.includes(bId));
   });
 
   const nowStr = new Date().toISOString().split('T')[0];
 
   // Map each assessment with its computed status for the student
   const mappedAssessments = studentAssessments.map((a) => {
-    const sub = studentSubmissions.find((s) => s.assessmentId === a.id);
+    const subs = studentSubmissions.filter((s) => s.assessmentId === a.id);
+    const completedSubs = subs.filter(s => s.status === 'submitted');
+    const inProgressSub = subs.find(s => s.status === 'in_progress');
+    const maxAttempts = a.maxAttempts || 1;
+    
     let computedStatus = 'Active';
 
-    if (sub && sub.status === 'submitted') {
-      computedStatus = 'Completed';
-    } else if (a.endDate < nowStr) {
+    if (a.endDate < nowStr) {
       computedStatus = 'Completed';
     } else if (a.startDate > nowStr) {
       computedStatus = 'Upcoming';
+    } else if (completedSubs.length >= maxAttempts) {
+      computedStatus = 'Completed';
     }
 
-    return { ...a, computedStatus, studentSubmission: sub };
+    return {
+      ...a,
+      computedStatus,
+      attemptsMade: completedSubs.length,
+      studentSubmission: completedSubs[completedSubs.length - 1],
+      maxAttempts
+    };
   });
 
   // Filter and Sort logic
@@ -241,8 +251,6 @@ export const StudentAssessments = () => {
                     Completed: Clock3
                   }[as.computedStatus];
 
-                  const isDraftSub = as.studentSubmission?.status === 'in_progress';
-
                   return (
                     <tr 
                       key={as.id} 
@@ -271,6 +279,7 @@ export const StudentAssessments = () => {
                       <td className="py-4 px-6 text-right">
                         <div className="font-bold text-neutral-900 dark:text-white">{as.marks} Marks</div>
                         <div className="text-[11px] text-neutral-500 mt-0.5">{as.duration} mins</div>
+                        <div className="text-[10px] text-[#01AC9F] mt-1 font-bold">Attempts: {as.attemptsMade}/{as.maxAttempts}</div>
                       </td>
                       <td className="py-4 px-6 text-center">
                         {as.computedStatus === 'Active' ? (
@@ -278,7 +287,7 @@ export const StudentAssessments = () => {
                             onClick={() => handleStartAttempt(as.id)}
                             className="bg-[#01AC9F] hover:bg-[#019388] text-white px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors cursor-pointer"
                           >
-                            {isDraftSub ? 'Resume' : 'Start'}
+                            {as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Start'}
                           </button>
                         ) : as.computedStatus === 'Completed' ? (
                           <button
@@ -286,7 +295,7 @@ export const StudentAssessments = () => {
                             disabled={!as.studentSubmission}
                             className={`bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                           >
-                            {as.studentSubmission ? 'View Result' : 'Expired'}
+                            {as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Expired')}
                           </button>
                         ) : (
                           <span className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase">
@@ -304,8 +313,6 @@ export const StudentAssessments = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAssessments.map((as) => {
-            const isDraftSub = as.studentSubmission?.status === 'in_progress';
-            
             return (
               <div key={as.id} className="bg-white dark:bg-neutral-900 p-5 rounded-3xl border border-brand-border dark:border-neutral-700 dark:border-neutral-700/60 shadow-sm flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div>
@@ -337,9 +344,10 @@ export const StudentAssessments = () => {
                   {as.computedStatus === 'Active' ? (
                     <button
                       onClick={() => handleStartAttempt(as.id)}
-                      className="w-full py-2 rounded-xl text-xs font-black uppercase shadow-md tracking-wider cursor-pointer flex items-center justify-center gap-1 transition-all bg-[#6C1D5F] hover:bg-[#84117C] text-white shadow-purple-950/10"
+                      disabled={as.attemptsMade >= as.maxAttempts}
+                      className={`w-full py-2 rounded-xl text-xs font-black uppercase shadow-md tracking-wider cursor-pointer flex items-center justify-center gap-1 transition-all ${as.attemptsMade >= as.maxAttempts ? 'bg-neutral-400 cursor-not-allowed' : 'bg-[#6C1D5F] hover:bg-[#84117C]'} text-white shadow-purple-950/10`}
                     >
-                      <span>{isDraftSub ? 'Resume Draft Attempt' : 'Initialize Assessment'}</span>
+                      <span>{as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Initialize Assessment'}</span>
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   ) : as.computedStatus === 'Completed' ? (
@@ -348,7 +356,7 @@ export const StudentAssessments = () => {
                       disabled={!as.studentSubmission}
                       className={`w-full py-2 rounded-xl text-xs font-black uppercase shadow-sm border border-neutral-300 dark:border-neutral-700 tracking-wider flex items-center justify-center gap-1 transition-all bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                     >
-                      <span>{as.studentSubmission ? 'View Result' : 'Expired'}</span>
+                      <span>{as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Expired')}</span>
                     </button>
                   ) : (
                     <button
