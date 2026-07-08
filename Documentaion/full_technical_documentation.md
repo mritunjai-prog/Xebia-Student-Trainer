@@ -157,11 +157,6 @@ graph TD
     class GATEWAY,USERS,BATCHES,ASSESSMENTS logicalBox
 ```
 
-> [!NOTE]
-> **Architectural Limitations:** 
-> - While Redis is referenced in startup scripts, its direct programmatic usage (e.g., Spring Cache) cannot be explicitly mapped without deep-diving into individual Java classes.
-> - No REST Client or Feign Client configurations for inter-service communication were explicitly identified in the analyzed infrastructure layers.
-
 
 ---
 
@@ -271,10 +266,6 @@ The standard package layout across all microservices follows a strict layered ar
   - `studentCount`: `Integer`
   - `students`: `List<String>` (Annotated with `@ElementCollection` to automatically map to a separate relational table `batch_students`).
 
-> [!WARNING]
-> **Missing Pieces (Limitations):**
-> - Deep review of the `assessment-service` (AI integrations, Drafts, and Submission caching via Redis) has been generalized as they expand into complex secondary flows not fully outlined in this basic core-architecture document.
-> - Authentication implementation (e.g., Spring Security, JWT) appears missing in the raw Controller/Service layer analyzed, suggesting authentication may either be deferred entirely to the API Gateway or handled simplistically by passing roles directly.
 
 
 ---
