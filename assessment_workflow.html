@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Workflow Diagram</title>
+    
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: centera;
+        }
+        h1 {
+            color: #38bdf8;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        p.subtitle {
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            max-width: 800px;
+            text-align: center;
+            line-height: 1.6;
+        }
+        .mermaid-container {
+            background-color: #1e293b;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            width: 100%;
+            max-width: 1400px;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Xebia Assessment Portal - Workflow Architecture</h1>
+    <p class="subtitle">
+        This flowchart maps the complete lifecycle of assessments across the platform. It traces the journey from when a Trainer creates a quiz in the Assessment Builder (using AI generation, manual drafting, or Excel import) to how it communicates with the Spring Boot Backend. On the student side, it shows how they discover the assessment, take the quiz, and view their final evaluated results.
+    </p>
+
+    <!-- The diagram will be injected here safely via JS -->
+    <div id="mermaid-target" class="mermaid-container"></div>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+
+        // Using a JavaScript template literal guarantees that your HTML auto-formatter 
+        // (like Prettier) will NEVER squish these linebreaks and break the syntax again!
+        const diagramCode = `
+flowchart TB
+    %% Styling classes
+    classDef page fill:#334155,stroke:#94a3b8,stroke-width:2px,color:#fff;
+    classDef component fill:#475569,stroke:#cbd5e1,stroke-width:2px,color:#fff;
+    classDef api fill:#0f766e,stroke:#2dd4bf,stroke-width:2px,color:#fff;
+    classDef backend fill:#86198f,stroke:#f0abfc,stroke-width:2px,color:#fff;
+    classDef user fill:#b45309,stroke:#fcd34d,stroke-width:2px,color:#fff;
+    classDef state fill:#1d4ed8,stroke:#93c5fd,stroke-width:2px,color:#fff;
+
+    %% Users
+    Student["Student User"]:::user
+    Trainer["Trainer User"]:::user
+
+    %% Subgraphs
+    subgraph Student_Workflow [Student Portal Workflow]
+        direction TB
+        SA["StudentAssessments.jsx<br/>Lists Available/Completed Quizzes"]:::page
+        TQ["TakeQuiz.jsx / TakeCodingQuiz.jsx<br/>Quiz Canvas & Navigation"]:::component
+        RES["Results.jsx<br/>Detailed Answer Audit & Scores"]:::component
+
+        SA -->|Click Start| TQ
+        SA -->|Click View Result| RES
+        TQ -->|Finish Exam| TQ_SUBMIT
+    end
+
+    subgraph Trainer_Workflow [Trainer Portal Workflow]
+        direction TB
+        TD["TeacherDashboard.jsx<br/>Manages Assessment Templates"]:::page
+        TD -->|Click Create/Edit| EBL["EnterpriseBuilderLayout.jsx<br/>Main Builder Wrapper"]:::page
+        
+        subgraph Assessment_Builder [Assessment Builder Modules]
+            EBL --> CBP["ConfigurationBuilderPanel.jsx<br/>Set Time, Marks, Strictness"]:::component
+            EBL --> QBP["QuestionBuilderPanel.jsx<br/>Manage Question Array"]:::component
+        end
+
+        %% Question Actions
+        QBP -->|AI Button| AI_GEN["aiService.js<br/>generateQuestions()"]:::api
+        QBP -->|Manual Draft| DRAFT["Internal State<br/>draftText / draftOptions"]:::state
+        QBP -->|Upload Template| XL_UP["XLSX / parseExcelToQuestions()"]:::api
+        QBP -->|Export Button| XL_DOWN["XLSX / handleExportQuestions()"]:::api
+
+        EBL -->|Click Publish / Save| SAVE_ASSESS
+    end
+
+    subgraph Client_API [Frontend Context and API]
+        direction TB
+        LMS["LMSContext.jsx<br/>Global Reducer State"]:::state
+        
+        TQ_SUBMIT["createSubmission API<br/>POST /api/v1/submissions"]:::api
+        SAVE_ASSESS["createAssessment / updateAssessment API<br/>POST / PUT /api/v1/assessments"]:::api
+
+        TQ_SUBMIT --> LMS
+        SAVE_ASSESS --> LMS
+    end
+
+    subgraph Backend_Services [Spring Boot Backend]
+        direction LR
+        DB["PostgreSQL DB"]:::backend
+        AS["AssessmentService.java<br/>Processes Assessment Logic"]:::backend
+        SS["SubmissionService.java<br/>Evaluates Submissions & Marks"]:::backend
+
+        LMS -.->|Fetches / Updates data| AS
+        LMS -.->|Fetches / Updates data| SS
+        AS <--> DB
+        SS <--> DB
+    end
+
+    %% Connections
+    Student --> SA
+    Trainer --> TD
+    
+    %% Descriptions and labels
+    AI_GEN -.->|Returns mapped JSON| QBP
+    XL_UP -.->|Parses rows to questions| QBP
+    SAVE_ASSESS -.->|Sends unified Object| AS
+        `;
+
+        async function renderDiagram() {
+            const target = document.getElementById('mermaid-target');
+            try {
+                const { svg } = await mermaid.render('mermaid-svg', diagramCode);
+                target.innerHTML = svg;
+            } catch (error) {
+                target.innerHTML = '<p style="color: red;">Error rendering diagram: ' + error.message + '</p>';
+            }
+        }
+
+        renderDiagram();
+    </script>
+</body>
+</html>

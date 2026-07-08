@@ -21,8 +21,10 @@ public class Question {
     private Boolean required;
     
     @ElementCollection
+    @Column(columnDefinition = "TEXT")
     private List<String> options;
     
+    @Column(columnDefinition = "TEXT")
     private String correctAnswer;
     @Column(columnDefinition = "TEXT")
     private String explanation;

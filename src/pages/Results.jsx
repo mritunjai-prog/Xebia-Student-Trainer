@@ -56,7 +56,7 @@ export const Results = () => {
       </button>
 
       {/* Outcome Score Header */}
-      <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-800 rounded-3xl p-6 md:p-8 shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-800 rounded-xl p-4 md:p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
         
         <div className="space-y-3.5 text-center md:text-left">
           <div className="flex flex-wrap gap-2 items-center justify-center md:justify-start">
@@ -89,7 +89,7 @@ export const Results = () => {
 
           {/* Overall Comments */}
           {submission.remarks &&
-          <div className="p-3.5 bg-neutral-50 dark:bg-neutral-950 border rounded-2xl flex items-start gap-2.5 text-left max-w-lg">
+          <div className="p-3 bg-neutral-50 dark:bg-neutral-950 border rounded-xl flex items-start gap-2.5 text-left max-w-lg">
               <MessageSquare className="w-5 h-5 text-purple-600 shrink-0 mt-0.5" />
               <div>
                 <p className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase font-bold tracking-wider">Trainer Evaluation feedback</p>
@@ -103,12 +103,12 @@ export const Results = () => {
 
         {/* Visual Score Circle badge */}
         <div className="flex flex-col items-center shrink-0">
-          <div className={`w-32 h-32 rounded-full border-4 flex flex-col items-center justify-center shadow-lg transition-colors ${submission.isEvaluated ? isPassed ? 'border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20' : 'border-rose-500 bg-rose-50/20 dark:bg-rose-950/20' : 'border-amber-500 bg-amber-50/20 dark:bg-amber-950/10'}`}>
-            <span className="text-[10px] text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider">Your Score</span>
-            <span className="font-display font-black text-3xl text-neutral-800 dark:text-white mt-1">
+          <div className={`w-24 h-24 rounded-full border-4 flex flex-col items-center justify-center shadow-md transition-colors ${submission.isEvaluated ? isPassed ? 'border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20' : 'border-rose-500 bg-rose-50/20 dark:bg-rose-950/20' : 'border-amber-500 bg-amber-50/20 dark:bg-amber-950/10'}`}>
+            <span className="text-[9px] text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider">Your Score</span>
+            <span className="font-display font-black text-2xl text-neutral-800 dark:text-white mt-0.5">
               {submission.isEvaluated ? `${submission.percentage}%` : 'Pending'}
             </span>
-            <span className="text-[10px] text-neutral-500 dark:text-neutral-400 mt-1 font-mono">
+            <span className="text-[9px] text-neutral-500 dark:text-neutral-400 font-mono">
               {submission.isEvaluated ? `${submission.score} / ${assessment.marks} pts` : '-- / --'}
             </span>
           </div>
@@ -140,9 +140,9 @@ export const Results = () => {
               return (
                 <div
                   key={q.id}
-                  className={`bg-white dark:bg-neutral-900 border rounded-2xl p-5 space-y-4 shadow-md ${isEvaluated ? isPassed ? 'border-emerald-200/50 dark:border-emerald-950/50' : 'border-rose-200/50 dark:border-rose-950/50' : 'border-brand-border dark:border-neutral-700 dark:border-neutral-800'}`}>
+                  className={`bg-white dark:bg-neutral-900 border rounded-xl p-3 space-y-3 shadow-sm ${isEvaluated ? isPassed ? 'border-emerald-200/50 dark:border-emerald-950/50' : 'border-rose-200/50 dark:border-rose-950/50' : 'border-brand-border dark:border-neutral-700 dark:border-neutral-800'}`}>
                   
-                  <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800/60 pb-3">
+                  <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800/60 pb-1.5">
                     <span className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-500 dark:text-neutral-400 font-bold rounded text-[10px] font-mono">
                       Q{idx + 1} • CODING CHALLENGE
                     </span>
@@ -158,25 +158,25 @@ export const Results = () => {
 
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-center text-[10px] font-mono">
-                      <div className="p-2 bg-neutral-50 dark:bg-neutral-950 rounded-2xl border border-neutral-100 dark:border-neutral-800/40">
+                      <div className="p-2 bg-neutral-50 dark:bg-neutral-950 rounded-lg border border-neutral-100 dark:border-neutral-800/40">
                         <span className="text-[9px] text-neutral-500 dark:text-neutral-400 block font-sans">LANGUAGE USED</span>
                         <span className="text-neutral-800 dark:text-white font-bold">{codingAns?.language?.toUpperCase() || 'JAVASCRIPT'}</span>
                       </div>
-                      <div className="p-2 bg-neutral-50 dark:bg-neutral-950 rounded-2xl border border-neutral-100 dark:border-neutral-800/40">
+                      <div className="p-2 bg-neutral-50 dark:bg-neutral-950 rounded-lg border border-neutral-100 dark:border-neutral-800/40">
                         <span className="text-[9px] text-neutral-500 dark:text-neutral-400 block font-sans">EXECUTION OUTCOME</span>
                         <span className={`font-bold ${isPassed ? 'text-green-500' : 'text-amber-500'}`}>{codingAns?.status || 'Submitted'}</span>
                       </div>
-                      <div className="p-2 bg-neutral-50 dark:bg-neutral-950 rounded-2xl border border-neutral-100 dark:border-neutral-800/40">
+                      <div className="p-2 bg-neutral-50 dark:bg-neutral-950 rounded-lg border border-neutral-100 dark:border-neutral-800/40">
                         <span className="text-[9px] text-neutral-500 dark:text-neutral-400 block font-sans">SIMULATION SCORE</span>
                         <span className="text-neutral-800 dark:text-white font-bold">{codingAns?.score || marksAwarded} pts</span>
                       </div>
-                      <div className="p-2 bg-neutral-50 dark:bg-neutral-950 rounded-2xl border border-neutral-100 dark:border-neutral-800/40">
+                      <div className="p-2 bg-neutral-50 dark:bg-neutral-950 rounded-lg border border-neutral-100 dark:border-neutral-800/40">
                         <span className="text-[9px] text-neutral-500 dark:text-neutral-400 block font-sans">SUBMITTED TIMESTAMP</span>
                         <span className="text-neutral-500 font-bold text-[10px]">{codingAns?.submittedAt ? new Date(codingAns.submittedAt).toLocaleTimeString() : 'N/A'}</span>
                       </div>
                     </div>
 
-                    <div className="h-64 border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden bg-[#1E1E1E]">
+                    <div className="h-48 border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden bg-[#1E1E1E]">
                       <Editor
                         height="100%"
                         language={codingAns?.language || 'javascript'}
@@ -201,11 +201,11 @@ export const Results = () => {
             return (
               <div
                 key={q.id}
-                className={`bg-white dark:bg-neutral-900 border rounded-2xl p-5 space-y-4 shadow-md ${isEvaluated ? isCorrect ? 'border-emerald-200/50 dark:border-emerald-950/50' : 'border-rose-200/50 dark:border-rose-950/50' : 'border-brand-border dark:border-neutral-700 dark:border-neutral-800'}`}>
+                className={`bg-white dark:bg-neutral-900 border rounded-xl p-3 space-y-2 shadow-sm ${isEvaluated ? isCorrect ? 'border-emerald-200/50 dark:border-emerald-950/50' : 'border-rose-200/50 dark:border-rose-950/50' : 'border-brand-border dark:border-neutral-700 dark:border-neutral-800'}`}>
                 
                 
                 {/* Header info */}
-                <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800/60 pb-3">
+                <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800/60 pb-1.5">
                   <span className="px-2 py-0.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-500 dark:text-neutral-400 font-bold rounded text-[10px] font-mono">
                     Q{idx + 1} • {q.type.toUpperCase()}
                   </span>
@@ -224,7 +224,7 @@ export const Results = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   
                   {/* Student Answer */}
-                  <div className="p-3 bg-neutral-50 dark:bg-neutral-950 rounded-2xl space-y-1.5 border border-neutral-100 dark:border-neutral-800/40">
+                  <div className="p-2 bg-neutral-50 dark:bg-neutral-950 rounded-xl space-y-1.5 border border-neutral-100 dark:border-neutral-800/40">
                     <p className="text-[10px] text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wide flex items-center gap-1">
                       <span>Your Answer</span>
                       {isEvaluated && (
@@ -256,7 +256,7 @@ export const Results = () => {
 
                   {/* Correct Answer comparison */}
                   {isEvaluated && (
-                    <div className="p-3 bg-emerald-500/5 dark:bg-emerald-950/10 rounded-2xl space-y-1.5 border border-emerald-100/40">
+                    <div className="p-2 bg-emerald-500/5 dark:bg-emerald-950/10 rounded-xl space-y-1.5 border border-emerald-100/40">
                       <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wide">Correct Template Answer</p>
                       
                       <div className="text-xs font-bold text-neutral-700 dark:text-neutral-300">

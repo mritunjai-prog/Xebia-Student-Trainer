@@ -366,7 +366,7 @@ export const TakeQuiz = () => {
       <div className="flex flex-col lg:flex-row gap-6 flex-1 items-start w-full">
         
         {/* Active Question Canvas (Left) */}
-        <div className="flex-1 w-full bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-800 rounded-3xl p-6 md:p-8 space-y-6 shadow-sm min-h-[450px] flex flex-col justify-between">
+        <div className="flex-1 w-full bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-800 rounded-3xl p-4 md:p-6 space-y-4 shadow-sm min-h-[450px] flex flex-col justify-between">
           <div>
             {/* Question ID indicator */}
             <div className="flex justify-between items-center border-b border-brand-border/20 dark:border-neutral-800 pb-4">
@@ -386,7 +386,7 @@ export const TakeQuiz = () => {
             </p>
 
             {/* Form Input fields depending on type */}
-            <div className="mt-8">
+            <div className="mt-4">
               {currentQ.type === 'mcq' || currentQ.type === 'true_false' ?
               <div className="space-y-3">
                   {currentQ.options?.map((opt, oIdx) => {
@@ -395,7 +395,7 @@ export const TakeQuiz = () => {
                     <div
                       key={oIdx}
                       onClick={() => handleSelectAnswer(currentQ.id, oIdx.toString())}
-                      className={`p-5 border rounded-2xl cursor-pointer flex items-center justify-between text-sm font-semibold transition-all ${isChecked ? 'bg-purple-50/80 border-[#6C1D5F] text-[#6C1D5F] dark:bg-purple-900/20 dark:border-purple-500 dark:text-purple-300 shadow-sm' : 'border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300'}`}>
+                      className={`p-3 border rounded-2xl cursor-pointer flex items-center justify-between text-sm font-semibold transition-all ${isChecked ? 'bg-purple-50/80 border-[#6C1D5F] text-[#6C1D5F] dark:bg-purple-900/20 dark:border-purple-500 dark:text-purple-300 shadow-sm' : 'border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300'}`}>
                       
                         <span>{opt}</span>
                         <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${isChecked ? 'border-[#6C1D5F] dark:border-purple-400 text-[#6C1D5F]' : 'border-neutral-300 dark:border-neutral-700'}`}>
@@ -422,7 +422,7 @@ export const TakeQuiz = () => {
                     <div
                       key={oIdx}
                       onClick={handleToggleMulti}
-                      className={`p-5 border rounded-2xl cursor-pointer flex items-center justify-between text-sm font-semibold transition-all ${isChecked ? 'bg-emerald-50/80 border-[#01AC9F] text-[#01AC9F] dark:bg-emerald-900/20 dark:border-emerald-500 dark:text-emerald-300 shadow-sm' : 'border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300'}`}>
+                      className={`p-3 border rounded-2xl cursor-pointer flex items-center justify-between text-sm font-semibold transition-all ${isChecked ? 'bg-emerald-50/80 border-[#01AC9F] text-[#01AC9F] dark:bg-emerald-900/20 dark:border-emerald-500 dark:text-emerald-300 shadow-sm' : 'border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300'}`}>
                       
                         <span>{opt}</span>
                         <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${isChecked ? 'bg-[#01AC9F] border-[#01AC9F] dark:bg-emerald-500 dark:border-emerald-500 text-white' : 'border-neutral-300 dark:border-neutral-700'}`}>

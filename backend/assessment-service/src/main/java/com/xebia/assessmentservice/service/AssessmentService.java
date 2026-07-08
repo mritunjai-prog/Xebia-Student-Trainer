@@ -16,7 +16,22 @@ public class AssessmentService {
         return assessmentRepository.findAll();
     }
 
+    private void sanitizeQuestionIds(Assessment assessment) {
+        if (assessment.getQuestions() != null) {
+            for (com.xebia.assessmentservice.model.Question q : assessment.getQuestions()) {
+                if (q.getId() != null) {
+                    try {
+                        java.util.UUID.fromString(q.getId());
+                    } catch (IllegalArgumentException e) {
+                        q.setId(null);
+                    }
+                }
+            }
+        }
+    }
+
     public Assessment createAssessment(Assessment assessment) {
+        sanitizeQuestionIds(assessment);
         return assessmentRepository.save(assessment);
     }
 
@@ -46,10 +61,26 @@ public class AssessmentService {
             if (updated.getNegativeMarking() != null) existing.setNegativeMarking(updated.getNegativeMarking());
             if (updated.getNegativeMarksValue() != null) existing.setNegativeMarksValue(updated.getNegativeMarksValue());
             if (updated.getAutoSubmit() != null) existing.setAutoSubmit(updated.getAutoSubmit());
-            if (updated.getBatches() != null) existing.setBatches(updated.getBatches());
-            if (updated.getQuestions() != null) existing.setQuestions(updated.getQuestions());
+            if (updated.getBatches() != null) {
+                if (existing.getBatches() != null) {
+                    existing.getBatches().clear();
+                    existing.getBatches().addAll(updated.getBatches());
+                } else {
+                    existing.setBatches(updated.getBatches());
+                }
+            }
+            if (updated.getQuestions() != null) {
+                if (existing.getQuestions() != null) {
+                    existing.getQuestions().clear();
+                    existing.getQuestions().addAll(updated.getQuestions());
+                } else {
+                    existing.setQuestions(updated.getQuestions());
+                }
+            }
+            sanitizeQuestionIds(existing);
             return assessmentRepository.save(existing);
         }
+        sanitizeQuestionIds(updated);
         return assessmentRepository.save(updated);
     }
 

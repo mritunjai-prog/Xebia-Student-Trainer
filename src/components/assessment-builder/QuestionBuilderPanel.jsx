@@ -204,6 +204,48 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
     XLSX.writeFile(wb, "Assessment_Template_Complete.xlsx");
   };
 
+  const handleExportQuestions = () => {
+    if (!questions || questions.length === 0) {
+      toast.add('No questions to export.', 'info');
+      return;
+    }
+
+    const exportData = questions.map(q => {
+      const row = {
+        'Type': q.type || 'mcq',
+        'Question Text': q.question || q.text || q.questionText || q['Question Text'] || '',
+      };
+
+      if (q.options && Array.isArray(q.options)) {
+        q.options.forEach((opt, idx) => {
+          row[`Option ${idx + 1}`] = opt;
+        });
+      }
+
+      if (q.type === 'coding') {
+        row['Problem Description'] = q.description || '';
+        row['Starter Code'] = q.starterCode || '';
+        row['Test Input'] = q.testInput || '';
+        row['Test Output'] = q.testOutput || '';
+      } else {
+        if (Array.isArray(q.correctAnswer)) {
+          row['Correct Answer'] = q.correctAnswer.join(', ');
+        } else if (q.correctAnswer) {
+          row['Correct Answer'] = q.correctAnswer;
+        }
+      }
+
+      row['Marks'] = q.marks || 1;
+      return row;
+    });
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Questions");
+    XLSX.writeFile(wb, `${config?.title?.replace(/[^a-z0-9]/gi, '_') || 'Assessment'}_Questions.xlsx`);
+    toast.add('Questions exported successfully!', 'success');
+  };
+
   return (
     <div className="h-full w-full flex flex-col bg-neutral-50 dark:bg-[#0a0a0a] overflow-hidden relative">
       
@@ -264,6 +306,14 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
               <Download className="w-3.5 h-3.5" /> Template
             </button>
             <button 
+              onClick={handleExportQuestions}
+              disabled={questions.length === 0}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-bold transition-colors"
+              title="Export Current Questions"
+            >
+              <Download className="w-3.5 h-3.5" /> Export
+            </button>
+            <button 
               onClick={() => setQuestions([])}
               disabled={questions.length === 0}
               className="flex items-center justify-center p-2 bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors"
@@ -298,7 +348,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
             </div>
           </div>
         )}
-        <div className="w-full max-w-4xl mx-auto space-y-8 pb-32">
+        <div className="w-full max-w-4xl mx-auto space-y-4 pb-32">
           
           {questions.length === 0 && !addingManual && (
               <div className="flex flex-col items-center justify-center h-64 text-center">
@@ -309,7 +359,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
             )}
 
             {questions.map((q, idx) => (
-              <div key={q.id || idx} className="space-y-4 group relative">
+              <div key={q.id || idx} className="space-y-2 group relative border-b border-neutral-100 dark:border-neutral-800 pb-4">
                 
                 {/* Floating Actions for each question */}
                 <div className="absolute -right-4 top-0 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-1 translate-x-full z-10">
@@ -332,11 +382,11 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
                 </div>
                 
                 {(q.type === 'mcq' || q.type === 'true_false') && q.options && (
-                  <div className="space-y-2 pl-6">
+                  <div className="space-y-1 pl-6">
                     {q.options.map((opt, oIdx) => {
                       const isCorrect = q.correctAnswer === opt || (Array.isArray(q.correctAnswer) && q.correctAnswer.includes(opt));
                       return (
-                        <div key={oIdx} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors cursor-pointer text-sm ${isCorrect ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100 ring-1 ring-emerald-500' : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-700 dark:text-neutral-300'}`}>
+                        <div key={oIdx} className={`flex items-center gap-2 p-1.5 rounded-lg border transition-colors cursor-pointer text-sm ${isCorrect ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100 ring-1 ring-emerald-500' : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-700 dark:text-neutral-300'}`}>
                           <input type="radio" disabled checked={isCorrect} className="w-4 h-4 text-emerald-600" />
                           <span className="flex-1">{opt}</span>
                           {isCorrect && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}
@@ -347,11 +397,11 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
                 )}
 
                 {q.type === 'multiple_select' && q.options && (
-                  <div className="space-y-2 pl-6">
+                  <div className="space-y-1 pl-6">
                     {q.options.map((opt, oIdx) => {
                       const isCorrect = q.correctAnswer === opt || (Array.isArray(q.correctAnswer) && q.correctAnswer.includes(opt));
                       return (
-                        <div key={oIdx} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors cursor-pointer text-sm ${isCorrect ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100 ring-1 ring-emerald-500' : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-700 dark:text-neutral-300'}`}>
+                        <div key={oIdx} className={`flex items-center gap-2 p-1.5 rounded-lg border transition-colors cursor-pointer text-sm ${isCorrect ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100 ring-1 ring-emerald-500' : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-700 dark:text-neutral-300'}`}>
                           <input type="checkbox" disabled checked={isCorrect} className="w-4 h-4 text-emerald-600 rounded" />
                           <span className="flex-1">{opt}</span>
                           {isCorrect && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}

@@ -11,13 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 public class Assessment {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    
+
     private String title;
     private String description;
     @Column(columnDefinition = "TEXT")
     private String instructions;
-    
+
     private String difficulty;
     private Integer marks;
     private Integer passingMarks;
@@ -33,17 +34,17 @@ public class Assessment {
     private String type; // mcq, assignment, mixed
     private String createdBy;
     private String createdAt;
-    
+
     private String topic;
     private Boolean shuffleQuestions;
     private Boolean randomizeOptions;
     private Boolean negativeMarking;
     private Integer negativeMarksValue;
     private Boolean autoSubmit;
-    
+
     @ElementCollection
     private List<String> batches;
-    
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "assessment_id")
     private List<Question> questions;
