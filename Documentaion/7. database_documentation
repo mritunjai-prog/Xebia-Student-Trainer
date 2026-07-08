@@ -1,0 +1,176 @@
+# Database Structure Documentation
+
+This document outlines the PostgreSQL database schema derived directly from the Spring Data JPA `@Entity` classes present in the microservices codebase.
+
+---
+
+## Entity Relationship (ER) Diagram
+
+```mermaid
+erDiagram
+    USERS {
+        UUID id PK
+        String name
+        String email UK
+        String role
+        String department
+        String avatar
+        Integer averageScore
+        Integer assessmentsCompleted
+    }
+
+    BATCHES {
+        UUID id PK
+        String name
+        String course
+        Integer studentCount
+        String status
+        String createdAt
+        String icon
+    }
+
+    BATCH_STUDENTS {
+        UUID batch_id FK
+        String students
+    }
+
+    ASSESSMENTS {
+        String id PK
+        String title
+        String description
+        Text instructions
+        String difficulty
+        Integer marks
+        Integer passingMarks
+        Integer duration
+        String startDate
+        String startTime
+        String endDate
+        String endTime
+        Integer attemptsAllowed
+        Boolean autoGrade
+        Boolean manualGrade
+        String status
+        String type
+        String createdBy
+        String createdAt
+        String topic
+        Boolean shuffleQuestions
+        Boolean randomizeOptions
+        Boolean negativeMarking
+        Integer negativeMarksValue
+        Boolean autoSubmit
+    }
+
+    ASSESSMENT_BATCHES {
+        String assessment_id FK
+        String batches
+    }
+
+    QUESTIONS {
+        UUID id PK
+        String type
+        Text question
+        Integer marks
+        Boolean required
+        String correctAnswer
+        Text explanation
+        String assessment_id FK
+    }
+
+    QUESTION_OPTIONS {
+        UUID question_id FK
+        String options
+    }
+
+    SUBMISSIONS {
+        String id PK
+        String assessmentId
+        String studentId
+        String status
+        String startedAt
+        String submittedAt
+        Integer score
+        Integer percentage
+        Integer timeTaken
+        Boolean isEvaluated
+        Text remarks
+        String evaluatedBy
+    }
+
+    ANSWERS {
+        UUID id PK
+        String questionId
+        Text answer
+        Integer marksAwarded
+        Text remarks
+        String submission_id FK
+    }
+
+    %% Relationships defined by @ElementCollection and @OneToMany annotations
+    BATCHES ||--o{ BATCH_STUDENTS : "has (ElementCollection)"
+    ASSESSMENTS ||--o{ ASSESSMENT_BATCHES : "assigned_to (ElementCollection)"
+    ASSESSMENTS ||--o{ QUESTIONS : "contains (@OneToMany)"
+    QUESTIONS ||--o{ QUESTION_OPTIONS : "has (ElementCollection)"
+    SUBMISSIONS ||--o{ ANSWERS : "contains (@OneToMany)"
+    
+    %% Implicit Logical Relationships (No hard DB FK constraints set via JPA, but used logically in code)
+    USERS ||--o{ SUBMISSIONS : "makes (logical via studentId)"
+    ASSESSMENTS ||--o{ SUBMISSIONS : "receives (logical via assessmentId)"
+    USERS ||--o{ BATCH_STUDENTS : "enrolled_in (logical via students)"
+```
+
+---
+
+## Tables & Usage Details
+
+### 1. Table: `users`
+- **File Location:** `backend/user-service/src/main/java/com/xebia/userservice/model/User.java`
+- **Keys:** `id` (PK, UUID generated)
+- **Columns:** 
+  - `name`, `role`, `department`, `avatar` (VARCHAR)
+  - `email` (VARCHAR, Unique Constraint)
+  - `averageScore`, `assessmentsCompleted` (INTEGER)
+- **Relationships:** None defined explicitly at DB level.
+- **Usage in Code:** Fetched during app initialization to simulate authentication, partition dashboards by `role`, and calculate Leaderboard rankings using the stat integer columns.
+
+### 2. Table: `batches`
+- **File Location:** `backend/batch-service/src/main/java/com/xebia/batchservice/model/Batch.java`
+- **Keys:** `id` (PK, UUID generated)
+- **Columns:** `name`, `course`, `studentCount`, `status`, `createdAt`, `icon`
+- **Relationships:** 
+  - Generates secondary table `batch_students` (via `@ElementCollection`) storing a list of Student string IDs attached to a `batch_id`.
+- **Usage in Code:** Grouping students logically. Filtered in `Reports.jsx` to show cohort-wide analytics.
+
+### 3. Table: `assessments`
+- **File Location:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/model/Assessment.java`
+- **Keys:** `id` (PK, Custom String provided by frontend)
+- **Columns:** Heavy configuration table. Contains 24 distinct columns managing metadata, scheduling (`startDate`, `duration`), and rule-sets (`shuffleQuestions`, `negativeMarking`, `autoGrade`).
+- **Relationships:**
+  - `assessment_batches` (Secondary table via `@ElementCollection` tracking which batches can take it).
+  - `@OneToMany` to `questions` (Generates an implicit `assessment_id` FK inside the `questions` table).
+- **Usage in Code:** The core entity managed in `AssessmentBuilder.jsx`. Pulled into memory to render the test-taking UI.
+
+### 4. Table: `questions`
+- **File Location:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/model/Question.java`
+- **Keys:** `id` (PK, UUID generated)
+- **Columns:** `type`, `question` (TEXT), `marks`, `required`, `correctAnswer`, `explanation` (TEXT), `assessment_id` (FK assigned by parent).
+- **Relationships:** 
+  - `question_options` (Secondary table via `@ElementCollection` storing array of multiple choice options).
+  - Belongs to `assessments`.
+- **Usage in Code:** Rendered dynamically inside `<TakeQuiz />`. `correctAnswer` is utilized in `LMSContext.jsx` for local auto-grading.
+
+### 5. Table: `submissions`
+- **File Location:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/model/Submission.java`
+- **Keys:** `id` (PK, Custom String)
+- **Columns:** `assessmentId` (Logical FK), `studentId` (Logical FK), `status`, `startedAt`, `submittedAt`, `score`, `percentage`, `timeTaken`, `isEvaluated`, `remarks` (TEXT), `evaluatedBy`
+- **Relationships:** 
+  - `@OneToMany` to `answers` (Generates an implicit `submission_id` FK inside the `answers` table).
+- **Usage in Code:** Saved when a student finishes an assessment. Later retrieved by trainers in `Evaluation.jsx` to review and grade pending attempts.
+
+### 6. Table: `answers`
+- **File Location:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/model/Answer.java`
+- **Keys:** `id` (PK, UUID generated)
+- **Columns:** `questionId` (Logical FK to questions table), `answer` (TEXT), `marksAwarded`, `remarks` (TEXT), `submission_id` (FK assigned by parent).
+- **Relationships:** Belongs to `submissions`.
+- **Usage in Code:** Records exactly what the student typed or selected for a specific question, alongside marks given by the AI or the Trainer.

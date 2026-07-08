@@ -1,0 +1,73 @@
+# Configuration & Deployment Documentation
+
+This document outlines the system configuration, build tools, environment variables, and proxy setups based explicitly on the provided configuration files (`vite.config.js`, `package.json`, `.env`, `application.yml`).
+
+---
+
+## 1. Frontend Configuration
+
+### Build Tools & Frameworks
+- **Framework:** React 19 (managed via Vite)
+- **Bundler / Dev Server:** Vite (`vite: ^6.2.3`)
+- **Styling:** TailwindCSS 4 (`@tailwindcss/vite: ^4.1.14`)
+- **Commands:** Defined in `package.json`:
+  - `npm run dev`: Starts the Vite server on `http://0.0.0.0:3000`.
+  - `npm run build`: Bundles the app for production via `vite build`.
+  - `npm run preview`: Locally previews the production build.
+
+### Environment Variables
+Located in `C:\Users\HP\Documents\Xebia-Intern\STUDENT portal\Xebia-Student-Trainer\.env`:
+```env
+VITE_GROQ_API_KEY="gsk_..." # Used in src/utils/aiService.js for external LLM API calls
+```
+
+### Local Development Proxy (`vite.config.js`)
+During local development, the Vite server (`localhost:3000`) is configured to intercept `/api/v1/*` requests and proxy them directly to the backend microservices, bypassing the API Gateway to prevent CORS issues locally.
+- `/api/v1/users` → proxied to `http://localhost:8081`
+- `/api/v1/batches` → proxied to `http://localhost:8082`
+- `/api/v1/assessments`, `/questions`, `/submissions` → proxied to `http://localhost:8083`
+
+*(Note: Vite is configured to respect the `DISABLE_HMR` environment variable, turning off Hot Module Replacement if set to 'true').*
+
+---
+
+## 2. Backend Configuration
+
+### Build Tools & Architecture
+- **Framework:** Spring Boot (Java)
+- **Build Tool:** Maven (Implied via standard Spring Boot Microservice architecture layout).
+- **Architecture:** API Gateway Pattern with 3 distinct domain microservices.
+
+### API Gateway (`application.yml`)
+Located in `backend/api-gateway/src/main/resources/application.yml`.
+
+**Server Configuration:**
+- **Port:** `8080` (The centralized entry point for production deployments).
+- **CORS:** Configured globally to allow all origins (`*`), methods (`*`), and headers (`*`) across `[/**]`.
+
+**Routing Rules:**
+The Spring Cloud Gateway routes incoming requests based on path predicates:
+| Target Service | Local URI | Path Predicates |
+| :--- | :--- | :--- |
+| `user-service` | `http://localhost:8081` | `/api/v1/users`, `/api/v1/users/**` |
+| `batch-service` | `http://localhost:8082` | `/api/v1/batches`, `/api/v1/batches/**` |
+| `assessment-service` | `http://localhost:8083` | `/api/v1/assessments/**`, `/api/v1/questions/**`, `/api/v1/submissions/**` |
+
+### Database Dependencies (Implied by Code)
+While no `docker-compose.yml` is present, the following infrastructure must be running locally for the backend to start:
+- **PostgreSQL:** Running on localhost, utilizing the default `postgres` database schema.
+- **Redis:** Running on localhost, utilized by the `assessment-service` for caching assessment drafts.
+
+---
+
+## 3. Deployment Setup
+
+Based on the visible files, there is no explicit containerization (e.g., `Dockerfile`) or CI/CD pipeline (e.g., `.github/workflows`) defined in the codebase. 
+
+**Expected Local Execution Flow:**
+1. Start PostgreSQL & Redis services locally.
+2. Boot `user-service` (Port 8081).
+3. Boot `batch-service` (Port 8082).
+4. Boot `assessment-service` (Port 8083).
+5. Boot `api-gateway` (Port 8080).
+6. Run `npm install` && `npm run dev` in the frontend root to start the React application (Port 3000).

@@ -1,0 +1,116 @@
+# Execution Flows
+
+Based on the explicit logic found in the codebase, the following outlines the execution and data flows across the system. File paths are explicitly included to make tracing the logic easy.
+
+---
+
+## 1. General Request Lifecycle & API Flow
+
+This flow dictates how standard data (like fetching batches or saving an assessment) traverses the full stack.
+
+1. **Frontend Trigger:** A user interaction in a React Component (e.g., `src/pages/BatchManagement.jsx`) triggers a function in `LMSContext` (`src/context/LMSContext.jsx`).
+2. **HTTP Client:** `LMSContext` delegates the network call to `src/api/client.js` (`apiClient`), which executes a native `fetch()` to `/api/v1/{resource}`.
+3. **API Gateway Routing:** The request hits the Spring Cloud Gateway configured in `backend/api-gateway/src/main/resources/application.yml` (port 8080). The gateway matches the URI path and routes it to the specific downstream microservice (e.g., `batch-service`).
+4. **Controller:** The respective Spring Boot `@RestController` (e.g., `backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java`) intercepts the HTTP request, deserializes the JSON body, and passes it to the `@Service` layer.
+5. **Service & Repository:** The `@Service` (e.g., `BatchService.java`) contains business logic and delegates data persistence to the Spring Data JPA `@Repository` (e.g., `BatchRepository.java`).
+6. **Database:** The repository executes the SQL statement against the PostgreSQL database (or Redis if it's a draft) and returns the data entity back up the chain.
+
+```mermaid
+sequenceDiagram
+    participant UI as Frontend Component<br/>(src/pages/*.jsx)
+    participant Context as LMSContext<br/>(src/context/LMSContext.jsx)
+    participant APIClient as apiClient<br/>(src/api/client.js)
+    participant Gateway as API Gateway<br/>(backend/api-gateway/.../application.yml)
+    participant Service as Microservice Controller<br/>(backend/*-service/.../controller/*.java)
+    participant DB as PostgreSQL Database
+
+    UI->>Context: Action Triggered
+    Context->>APIClient: Execute Method (e.g., getBatches)
+    APIClient->>Gateway: HTTP Request (/api/v1/...)
+    Gateway->>Service: Route Request to Service
+    Service->>DB: JPA query execution
+    DB-->>Service: Return Result Set
+    Service-->>Gateway: HTTP 200 OK (JSON)
+    Gateway-->>APIClient: Forward Response
+    APIClient-->>Context: Resolve Promise (Data)
+    Context-->>UI: Update React State & Re-render
+```
+
+---
+
+## 2. Simulated Authentication Flow
+
+Because there is no backend authentication logic explicitly defined in the provided code, the authentication flow happens entirely on the client side.
+
+1. **Hydration:** When the frontend boots up, `src/context/LMSContext.jsx` immediately fetches all known users from `GET /api/v1/users` via `src/api/client.js`.
+2. **Login Attempt:** A user enters an email address in `src/pages/Login.jsx` and clicks "Sign in as Trainer" or "Sign in as Student".
+3. **Validation:** `LMSContext.login()` executes an `Array.find()` on the pre-loaded users array to match the provided email.
+4. **State Commitment:** If a match is found, the user object is set to the `currentUser` state variable and redundantly saved to browser `localStorage`.
+5. **Route Unlock:** The `<AppContent />` wrapper in `src/App.jsx` observes the `currentUser` state change and dynamically mounts the protected routes.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Login as Login.jsx<br/>(src/pages/Login.jsx)
+    participant Context as LMSContext<br/>(src/context/LMSContext.jsx)
+    participant Local as localStorage<br/>(Browser Storage)
+    participant API as API Gateway<br/>(backend/api-gateway/)
+
+    Note over Context, API: 1. App Initialization
+    Context->>API: GET /api/v1/users (via apiClient)
+    API-->>Context: Returns List of Users
+    
+    Note over User, Context: 2. User Authentication
+    User->>Login: Enters Email & Selects Role
+    Login->>Context: Call login(email, role)
+    Context->>Context: Find user by email in local array
+    
+    alt User Found
+        Context->>Context: Set currentUser State
+        Context->>Local: Persist currentUser Object
+        Context-->>User: Re-route to Dashboard (App.jsx)
+    else User Not Found
+        Context-->>Login: Throw Error (User not found)
+        Login-->>User: Display Toast Error
+    end
+```
+
+---
+
+## 3. Data Flow: Assessment Submission & Auto-Grading
+
+This flow describes what happens when a student takes a test and submits it. It involves draft caching, local evaluation, and final persistence.
+
+1. **Drafts (In-Progress):** As a student selects options in `src/pages/TakeQuiz.jsx`, `apiClient.saveDraft()` (`src/api/client.js`) is called periodically.
+2. **Redis Caching:** The `backend/assessment-service/.../controller/DraftController.java` intercepts this and stores the draft `Map` into Redis.
+3. **Submission Trigger:** The student clicks "Submit" in `TakeQuiz.jsx`.
+4. **Local Auto-Grading:** `LMSContext.submitAssessment()` in `src/context/LMSContext.jsx` intercepts the submission. It cross-references the student's answers with the assessment's expected `correctAnswer` in memory, mutating the answer payload to include `marksAwarded`.
+5. **Persistence:** The graded payload is POSTed to `apiClient.createSubmission()`.
+6. **Database Save:** `backend/assessment-service/.../controller/SubmissionController.java` receives it and persists the final graded entity into the `submissions` PostgreSQL table.
+7. **Stat Updates:** Synchronously, `LMSContext.jsx` increments the student's `assessmentsCompleted` and recalculates their `averageScore` to reflect immediately on `src/pages/Leaderboard.jsx`.
+
+```mermaid
+sequenceDiagram
+    participant Student
+    participant Quiz as TakeQuiz.jsx<br/>(src/pages/TakeQuiz.jsx)
+    participant Context as LMSContext<br/>(src/context/LMSContext.jsx)
+    participant AssessmentSVC as Assessment Service<br/>(backend/assessment-service/)
+    participant Redis as Redis Cache
+    participant Postgres as PostgreSQL (submissions)
+
+    Note over Student, Postgres: Periodic Draft Saving
+    Student->>Quiz: Selects Answer
+    Quiz->>AssessmentSVC: POST /drafts/{studentId}/{assessId} (via DraftController.java)
+    AssessmentSVC->>Redis: Save Draft Data
+
+    Note over Student, Postgres: Final Submission
+    Student->>Quiz: Clicks "Submit"
+    Quiz->>Context: call submitAssessment()
+    Context->>Context: Grade objective answers locally
+    Context->>AssessmentSVC: POST /api/v1/submissions (via SubmissionController.java)
+    AssessmentSVC->>Postgres: INSERT into submissions table
+    Postgres-->>AssessmentSVC: Return generated ID
+    AssessmentSVC-->>Context: 200 OK
+    Context->>Context: Update Student Stats (avg score)
+    Context-->>Quiz: Success! Re-route to Results (src/pages/Results.jsx)
+```

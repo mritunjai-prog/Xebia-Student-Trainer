@@ -1,0 +1,64 @@
+# Frontend Implementation Documentation
+
+Based on the analysis of the provided React codebase at `C:\Users\HP\Documents\Xebia-Intern\STUDENT portal\Xebia-Student-Trainer\src`, the following details the frontend architecture.
+
+---
+
+## 1. Folder Structure
+The `src/` directory is logically partitioned into domain-specific folders:
+- **`api/`**: Contains the centralized HTTP client (`client.js`) interfacing with the backend gateway.
+- **`components/`**: Contains reusable UI elements (`Header.jsx`, `Sidebar.jsx`, `Toast.jsx`) and complex modular views (e.g., `assessment-builder/`).
+- **`context/`**: Contains global state management logic via React Context (`LMSContext.jsx`).
+- **`pages/`**: Contains top-level view components mapping 1:1 with specific application routes (e.g., `Login.jsx`, `TeacherDashboard.jsx`, `TakeQuiz.jsx`).
+- **`utils/`**: Houses utility scripts and external integrations (e.g., `aiService.js`).
+
+---
+
+## 2. Routing
+Routing is implemented in `src/App.jsx` using `react-router-dom` (`BrowserRouter`, `Routes`, `Route`).
+- **Authentication Guard:** If `currentUser` is null, the app exclusively renders the `<Login />` component.
+- **Role-Based Routing:** The `AppContent` wrapper inspects `currentUser.role` to render distinct routing trees:
+  - **Teacher:** Accesses `/trainer-dashboard`, `/batches`, `/assessment-builder`, `/evaluation`, etc.
+  - **Student:** Accesses `/student-dashboard`, `/assessments`, `/take/:slug`, `/results/:slug/:id`, etc.
+- **Dynamic UI:** If the URL path indicates an active test (e.g., `/take/` or `/take-coding/`), standard navigational elements (Sidebar, Header) are hidden to enforce focus.
+
+---
+
+## 3. State Management
+State is centrally managed without external libraries (like Redux) using the React Context API.
+- **Provider:** `<LMSProvider>` defined in `src/context/LMSContext.jsx` wraps the entire application.
+- **Hydration:** On mount, an empty `useEffect` triggers asynchronous data fetching (`getUsers`, `getBatches`, `getAssessments`) via `apiClient` to populate global states.
+- **Persistence:** High-frequency states (e.g., `currentUser`, `theme`, `codingSubmissions`) are aggressively synced to `localStorage` via multiple `useEffect` hooks to survive page reloads.
+
+---
+
+## 4. Services / API Calls
+API calls are abstracted out of component files and centralized into a service object.
+- **`src/api/client.js`**: Exports an `apiClient` object utilizing the native browser `fetch` API.
+  - All requests prefix the URI with `/api/v1` (which the Vite proxy/API Gateway intercepts).
+  - Handles JSON serialization natively before transmission.
+  - Exposes dedicated methods for entity operations (e.g., `createBatch()`, `getSubmissions()`, `saveDraft()`).
+
+---
+
+## 5. Important Components Analysis
+
+### A. App / AppContent (`src/App.jsx`)
+- **Purpose:** The root structural component handling URL-to-Component mapping and responsive layout wrappers (Sidebar/Header injections).
+- **File path:** `src/App.jsx`
+- **Hooks:** `useState` (for Sidebar toggles), `useLocation` (for route tracking), `useLMS` (to consume global state).
+- **State:** `isMobileSidebarOpen`, `isDesktopSidebarCollapsed`, `toasts`.
+- **Rendering behavior:** Conditionally mounts the Sidebar/Header depending on viewport size and the current route (hiding them during assessments). Uses `motion.div` (`framer-motion`) for page transition animations.
+
+### B. LMSContext (`src/context/LMSContext.jsx`)
+- **Purpose:** Acts as the central data store and business logic orchestrator for the entire application.
+- **File path:** `src/context/LMSContext.jsx`
+- **Hooks:** `createContext`, `useContext`, `useState`, `useEffect`.
+- **State:** Extremely heavy state container holding `teachers`, `students`, `batches`, `assessments`, `submissions`, `currentUser`, and localized `notifications`.
+- **API usage:** Heavily utilizes `apiClient`. For example, `createBatch` in the Context calls `apiClient.createBatch`, then locally mutates the `batches` state array to reflect the new data instantly across the app.
+- **Rendering behavior:** Does not render UI; strictly provides state and modifier functions to children via `value={{...}}`.
+
+### C. apiClient (`src/api/client.js`)
+- **Purpose:** Abstracts all backend REST communication into a single interface.
+- **File path:** `src/api/client.js`
+- **API usage:** Implements standard HTTP verbs (`GET`, `POST`, `PUT`, `DELETE`). Also handles complex payload transformations, such as stringifying JSON arrays within submission answers before sending them to the backend in `createSubmission()`.

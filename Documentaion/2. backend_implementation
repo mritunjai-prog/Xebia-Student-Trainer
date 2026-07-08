@@ -1,0 +1,114 @@
+# Backend Implementation Documentation
+
+Based on the analysis of the provided codebase at `C:\Users\HP\Documents\Xebia-Intern\STUDENT portal\Xebia-Student-Trainer`, the following defines the backend implementation details.
+
+---
+
+## 1. Architecture
+The backend uses a **Java Spring Boot** microservices architecture. 
+- **Microservices:** Divided into domain-driven services (`user-service`, `batch-service`, `assessment-service`).
+- **Data Access:** Relies on **Spring Data JPA** (Hibernate) mapping to a PostgreSQL database.
+- **Routing:** Handled via Spring Cloud Gateway (`api-gateway`).
+- **Dependencies & Build:** Managed via Maven wrapper (`mvnw`) utilizing Java 21.
+
+---
+
+## 2. Package Structure
+The standard package layout across all microservices follows a strict layered architecture pattern. Using `com.xebia.{servicename}` as the root:
+- `controller/`: Contains `@RestController` classes exposing HTTP endpoints.
+- `service/`: Contains `@Service` classes holding business logic and acting as intermediaries.
+- `repository/`: Contains Spring Data `JpaRepository` interfaces for database interactions.
+- `model/`: Contains JPA `@Entity` classes representing database tables.
+
+*(Note: `assessment-service` also includes a `config/` directory containing `RedisConfig.java` for caching integrations).*
+
+---
+
+## 3. Controllers
+
+### UserController
+- **File path:** `backend/user-service/src/main/java/com/xebia/userservice/controller/UserController.java`
+- **Dependencies:** `UserService`
+- **Endpoints:**
+  - `GET /api/v1/users` 
+    - *Request:* Optional query param `?role={role}`
+    - *Response:* `List<User>`
+  - `POST /api/v1/users`
+    - *Request:* JSON Body `User`
+    - *Response:* `User` (Created record)
+
+### BatchController
+- **File path:** `backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java`
+- **Dependencies:** `BatchService`
+- **Endpoints:**
+  - `GET /api/v1/batches` → Returns `List<Batch>`
+  - `POST /api/v1/batches` → Accepts JSON `Batch`, Returns `Batch`
+  - `PUT /api/v1/batches/{id}` → Accepts JSON `Batch`, Returns updated `ResponseEntity<Batch>`
+  - `DELETE /api/v1/batches/{id}` → Returns `ResponseEntity<Void>`
+
+### AssessmentController
+- **File path:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/AssessmentController.java`
+- **Dependencies:** `AssessmentService`
+- **Endpoints:** Provides identical standard CRUD mappings mapped to `/api/v1/assessments`.
+
+---
+
+## 4. Services
+
+### UserService
+- **File path:** `backend/user-service/src/main/java/com/xebia/userservice/service/UserService.java`
+- **Dependencies:** `UserRepository`
+- **Business Logic:** Primarily acts as a passthrough to the repository.
+- **Methods:**
+  - `getAllUsers()` → `userRepository.findAll()`
+  - `getUsersByRole(String role)` → `userRepository.findByRole(role)`
+  - `createUser(User user)` → `userRepository.save(user)`
+
+### BatchService
+- **File path:** `backend/batch-service/src/main/java/com/xebia/batchservice/service/BatchService.java`
+- **Dependencies:** `BatchRepository`
+- **Business Logic:** The `updateBatch` method fetches the existing `Batch` via `findById(id)`. If present, it executes conditional null checks (`if (updated.getName() != null)`) to selectively update fields before saving, preserving existing data.
+- **Methods:** `getAllBatches()`, `createBatch()`, `updateBatch()`, `deleteBatch()`.
+
+---
+
+## 5. Repositories / Data Access
+
+### UserRepository
+- **File path:** `backend/user-service/src/main/java/com/xebia/userservice/repository/UserRepository.java`
+- **Relationships:** Extends `JpaRepository<User, String>`
+- **Queries:** Defines custom finder method `List<User> findByRole(String role);`
+
+### BatchRepository
+- **File path:** `backend/batch-service/src/main/java/com/xebia/batchservice/repository/BatchRepository.java`
+- **Relationships:** Extends `JpaRepository<Batch, String>`
+- **Queries:** Inherits all standard Spring Data JPA methods. No custom queries are currently defined.
+
+---
+
+## 6. Entities / Models
+
+### User Entity
+- **File path:** `backend/user-service/src/main/java/com/xebia/userservice/model/User.java`
+- **Configuration:** `@Entity`, `@Table(name = "users")`. Uses Lombok (`@Data`, `@NoArgsConstructor`, `@AllArgsConstructor`).
+- **Fields:**
+  - `id`: `String` (Generated via `GenerationType.UUID`)
+  - `name`: `String`
+  - `email`: `String` (`@Column(unique = true)`)
+  - `role`: `String` ("teacher" or "student")
+  - `department`, `avatar`: `String`
+  - `averageScore`, `assessmentsCompleted`: `Integer`
+
+### Batch Entity
+- **File path:** `backend/batch-service/src/main/java/com/xebia/batchservice/model/Batch.java`
+- **Configuration:** `@Entity`, `@Table(name = "batches")`. Uses Lombok.
+- **Fields:**
+  - `id`: `String` (UUID Generated)
+  - `name`, `course`, `status`, `createdAt`, `icon`: `String`
+  - `studentCount`: `Integer`
+  - `students`: `List<String>` (Annotated with `@ElementCollection` to automatically map to a separate relational table `batch_students`).
+
+> [!WARNING]
+> **Missing Pieces (Limitations):**
+> - Deep review of the `assessment-service` (AI integrations, Drafts, and Submission caching via Redis) has been generalized as they expand into complex secondary flows not fully outlined in this basic core-architecture document.
+> - Authentication implementation (e.g., Spring Security, JWT) appears missing in the raw Controller/Service layer analyzed, suggesting authentication may either be deferred entirely to the API Gateway or handled simplistically by passing roles directly.

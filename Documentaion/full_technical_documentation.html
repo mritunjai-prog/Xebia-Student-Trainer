@@ -1,0 +1,1129 @@
+<!DOCTYPE html><html><head>
+      <title>full_technical_documentation</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///c:\Users\HP\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.30\crossnote\dependencies\katex\katex.min.css">
+      
+      
+      
+      <script type="text/javascript" src="file:///c:\Users\HP\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.30\crossnote\dependencies\mermaid\mermaid.min.js" charset="UTF-8"></script>
+      
+      
+      
+      <style>
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-details{margin:0;padding:0;border:none}.markdown-preview .md-toc summary.md-toc-link-wrapper{cursor:pointer;list-style-position:outside}.markdown-preview .md-toc summary.md-toc-link-wrapper::marker{font-size:.85em}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='0']{margin-left:12px}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='1']{margin-left:28px}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='2']{margin-left:44px}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='3']{margin-left:60px}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='4']{margin-left:76px}.markdown-preview .md-toc .md-toc-link-wrapper[data-level='5']{margin-left:80px}.markdown-preview a.tag,.markdown-preview a.tag:active,.markdown-preview a.tag:link,.markdown-preview a.tag:visited,.markdown-preview span.tag:not(.token){display:inline-block;background-color:var(--vscode-badge-background,rgba(127,127,127,.18));color:var(--vscode-badge-foreground,currentColor);border-radius:2em;font-size:.85em;font-weight:500;padding:.05em .55em;line-height:1.5;white-space:nowrap;text-decoration:none;text-shadow:none;box-shadow:none;transition:background-color .12s ease,opacity .12s ease}.markdown-preview a.tag{cursor:pointer}.markdown-preview a.tag:focus,.markdown-preview a.tag:hover{background-color:var(--vscode-badge-background,rgba(127,127,127,.32));color:var(--vscode-badge-foreground,currentColor);opacity:.85;text-decoration:none;outline:0}.markdown-preview .wikilink-embed-content{border-left:3px solid var(--vscode-textBlockQuote-border,rgba(128,128,128,.3));background:var(--vscode-textBlockQuote-background,rgba(128,128,128,.05));margin:.5em 0;padding:.5em .75em;border-radius:0 3px 3px 0}.markdown-preview .wikilink-embed-content.wikilink-embed-error{border-left-color:var(--vscode-errorForeground,#cf222e);color:var(--vscode-errorForeground,#cf222e);font-style:italic;opacity:.8}.markdown-preview .wikilink-embed-content h1:first-child,.markdown-preview .wikilink-embed-content h2:first-child,.markdown-preview .wikilink-embed-content h3:first-child,.markdown-preview .wikilink-embed-content h4:first-child,.markdown-preview .wikilink-embed-content h5:first-child,.markdown-preview .wikilink-embed-content h6:first-child{margin-top:.25em}.markdown-preview .wikilink-embed-content .wikilink-embed-content{margin:.25em 0;padding:.25em .5em}.markdown-preview .block-id{display:none}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:var(--vscode-scrollbarSlider-background,rgba(150,150,150,.66));border:4px solid var(--vscode-scrollbarSlider-background,rgba(150,150,150,.66));background-clip:content-box}.scrollbar-style::-webkit-scrollbar-thumb:hover{background-color:var(--vscode-scrollbarSlider-hoverBackground,rgba(120,120,120,.66))}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:var(--vscode-scrollbarSlider-background,rgba(150,150,150,.66));border:4px solid var(--vscode-scrollbarSlider-background,rgba(150,150,150,.66));background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb:hover{background-color:var(--vscode-scrollbarSlider-hoverBackground,rgba(120,120,120,.66))}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-details{margin:0;padding:0;border:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='0']{padding-left:0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='1']{padding-left:16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='2']{padding-left:32px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='3']{padding-left:48px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='4']{padding-left:64px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper[data-level='5']{padding-left:80px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}@font-face{font-family:"Material Icons";font-style:normal;font-weight:400;src:local("Material Icons"),local("MaterialIcons-Regular"),url("data:application/x-font-woff;charset=utf-8;base64,d09GRgABAAAAAAfIAAsAAAAADDAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABHU1VCAAABCAAAADMAAABCsP6z7U9TLzIAAAE8AAAARAAAAFZW7kosY21hcAAAAYAAAADTAAACjtP6ytBnbHlmAAACVAAAAxgAAAQ4zRtvlGhlYWQAAAVsAAAALwAAADYRwZsnaGhlYQAABZwAAAAcAAAAJAeKAzxobXR4AAAFuAAAABIAAAA8OGQAAGxvY2EAAAXMAAAAIAAAACAG5AfwbWF4cAAABewAAAAfAAAAIAEfAERuYW1lAAAGDAAAAVcAAAKFkAhoC3Bvc3QAAAdkAAAAYgAAAK2vz7wkeJxjYGRgYOBikGPQYWB0cfMJYeBgYGGAAJAMY05meiJQDMoDyrGAaQ4gZoOIAgCKIwNPAHicY2BkPsQ4gYGVgYOpk+kMAwNDP4RmfM1gxMjBwMDEwMrMgBUEpLmmMDgwVLy4xKzzX4chhrmK4QpQmBEkBwAZygyweJzFkr0NwjAQhZ+TEP6CRUfHBEwRUWaQTICyQbpMwRCskA5RUIONxG0RnnNpKAIV4qzPku/8c353ACYAYrIjCWCuMAh2ptf0/hiL3p/gyPUWa3osqlt0L1zu9r71z8dGrJRykFoauXQd932Lj5vhG+MjxGeYI8MKETObMpslf5EyP8tg+vHun5r539PvlvXzaVhRFVQDTPEWKVQR90KhnnC5Ek67vUKN4VuFasM/ldARj43CCkCsEjpJSoVVgRyU0GVSK6wUpFFCx8lFgX0BiXpRPQB4nE2TTWjcRhTH3xttpDhxN7uxPlp3u/FK7moRPixafRijNosxSw/LUsIwNcaEHPZggo/FmEKMCKWU4kNOOftQSlhE8alnH0Ix9BqWnHooPRrTQ0+mnu2bXTu2pPdGM9LM/6c3fwECTM4gBBMYQNqxzLrZAjqYSlqu2TAHZQA0/DQJH6FtzqGDnvbt4Ggwvzw/nL8EfH8kW0fsuRqhgWXZnY7M1picaUL7Du5BHeDzMIl83dAt016wH1qmvtSMo5R6YRJHTR//FXsff/nj/tc/5K9P5d+nP22+fFK5u7v3K39SW3y+OtDKO3L85vD09PD9z5X17a2N1g4tqk01RlqX7gyoEmnsWQtVr4rtZMmukEaFBZxzefkCn11cyKMLZgshRwgTYNoLNXCBz2ja7HvZG7hDpPSNfoo5vs0knK/9hb+rNpu+8kHPgk/Ao4kK3tWtTpSEtvkA9c+wE6UaUdwieNkaHg55tBEtRiEPw1s0+FtrtTcc9two2lhMknV7PZF/cs6+uUFTmpTGbEx7sQCPSLOttHS3GRltqp7SNzVSKzl6aWnZT/CX5k6/v9N3Hh8fHBwffJVjhrC6OgH5dkIt/tPsq+d/PD5Qz7G7efzq1THFjdZVPe/N6ulQ3JnDWSE5junsFsVIiFwL/htf1S5gJ3BfOcUxfHKLnzqpFpyfZ9cX+/5WB6a+Y0pHpzkNrYNVDwMsikK+y7WuLCRg/oFHkA8VT3rDg5ZnU6ktzzINymV0m74Xd5pfIGXyFeVEQSShkzqG7TBBa2OxVRKitLXv7h3uuftXnXq7lz2tZ/WnWa9dx9dCjDhHzmuVQATlmljr9dZErUydSo2Hbi/b1vXtrOeGCk2/8s3ZlO8+ueJT8BVlw5pGw2oYccdSiHHqx0RlabHqdNR9jAETl6PreJcPBnnfpTLnOQ8C3OV8AmQGzouV1iZdeb5SSIoVc8W8/kcDtksUH5FrU6/aqBqNWcMEzxG4DAQ14qRQhi9mWU0rzepKezbjfgCwQKxVYq5ajRgpRqy45CqwkJydcEkbTkvRz8P5/2ZpDTN4nGNgZGBgAOKb6v+/xvPbfGXgZmEAgeuB2kkI+v8bFgbmKiCXg4EJJAoAPyAKhQB4nGNgZGBg1vmvwxDDwgACQJKRARXwAwAzZQHQeJxjYQCCFAYGFgbSMQAcWACdAAAAAAAAAAwALgBgAIQAmADSAQgBIgE8AVABoAHeAfwCHHicY2BkYGDgZ7BgYGMAASYg5gJCBob/YD4DAA/hAWQAeJxlkbtuwkAURMc88gApQomUJoq0TdIQzEOpUDokKCNR0BuzBiO/tF6QSJcPyHflE9Klyyekz2CuG8cr7547M3d9JQO4xjccnJ57vid2cMHqxDWc40G4Tv1JuEF+Fm6ijRfhM+oz4Ra6eBVu4wZvvMFpXLIa40PYQQefwjVc4Uu4Tv1HuEH+FW7i1mkKn6Hj3Am3sHC6wm08Ou8tpSZGe1av1PKggjSxPd8zJtSGTuinyVGa6/Uu8kxZludCmzxMEzV0B6U004k25W35fj2yNlCBSWM1paujKFWZSbfat+7G2mzc7weiu34aczzFNYGBhgfLfcV6iQP3ACkSaj349AxXSN9IT0j16JepOb01doiKbNWt1ovippz6sVYYwsXgX2rGVFIkq7Pl2PNrI6qW6eOshj0xaSq9mpNEZIWs8LZUfOouNkVXxp/d5woqebeYIf4D2J1ywQB4nG3LOw6AIBAE0B384B+PAkgEa+QwNnYmHt+EpXSal5lkSBBnoP8oCFSo0aCFRIceA0ZMmLFAYSW88rmvtMUjG3RiQ9HvpfusM6zWNmtc5H/iPewha50tOt5PS/QBx2IeSwAA") format("woff")}.callout{--callout-color:68,138,255;position:relative;overflow:hidden;border-radius:4px;margin:1rem 0;padding:.75rem 1rem;background:rgba(var(--callout-color),.1)}.callout>.callout-title{margin:0 -1.2rem;padding:0 1.2rem 0 3.3rem;font-weight:700;color:rgb(var(--callout-color))}.callout .callout-title::before{position:absolute;left:1.2rem;font-size:1.2rem;font-family:Material Icons;font-style:normal;font-variant:normal;font-weight:400;text-transform:none;white-space:nowrap;word-wrap:normal;direction:ltr;color:rgba(var(--callout-color),.8);content:var(--callout-icon, "i")}.callout>p{margin-block-start:1rem;margin-block-end:1rem;padding-left:.4rem}.callout details.callout-title,.callout summary.callout-title{cursor:pointer;list-style:none}.callout summary.callout-title::-webkit-details-marker{display:none}details.callout>summary.callout-title::after{display:inline-block;width:.45em;height:.45em;margin-left:1em;border-right:2px solid rgb(var(--callout-color));border-bottom:2px solid rgb(var(--callout-color));transform:translateY(-.05em) rotate(-45deg);transition:transform 160ms ease,opacity 160ms ease;opacity:.9;content:""}details.callout[open]>summary.callout-title::after{transform:translateY(-.05em) rotate(45deg);opacity:1}.callout[data-callout=abstract],.callout[data-callout=summary],.callout[data-callout=tldr]{--callout-color:0,191,188;--callout-icon:"\E8D2"}.callout[data-callout=note]{--callout-color:8,109,221;--callout-icon:"\E3C9"}.callout[data-callout=info]{--callout-color:8,109,221;--callout-icon:"\E88E"}.callout[data-callout=todo]{--callout-color:8,109,221;--callout-icon:"\E88E"}.callout[data-callout=hint],.callout[data-callout=important],.callout[data-callout=tip]{--callout-color:0,191,188;--callout-icon:"\E80E"}.callout[data-callout=check],.callout[data-callout=done],.callout[data-callout=success]{--callout-color:8,185,78;--callout-icon:"\E876"}.callout[data-callout=faq],.callout[data-callout=help],.callout[data-callout=question]{--callout-color:236,117,0;--callout-icon:"\E887"}.callout[data-callout=attention],.callout[data-callout=caution],.callout[data-callout=warning]{--callout-color:236,117,0;--callout-icon:"\E002"}.callout[data-callout=fail],.callout[data-callout=failure],.callout[data-callout=missing]{--callout-color:233,49,71;--callout-icon:"\E14C"}.callout[data-callout=danger],.callout[data-callout=error]{--callout-color:233,49,71;--callout-icon:"\E3E7"}.callout[data-callout=bug]{--callout-color:233,49,71;--callout-icon:"\E868"}.callout[data-callout=example]{--callout-color:120,82,238;--callout-icon:"\E242"}.callout[data-callout=cite],.callout[data-callout=quote]{--callout-color:158,158,158;--callout-icon:"\E244"}.callout .callout{margin:.75rem 0}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+      <!-- The content below will be included at the end of the <head> element. -->
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script>
+    </head>
+    <body for="html-export">
+      <div class="crossnote markdown-preview  ">
+      
+<h1 id="system-technical-documentation">System Technical Documentation </h1>
+<h2 id="table-of-contents">Table of Contents </h2>
+<ol>
+<li><a href="#project-overview--architecture">Project Overview &amp; Architecture</a></li>
+<li><a href="#backend-implementation">Backend Implementation</a></li>
+<li><a href="#frontend-implementation">Frontend Implementation</a></li>
+<li><a href="#api-specifications">API Specifications</a></li>
+<li><a href="#feature-documentation">Feature Documentation</a></li>
+<li><a href="#database-structure">Database Structure</a></li>
+<li><a href="#execution-flows">Execution Flows</a></li>
+<li><a href="#configuration--deployment">Configuration &amp; Deployment</a></li>
+</ol>
+<hr>
+<p><a id="project-overview--architecture"></a></p>
+<h2 id="1-project-overview-structure--architecture">1. Project Overview, Structure &amp; Architecture </h2>
+<h2 id="1-project-overview">1. Project Overview </h2>
+<h3 id="purpose">Purpose </h3>
+<p>An AI-powered assessment platform designed for Students and Trainers to facilitate the creation, management, and submission of educational assessments, while managing users and student batches.</p>
+<h3 id="technologies-used">Technologies Used </h3>
+<ul>
+<li><strong>Java 21:</strong> Primary language for backend microservices.</li>
+<li><strong>JavaScript (JSX):</strong> Primary language for the frontend.</li>
+<li><strong>PostgreSQL:</strong> Relational database for persistent data storage.</li>
+<li><strong>Redis:</strong> In-memory data store for caching/session management.</li>
+<li><strong>Groq AI:</strong> Integrated for AI-assisted features.</li>
+</ul>
+<h3 id="frameworks">Frameworks </h3>
+<ul>
+<li><strong>Frontend:</strong> React 18, React Router DOM, Tailwind CSS (for styling).</li>
+<li><strong>Backend:</strong> Spring Boot (v4.1.0) and Spring Cloud (v2025.1.2) for a microservices architecture.</li>
+</ul>
+<h3 id="build-tools">Build Tools </h3>
+<ul>
+<li><strong>Frontend:</strong> Vite (configured via <code>vite.config.js</code>) and NPM (<code>package.json</code>).</li>
+<li><strong>Backend:</strong> Maven wrapper (<code>mvnw</code>) across all microservices.</li>
+</ul>
+<hr>
+<h2 id="2-project-structure">2. Project Structure </h2>
+<h3 id="full-folder-tree-core-architecture">Full Folder Tree (Core Architecture) </h3>
+<pre data-role="codeBlock" data-info="text" class="language-text text"><code>C:\Users\HP\Documents\Xebia-Intern\STUDENT portal\Xebia-Student-Trainer
+├── backend/
+│   ├── api-gateway/
+│   ├── assessment-service/
+│   ├── batch-service/
+│   └── user-service/
+├── public/
+└── src/
+    ├── api/
+    ├── components/
+    ├── context/
+    ├── pages/
+    └── utils/
+</code></pre><h3 id="explanation-of-each-folder--responsibilities">Explanation of Each Folder &amp; Responsibilities </h3>
+<ul>
+<li>
+<p><strong><code>backend/</code></strong><br>
+Houses the Java Spring Boot microservices that drive application logic and database interaction.</p>
+<ul>
+<li><strong><code>api-gateway/</code></strong>: Uses <code>spring-cloud-starter-gateway-server-webmvc</code> to act as the single entry point, routing requests to the appropriate microservice.</li>
+<li><strong><code>user-service/</code></strong>: Responsible for user management (Trainers and Students), authentication, and profiles.</li>
+<li><strong><code>batch-service/</code></strong>: Manages cohorts/batches of students and their enrollment.</li>
+<li><strong><code>assessment-service/</code></strong>: Handles core assessment logic, including tests, questions, options, and student submissions.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>src/</code></strong><br>
+Contains the entire React frontend source code.</p>
+<ul>
+<li><strong><code>api/</code></strong>: Utility functions/wrappers for making HTTP requests to the API Gateway.</li>
+<li><strong><code>components/</code></strong>: Reusable React UI components (e.g., buttons, cards, modals).</li>
+<li><strong><code>context/</code></strong>: React Context providers for managing global application state.</li>
+<li><strong><code>pages/</code></strong>: Top-level route components mapped to URLs via React Router.</li>
+<li><strong><code>utils/</code></strong>: Helper functions and common logic.</li>
+</ul>
+</li>
+<li>
+<p><strong><code>public/</code></strong><br>
+Contains static assets like raw HTML (<code>index.html</code>) served directly to the browser.</p>
+</li>
+</ul>
+<hr>
+<h2 id="3-identify">3. Identify </h2>
+<ul>
+<li><strong>Frontend:</strong> A Single Page Application (SPA) located at <code>src/</code>, initialized through <code>index.html</code> and bundled using Vite.</li>
+<li><strong>Backend:</strong> A distributed microservices architecture located at <code>backend/</code>, orchestrated via the <code>start_backend.ps1</code> script.</li>
+<li><strong>Database Usage:</strong>
+<ul>
+<li><strong>PostgreSQL</strong> is utilized heavily across the backend. Connections are established using the <code>org.postgresql:postgresql</code> JDBC driver, configured inside the <code>src/main/resources/application.yml</code> file of each microservice. Schema definitions are generated via Hibernate JPA (<code>ddl-auto: update</code>).</li>
+<li><strong>Redis</strong> is referenced in the backend infrastructure for caching/rate-limiting.</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="4-system--component-architecture">4. System &amp; Component Architecture </h2>
+<h3 id="system-architecture">System Architecture </h3>
+<p>The system is a distributed web application consisting of a React-based SPA communicating with a Java Spring Boot microservices backend through an API Gateway. Data persistence is handled by a single PostgreSQL database.</p>
+<h3 id="component-architecture">Component Architecture </h3>
+<ul>
+<li><strong>Frontend Components:</strong> Pages map to routes, Context manages global state, and the API Client acts as a centralized request dispatcher.</li>
+<li><strong>Backend Microservices:</strong> The API Gateway proxies <code>/api/v1/*</code> requests. The <code>user-service</code>, <code>batch-service</code>, and <code>assessment-service</code> independently process domain-specific logic.</li>
+</ul>
+<h3 id="module-interactions">Module Interactions </h3>
+<ul>
+<li>The <strong>Frontend</strong> only interacts with the <strong>API Gateway</strong> (port 8080).</li>
+<li>The <strong>API Gateway</strong> inspects the URL path to determine module interaction:
+<ul>
+<li><code>/api/v1/users/**</code> -&gt; <strong>User Service</strong> (8081).</li>
+<li><code>/api/v1/batches/**</code> -&gt; <strong>Batch Service</strong> (8082).</li>
+<li><code>/api/v1/assessments/**</code> &amp; <code>/api/v1/questions/**</code> -&gt; <strong>Assessment Service</strong> (8083).</li>
+</ul>
+</li>
+<li>Microservices appear isolated, interacting solely with their respective PostgreSQL tables generated by Hibernate.</li>
+</ul>
+<hr>
+<h2 id="5-data-flow-diagrams">5. Data Flow Diagrams </h2>
+<h3 id="a-high-level-data-flow-request-lifecycle">A. High-Level Data Flow: Request Lifecycle </h3>
+<div class="mermaid">graph TD
+    classDef pathBox fill:#F6DFCD,stroke:#E2C2B3,stroke-width:1px,color:#000
+    classDef logicalBox fill:#CDE3CC,stroke:#AECBAA,stroke-width:1px,color:#000
+    classDef logicalHex fill:#CDE3CC,stroke:#AECBAA,stroke-width:1px,color:#000
+    
+    A([BROWSER INITIATES ACTION]) -.-&gt; A_Path[src/pages/Login.jsx]
+    
+    A -.-&gt; B{{FRONTEND HTTP CLIENT}}
+    B -.-&gt; B_Path[src/api/client.js]
+    
+    B -- "HTTP Request (e.g., /api/v1/users)" --&gt; C{{API GATEWAY ROUTING}}
+    C -.-&gt; C_Path[backend/api-gateway/src/main/resources/application.yml]
+    
+    C -- "Proxies Request to internal port" --&gt; D{{SPRING BOOT CONTROLLER}}
+    D -.-&gt; D_Path[backend/user-service/src/main/java/com/xebia/userservice/controller/UserController.java]
+    
+    D -- "Hibernate JPA Execution" --&gt; E([POSTGRESQL DATABASE])
+    
+    class A_Path,B_Path,C_Path,D_Path pathBox
+    class A,E logicalBox
+    class B,C,D logicalHex
+</div><h3 id="b-component-diagram-api-gateway-routing-rules">B. Component Diagram: API Gateway Routing Rules </h3>
+<div class="mermaid">graph TD
+    classDef pathBox fill:#F6DFCD,stroke:#E2C2B3,stroke-width:1px,color:#000
+    classDef logicalBox fill:#CDE3CC,stroke:#AECBAA,stroke-width:1px,color:#000
+
+    GATEWAY([API GATEWAY PORT 8080]) -.-&gt; G_Path[backend/api-gateway/src/main/resources/application.yml]
+    
+    GATEWAY -- "Path: /api/v1/users" --&gt; USERS([USER SERVICE PORT 8081])
+    USERS -.-&gt; U_Path[backend/user-service/]
+    
+    GATEWAY -- "Path: /api/v1/batches" --&gt; BATCHES([BATCH SERVICE PORT 8082])
+    BATCHES -.-&gt; B_Path[backend/batch-service/]
+    
+    GATEWAY -- "Path: /api/v1/assessments" --&gt; ASSESSMENTS([ASSESSMENT SERVICE PORT 8083])
+    ASSESSMENTS -.-&gt; A_Path[backend/assessment-service/]
+    
+    class G_Path,U_Path,B_Path,A_Path pathBox
+    class GATEWAY,USERS,BATCHES,ASSESSMENTS logicalBox
+</div><div class="callout" data-callout="note">
+<div class="callout-title">Note</div>
+<p><strong>Architectural Limitations:</strong></p>
+<ul>
+<li>While Redis is referenced in startup scripts, its direct programmatic usage (e.g., Spring Cache) cannot be explicitly mapped without deep-diving into individual Java classes.</li>
+<li>No REST Client or Feign Client configurations for inter-service communication were explicitly identified in the analyzed infrastructure layers.</li>
+</ul>
+</div>
+<hr>
+<p><a id="backend-implementation"></a></p>
+<h2 id="2-backend-implementation">2. Backend Implementation </h2>
+<h3 id="architecture">Architecture </h3>
+<p>The backend uses a <strong>Java Spring Boot</strong> microservices architecture.</p>
+<ul>
+<li><strong>Microservices:</strong> Divided into domain-driven services (<code>user-service</code>, <code>batch-service</code>, <code>assessment-service</code>).</li>
+<li><strong>Data Access:</strong> Relies on <strong>Spring Data JPA</strong> (Hibernate) mapping to a PostgreSQL database.</li>
+<li><strong>Routing:</strong> Handled via Spring Cloud Gateway (<code>api-gateway</code>).</li>
+<li><strong>Dependencies &amp; Build:</strong> Managed via Maven wrapper (<code>mvnw</code>) utilizing Java 21.</li>
+</ul>
+<hr>
+<h3 id="package-structure">Package Structure </h3>
+<p>The standard package layout across all microservices follows a strict layered architecture pattern. Using <code>com.xebia.{servicename}</code> as the root:</p>
+<ul>
+<li><code>controller/</code>: Contains <code>@RestController</code> classes exposing HTTP endpoints.</li>
+<li><code>service/</code>: Contains <code>@Service</code> classes holding business logic and acting as intermediaries.</li>
+<li><code>repository/</code>: Contains Spring Data <code>JpaRepository</code> interfaces for database interactions.</li>
+<li><code>model/</code>: Contains JPA <code>@Entity</code> classes representing database tables.</li>
+</ul>
+<p><em>(Note: <code>assessment-service</code> also includes a <code>config/</code> directory containing <code>RedisConfig.java</code> for caching integrations).</em></p>
+<hr>
+<h3 id="controllers">Controllers </h3>
+<h3 id="usercontroller">UserController </h3>
+<ul>
+<li><strong>File path:</strong> <code>backend/user-service/src/main/java/com/xebia/userservice/controller/UserController.java</code></li>
+<li><strong>Dependencies:</strong> <code>UserService</code></li>
+<li><strong>Endpoints:</strong>
+<ul>
+<li><code>GET /api/v1/users</code>
+<ul>
+<li><em>Request:</em> Optional query param <code>?role={role}</code></li>
+<li><em>Response:</em> <code>List&lt;User&gt;</code></li>
+</ul>
+</li>
+<li><code>POST /api/v1/users</code>
+<ul>
+<li><em>Request:</em> JSON Body <code>User</code></li>
+<li><em>Response:</em> <code>User</code> (Created record)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="batchcontroller">BatchController </h3>
+<ul>
+<li><strong>File path:</strong> <code>backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java</code></li>
+<li><strong>Dependencies:</strong> <code>BatchService</code></li>
+<li><strong>Endpoints:</strong>
+<ul>
+<li><code>GET /api/v1/batches</code> → Returns <code>List&lt;Batch&gt;</code></li>
+<li><code>POST /api/v1/batches</code> → Accepts JSON <code>Batch</code>, Returns <code>Batch</code></li>
+<li><code>PUT /api/v1/batches/{id}</code> → Accepts JSON <code>Batch</code>, Returns updated <code>ResponseEntity&lt;Batch&gt;</code></li>
+<li><code>DELETE /api/v1/batches/{id}</code> → Returns <code>ResponseEntity&lt;Void&gt;</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="assessmentcontroller">AssessmentController </h3>
+<ul>
+<li><strong>File path:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/AssessmentController.java</code></li>
+<li><strong>Dependencies:</strong> <code>AssessmentService</code></li>
+<li><strong>Endpoints:</strong> Provides identical standard CRUD mappings mapped to <code>/api/v1/assessments</code>.</li>
+</ul>
+<hr>
+<h3 id="services">Services </h3>
+<h3 id="userservice">UserService </h3>
+<ul>
+<li><strong>File path:</strong> <code>backend/user-service/src/main/java/com/xebia/userservice/service/UserService.java</code></li>
+<li><strong>Dependencies:</strong> <code>UserRepository</code></li>
+<li><strong>Business Logic:</strong> Primarily acts as a passthrough to the repository.</li>
+<li><strong>Methods:</strong>
+<ul>
+<li><code>getAllUsers()</code> → <code>userRepository.findAll()</code></li>
+<li><code>getUsersByRole(String role)</code> → <code>userRepository.findByRole(role)</code></li>
+<li><code>createUser(User user)</code> → <code>userRepository.save(user)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="batchservice">BatchService </h3>
+<ul>
+<li><strong>File path:</strong> <code>backend/batch-service/src/main/java/com/xebia/batchservice/service/BatchService.java</code></li>
+<li><strong>Dependencies:</strong> <code>BatchRepository</code></li>
+<li><strong>Business Logic:</strong> The <code>updateBatch</code> method fetches the existing <code>Batch</code> via <code>findById(id)</code>. If present, it executes conditional null checks (<code>if (updated.getName() != null)</code>) to selectively update fields before saving, preserving existing data.</li>
+<li><strong>Methods:</strong> <code>getAllBatches()</code>, <code>createBatch()</code>, <code>updateBatch()</code>, <code>deleteBatch()</code>.</li>
+</ul>
+<hr>
+<h3 id="repositories--data-access">Repositories / Data Access </h3>
+<h3 id="userrepository">UserRepository </h3>
+<ul>
+<li><strong>File path:</strong> <code>backend/user-service/src/main/java/com/xebia/userservice/repository/UserRepository.java</code></li>
+<li><strong>Relationships:</strong> Extends <code>JpaRepository&lt;User, String&gt;</code></li>
+<li><strong>Queries:</strong> Defines custom finder method <code>List&lt;User&gt; findByRole(String role);</code></li>
+</ul>
+<h3 id="batchrepository">BatchRepository </h3>
+<ul>
+<li><strong>File path:</strong> <code>backend/batch-service/src/main/java/com/xebia/batchservice/repository/BatchRepository.java</code></li>
+<li><strong>Relationships:</strong> Extends <code>JpaRepository&lt;Batch, String&gt;</code></li>
+<li><strong>Queries:</strong> Inherits all standard Spring Data JPA methods. No custom queries are currently defined.</li>
+</ul>
+<hr>
+<h3 id="entities--models">Entities / Models </h3>
+<h3 id="user-entity">User Entity </h3>
+<ul>
+<li><strong>File path:</strong> <code>backend/user-service/src/main/java/com/xebia/userservice/model/User.java</code></li>
+<li><strong>Configuration:</strong> <code>@Entity</code>, <code>@Table(name = "users")</code>. Uses Lombok (<code>@Data</code>, <code>@NoArgsConstructor</code>, <code>@AllArgsConstructor</code>).</li>
+<li><strong>Fields:</strong>
+<ul>
+<li><code>id</code>: <code>String</code> (Generated via <code>GenerationType.UUID</code>)</li>
+<li><code>name</code>: <code>String</code></li>
+<li><code>email</code>: <code>String</code> (<code>@Column(unique = true)</code>)</li>
+<li><code>role</code>: <code>String</code> ("teacher" or "student")</li>
+<li><code>department</code>, <code>avatar</code>: <code>String</code></li>
+<li><code>averageScore</code>, <code>assessmentsCompleted</code>: <code>Integer</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="batch-entity">Batch Entity </h3>
+<ul>
+<li><strong>File path:</strong> <code>backend/batch-service/src/main/java/com/xebia/batchservice/model/Batch.java</code></li>
+<li><strong>Configuration:</strong> <code>@Entity</code>, <code>@Table(name = "batches")</code>. Uses Lombok.</li>
+<li><strong>Fields:</strong>
+<ul>
+<li><code>id</code>: <code>String</code> (UUID Generated)</li>
+<li><code>name</code>, <code>course</code>, <code>status</code>, <code>createdAt</code>, <code>icon</code>: <code>String</code></li>
+<li><code>studentCount</code>: <code>Integer</code></li>
+<li><code>students</code>: <code>List&lt;String&gt;</code> (Annotated with <code>@ElementCollection</code> to automatically map to a separate relational table <code>batch_students</code>).</li>
+</ul>
+</li>
+</ul>
+<div class="callout" data-callout="warning">
+<div class="callout-title">Warning</div>
+<p><strong>Missing Pieces (Limitations):</strong></p>
+<ul>
+<li>Deep review of the <code>assessment-service</code> (AI integrations, Drafts, and Submission caching via Redis) has been generalized as they expand into complex secondary flows not fully outlined in this basic core-architecture document.</li>
+<li>Authentication implementation (e.g., Spring Security, JWT) appears missing in the raw Controller/Service layer analyzed, suggesting authentication may either be deferred entirely to the API Gateway or handled simplistically by passing roles directly.</li>
+</ul>
+</div>
+<hr>
+<p><a id="frontend-implementation"></a></p>
+<h2 id="3-frontend-implementation">3. Frontend Implementation </h2>
+<h3 id="folder-structure">Folder Structure </h3>
+<p>The <code>src/</code> directory is logically partitioned into domain-specific folders:</p>
+<ul>
+<li><strong><code>api/</code></strong>: Contains the centralized HTTP client (<code>client.js</code>) interfacing with the backend gateway.</li>
+<li><strong><code>components/</code></strong>: Contains reusable UI elements (<code>Header.jsx</code>, <code>Sidebar.jsx</code>, <code>Toast.jsx</code>) and complex modular views (e.g., <code>assessment-builder/</code>).</li>
+<li><strong><code>context/</code></strong>: Contains global state management logic via React Context (<code>LMSContext.jsx</code>).</li>
+<li><strong><code>pages/</code></strong>: Contains top-level view components mapping 1:1 with specific application routes (e.g., <code>Login.jsx</code>, <code>TeacherDashboard.jsx</code>, <code>TakeQuiz.jsx</code>).</li>
+<li><strong><code>utils/</code></strong>: Houses utility scripts and external integrations (e.g., <code>aiService.js</code>).</li>
+</ul>
+<hr>
+<h3 id="routing">Routing </h3>
+<p>Routing is implemented in <code>src/App.jsx</code> using <code>react-router-dom</code> (<code>BrowserRouter</code>, <code>Routes</code>, <code>Route</code>).</p>
+<ul>
+<li><strong>Authentication Guard:</strong> If <code>currentUser</code> is null, the app exclusively renders the <code>&lt;Login /&gt;</code> component.</li>
+<li><strong>Role-Based Routing:</strong> The <code>AppContent</code> wrapper inspects <code>currentUser.role</code> to render distinct routing trees:
+<ul>
+<li><strong>Teacher:</strong> Accesses <code>/trainer-dashboard</code>, <code>/batches</code>, <code>/assessment-builder</code>, <code>/evaluation</code>, etc.</li>
+<li><strong>Student:</strong> Accesses <code>/student-dashboard</code>, <code>/assessments</code>, <code>/take/:slug</code>, <code>/results/:slug/:id</code>, etc.</li>
+</ul>
+</li>
+<li><strong>Dynamic UI:</strong> If the URL path indicates an active test (e.g., <code>/take/</code> or <code>/take-coding/</code>), standard navigational elements (Sidebar, Header) are hidden to enforce focus.</li>
+</ul>
+<hr>
+<h3 id="state-management">State Management </h3>
+<p>State is centrally managed without external libraries (like Redux) using the React Context API.</p>
+<ul>
+<li><strong>Provider:</strong> <code>&lt;LMSProvider&gt;</code> defined in <code>src/context/LMSContext.jsx</code> wraps the entire application.</li>
+<li><strong>Hydration:</strong> On mount, an empty <code>useEffect</code> triggers asynchronous data fetching (<code>getUsers</code>, <code>getBatches</code>, <code>getAssessments</code>) via <code>apiClient</code> to populate global states.</li>
+<li><strong>Persistence:</strong> High-frequency states (e.g., <code>currentUser</code>, <code>theme</code>, <code>codingSubmissions</code>) are aggressively synced to <code>localStorage</code> via multiple <code>useEffect</code> hooks to survive page reloads.</li>
+</ul>
+<hr>
+<h3 id="services--api-calls">Services / API Calls </h3>
+<p>API calls are abstracted out of component files and centralized into a service object.</p>
+<ul>
+<li><strong><code>src/api/client.js</code></strong>: Exports an <code>apiClient</code> object utilizing the native browser <code>fetch</code> API.
+<ul>
+<li>All requests prefix the URI with <code>/api/v1</code> (which the Vite proxy/API Gateway intercepts).</li>
+<li>Handles JSON serialization natively before transmission.</li>
+<li>Exposes dedicated methods for entity operations (e.g., <code>createBatch()</code>, <code>getSubmissions()</code>, <code>saveDraft()</code>).</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="important-components-analysis">Important Components Analysis </h3>
+<h3 id="a-app--appcontent-srcappjsx">A. App / AppContent (<code>src/App.jsx</code>) </h3>
+<ul>
+<li><strong>Purpose:</strong> The root structural component handling URL-to-Component mapping and responsive layout wrappers (Sidebar/Header injections).</li>
+<li><strong>File path:</strong> <code>src/App.jsx</code></li>
+<li><strong>Hooks:</strong> <code>useState</code> (for Sidebar toggles), <code>useLocation</code> (for route tracking), <code>useLMS</code> (to consume global state).</li>
+<li><strong>State:</strong> <code>isMobileSidebarOpen</code>, <code>isDesktopSidebarCollapsed</code>, <code>toasts</code>.</li>
+<li><strong>Rendering behavior:</strong> Conditionally mounts the Sidebar/Header depending on viewport size and the current route (hiding them during assessments). Uses <code>motion.div</code> (<code>framer-motion</code>) for page transition animations.</li>
+</ul>
+<h3 id="b-lmscontext-srccontextlmscontextjsx">B. LMSContext (<code>src/context/LMSContext.jsx</code>) </h3>
+<ul>
+<li><strong>Purpose:</strong> Acts as the central data store and business logic orchestrator for the entire application.</li>
+<li><strong>File path:</strong> <code>src/context/LMSContext.jsx</code></li>
+<li><strong>Hooks:</strong> <code>createContext</code>, <code>useContext</code>, <code>useState</code>, <code>useEffect</code>.</li>
+<li><strong>State:</strong> Extremely heavy state container holding <code>teachers</code>, <code>students</code>, <code>batches</code>, <code>assessments</code>, <code>submissions</code>, <code>currentUser</code>, and localized <code>notifications</code>.</li>
+<li><strong>API usage:</strong> Heavily utilizes <code>apiClient</code>. For example, <code>createBatch</code> in the Context calls <code>apiClient.createBatch</code>, then locally mutates the <code>batches</code> state array to reflect the new data instantly across the app.</li>
+<li><strong>Rendering behavior:</strong> Does not render UI; strictly provides state and modifier functions to children via <code>value={{...}}</code>.</li>
+</ul>
+<h3 id="c-apiclient-srcapiclientjs">C. apiClient (<code>src/api/client.js</code>) </h3>
+<ul>
+<li><strong>Purpose:</strong> Abstracts all backend REST communication into a single interface.</li>
+<li><strong>File path:</strong> <code>src/api/client.js</code></li>
+<li><strong>API usage:</strong> Implements standard HTTP verbs (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>). Also handles complex payload transformations, such as stringifying JSON arrays within submission answers before sending them to the backend in <code>createSubmission()</code>.</li>
+</ul>
+<hr>
+<p><a id="api-specifications"></a></p>
+<h2 id="4-api-specifications">4. API Specifications </h2>
+<h3 id="user-service-apis">User Service APIs </h3>
+<h4 id="1-retrieve-users">1. Retrieve Users </h4>
+<ul>
+<li><strong>Method:</strong> <code>GET</code></li>
+<li><strong>URL:</strong> <code>/api/v1/users</code> (Optional Query Param: <code>?role=</code>)</li>
+<li><strong>Controller:</strong> <code>backend/user-service/src/main/java/com/xebia/userservice/controller/UserController.java</code></li>
+<li><strong>Service Used:</strong> <code>UserService</code></li>
+<li><strong>Request Body:</strong> None</li>
+<li><strong>Response:</strong> <code>List&lt;User&gt;</code> (JSON Array)</li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> Executes <code>userRepository.findAll()</code> or <code>userRepository.findByRole(role)</code>.</li>
+<li><strong>Execution Flow:</strong> API Gateway routing → <code>UserController.getAllUsers()</code> → <code>UserService</code> → <code>UserRepository</code> → PostgreSQL <code>users</code> table.</li>
+</ul>
+<h4 id="2-create-user">2. Create User </h4>
+<ul>
+<li><strong>Method:</strong> <code>POST</code></li>
+<li><strong>URL:</strong> <code>/api/v1/users</code></li>
+<li><strong>Controller:</strong> <code>backend/user-service/src/main/java/com/xebia/userservice/controller/UserController.java</code></li>
+<li><strong>Service Used:</strong> <code>UserService</code></li>
+<li><strong>Request Body:</strong> <code>User</code> JSON object</li>
+<li><strong>Response:</strong> <code>User</code> JSON object (with generated UUID)</li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> Executes <code>userRepository.save(user)</code>.</li>
+<li><strong>Execution Flow:</strong> API Gateway routing → <code>UserController.createUser()</code> → <code>UserService.createUser()</code> → <code>UserRepository.save()</code> → PostgreSQL <code>users</code> table.</li>
+</ul>
+<hr>
+<h3 id="batch-service-apis">Batch Service APIs </h3>
+<h4 id="3-retrieve-batches">3. Retrieve Batches </h4>
+<ul>
+<li><strong>Method:</strong> <code>GET</code></li>
+<li><strong>URL:</strong> <code>/api/v1/batches</code></li>
+<li><strong>Controller:</strong> <code>backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java</code></li>
+<li><strong>Service Used:</strong> <code>BatchService</code></li>
+<li><strong>Request Body:</strong> None</li>
+<li><strong>Response:</strong> <code>List&lt;Batch&gt;</code> (JSON Array)</li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> <code>batchRepository.findAll()</code></li>
+<li><strong>Execution Flow:</strong> Gateway → <code>BatchController.getAllBatches()</code> → <code>BatchService.getAllBatches()</code> → DB.</li>
+</ul>
+<h4 id="4-create-batch">4. Create Batch </h4>
+<ul>
+<li><strong>Method:</strong> <code>POST</code></li>
+<li><strong>URL:</strong> <code>/api/v1/batches</code></li>
+<li><strong>Controller:</strong> <code>backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java</code></li>
+<li><strong>Service Used:</strong> <code>BatchService</code></li>
+<li><strong>Request Body:</strong> <code>Batch</code> JSON object</li>
+<li><strong>Response:</strong> <code>Batch</code> JSON object (with generated UUID)</li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> <code>batchRepository.save(batch)</code></li>
+<li><strong>Execution Flow:</strong> Gateway → <code>BatchController.createBatch()</code> → <code>BatchService.createBatch()</code> → DB.</li>
+</ul>
+<h4 id="5-update-batch">5. Update Batch </h4>
+<ul>
+<li><strong>Method:</strong> <code>PUT</code></li>
+<li><strong>URL:</strong> <code>/api/v1/batches/{id}</code></li>
+<li><strong>Controller:</strong> <code>backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java</code></li>
+<li><strong>Service Used:</strong> <code>BatchService</code></li>
+<li><strong>Request Body:</strong> <code>Batch</code> JSON object</li>
+<li><strong>Response:</strong> <code>Batch</code> JSON object (Updated record)</li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> Fetches via <code>findById(id)</code>, modifies fields conditionally in memory, saves via <code>save(batch)</code>.</li>
+<li><strong>Execution Flow:</strong> Gateway → <code>BatchController.updateBatch()</code> → <code>BatchService.updateBatch()</code> → DB.</li>
+</ul>
+<h4 id="6-delete-batch">6. Delete Batch </h4>
+<ul>
+<li><strong>Method:</strong> <code>DELETE</code></li>
+<li><strong>URL:</strong> <code>/api/v1/batches/{id}</code></li>
+<li><strong>Controller:</strong> <code>backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java</code></li>
+<li><strong>Service Used:</strong> <code>BatchService</code></li>
+<li><strong>Request Body:</strong> None</li>
+<li><strong>Response:</strong> Empty Body</li>
+<li><strong>Status Codes:</strong> <code>204 No Content</code></li>
+<li><strong>Database Interaction:</strong> <code>batchRepository.deleteById(id)</code></li>
+<li><strong>Execution Flow:</strong> Gateway → <code>BatchController.deleteBatch()</code> → <code>BatchService.deleteBatch()</code> → returns <code>ResponseEntity.noContent()</code>.</li>
+</ul>
+<hr>
+<h3 id="assessment-service-apis">Assessment Service APIs </h3>
+<h4 id="7-retrieve-assessments">7. Retrieve Assessments </h4>
+<ul>
+<li><strong>Method:</strong> <code>GET</code></li>
+<li><strong>URL:</strong> <code>/api/v1/assessments</code></li>
+<li><strong>Controller:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/AssessmentController.java</code></li>
+<li><strong>Service Used:</strong> <code>AssessmentService</code></li>
+<li><strong>Request Body:</strong> None</li>
+<li><strong>Response:</strong> <code>List&lt;Assessment&gt;</code> (JSON Array)</li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> <code>assessmentRepository.findAll()</code></li>
+</ul>
+<h4 id="8-create--update--delete-assessments">8. Create / Update / Delete Assessments </h4>
+<p><em>(Behaves identically to Batch Service logic structure across <code>POST /api/v1/assessments</code>, <code>PUT /api/v1/assessments/{id}</code>, and <code>DELETE /api/v1/assessments/{id}</code>).</em></p>
+<hr>
+<h3 id="submission--draft-apis-assessment-service">Submission &amp; Draft APIs (Assessment Service) </h3>
+<h4 id="9-retrieve-submissions">9. Retrieve Submissions </h4>
+<ul>
+<li><strong>Method:</strong> <code>GET</code></li>
+<li><strong>URL:</strong> <code>/api/v1/submissions</code> (Optional Query Param: <code>?studentId=</code>)</li>
+<li><strong>Controller:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/SubmissionController.java</code></li>
+<li><strong>Service Used:</strong> <code>SubmissionService</code></li>
+<li><strong>Request Body:</strong> None</li>
+<li><strong>Response:</strong> <code>List&lt;Submission&gt;</code></li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> <code>submissionRepository.findAll()</code> or <code>findByStudentId()</code></li>
+</ul>
+<h4 id="10-create-submission">10. Create Submission </h4>
+<ul>
+<li><strong>Method:</strong> <code>POST</code></li>
+<li><strong>URL:</strong> <code>/api/v1/submissions</code></li>
+<li><strong>Controller:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/SubmissionController.java</code></li>
+<li><strong>Service Used:</strong> <code>SubmissionService</code></li>
+<li><strong>Request Body:</strong> <code>Submission</code> JSON object</li>
+<li><strong>Response:</strong> <code>Submission</code> JSON object</li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> <code>submissionRepository.save(submission)</code></li>
+</ul>
+<h4 id="11-save-assessment-draft">11. Save Assessment Draft </h4>
+<ul>
+<li><strong>Method:</strong> <code>POST</code></li>
+<li><strong>URL:</strong> <code>/api/v1/assessments/drafts/{studentId}/{assessmentId}</code></li>
+<li><strong>Controller:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/DraftController.java</code></li>
+<li><strong>Service Used:</strong> <code>AssessmentCacheService</code></li>
+<li><strong>Request Body:</strong> <code>Map&lt;String, Object&gt;</code> draftData JSON</li>
+<li><strong>Response:</strong> None</li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> <strong>None.</strong> Uses Spring Cache/Redis templates (<code>cacheService.saveDraft()</code>).</li>
+<li><strong>Execution Flow:</strong> Gateway → <code>DraftController.saveDraft()</code> → <code>AssessmentCacheService</code> → Redis Cluster.</li>
+</ul>
+<h4 id="12-get-assessment-draft">12. Get Assessment Draft </h4>
+<ul>
+<li><strong>Method:</strong> <code>GET</code></li>
+<li><strong>URL:</strong> <code>/api/v1/assessments/drafts/{studentId}/{assessmentId}</code></li>
+<li><strong>Controller:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/DraftController.java</code></li>
+<li><strong>Service Used:</strong> <code>AssessmentCacheService</code></li>
+<li><strong>Request Body:</strong> None</li>
+<li><strong>Response:</strong> JSON Object (draft data) or null</li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> <strong>None.</strong> Fetched from Redis.</li>
+</ul>
+<hr>
+<h3 id="ai-apis-assessment-service">AI APIs (Assessment Service) </h3>
+<h4 id="13-generate-assessment-description-ai">13. Generate Assessment Description (AI) </h4>
+<ul>
+<li><strong>Method:</strong> <code>POST</code></li>
+<li><strong>URL:</strong> <code>/api/v1/assessments/ai/generate-description</code></li>
+<li><strong>Controller:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/AIController.java</code></li>
+<li><strong>Service Used:</strong> <code>AIService</code></li>
+<li><strong>Request Body:</strong> <code>Map&lt;String, String&gt;</code> containing <code>{"topic": "..."}</code></li>
+<li><strong>Response:</strong> <code>Map&lt;String, String&gt;</code> containing <code>{"content": "..."}</code></li>
+<li><strong>Status Codes:</strong> <code>200 OK</code></li>
+<li><strong>Database Interaction:</strong> <strong>None.</strong></li>
+<li><strong>Execution Flow:</strong> Gateway → <code>AIController.generateDescription()</code> → <code>AIService.generateAssessmentDescription()</code> → Calls external LLM API synchronously → Returns wrapped JSON map.</li>
+</ul>
+<hr>
+<p><a id="feature-documentation"></a></p>
+<h2 id="5-feature-documentation">5. Feature Documentation </h2>
+<h3 id="simulated-role-based-authentication">Simulated Role-Based Authentication </h3>
+<p><strong>Purpose:</strong> Authenticate users by verifying their email against the pre-loaded backend user lists and directing them to the appropriate dashboard based on their role (<code>teacher</code> or <code>student</code>).</p>
+<p><strong>Files Involved:</strong></p>
+<ul>
+<li><code>src/App.jsx</code></li>
+<li><code>src/pages/Login.jsx</code></li>
+<li><code>src/context/LMSContext.jsx</code></li>
+<li><code>backend/user-service/src/main/java/com/xebia/userservice/controller/UserController.java</code></li>
+</ul>
+<p><strong>Frontend Components:</strong></p>
+<ul>
+<li><code>&lt;Login /&gt;</code></li>
+<li><code>&lt;AppContent /&gt;</code></li>
+</ul>
+<p><strong>Backend Components:</strong></p>
+<ul>
+<li><code>UserController</code> (<code>GET /api/v1/users</code>)</li>
+</ul>
+<p><strong>Flow Description:</strong></p>
+<ol>
+<li>On app load, <code>LMSContext</code> fetches all users from the backend via <code>GET /api/v1/users</code> and partitions them into <code>teachers</code> and <code>students</code> states.</li>
+<li>The user enters an email in <code>Login.jsx</code> and clicks "Sign in".</li>
+<li><code>LMSContext.login()</code> scans the pre-loaded arrays. If matched, it sets the <code>currentUser</code> and re-routes to the proper dashboard.</li>
+</ol>
+<hr>
+<h3 id="batch-management">Batch Management </h3>
+<p><strong>Purpose:</strong> Allows Trainers to create, view, update, and manage cohorts of students (Batches).</p>
+<p><strong>Files Involved:</strong></p>
+<ul>
+<li><code>src/pages/BatchManagement.jsx</code></li>
+<li><code>src/pages/BatchDetail.jsx</code></li>
+<li><code>src/context/LMSContext.jsx</code></li>
+<li><code>src/api/client.js</code></li>
+<li><code>backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java</code></li>
+</ul>
+<p><strong>Flow Description:</strong></p>
+<ol>
+<li>A trainer submits a new batch via the frontend.</li>
+<li><code>LMSContext.createBatch()</code> triggers <code>apiClient.createBatch()</code>.</li>
+<li>The API Gateway routes <code>POST /api/v1/batches</code> to the Batch Service which persists the entity in PostgreSQL.</li>
+</ol>
+<hr>
+<h3 id="assessment-builder-with-ai-assistance">Assessment Builder with AI Assistance </h3>
+<p><strong>Purpose:</strong> Enables Trainers to create comprehensive assessments and utilize an AI endpoint to auto-generate topic descriptions.</p>
+<p><strong>Files Involved:</strong></p>
+<ul>
+<li><code>src/pages/AssessmentBuilder.jsx</code></li>
+<li><code>src/components/assessment-builder/ConfigPanel.jsx</code></li>
+<li><code>src/components/assessment-builder/QuestionBuilderPanel.jsx</code></li>
+<li><code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/AssessmentController.java</code></li>
+<li><code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/AIController.java</code></li>
+</ul>
+<p><strong>Flow Description:</strong></p>
+<ol>
+<li>Trainer clicks "Generate via AI". Frontend sends <code>POST /api/v1/assessments/ai/generate-description</code>.</li>
+<li>The <code>AIController</code> intercepts this, passing it to <code>AIService</code> to generate content via a 3rd party LLM API.</li>
+<li>Trainer publishes the assessment. <code>apiClient.createAssessment()</code> POSTs the JSON structure to <code>/api/v1/assessments</code> for database persistence.</li>
+</ol>
+<hr>
+<h3 id="assessment-taking--progress-persistence-drafts">Assessment Taking &amp; Progress Persistence (Drafts) </h3>
+<p><strong>Purpose:</strong> Enables students to take assessments with their progress saved continuously in-memory via Redis.</p>
+<p><strong>Files Involved:</strong></p>
+<ul>
+<li><code>src/pages/TakeQuiz.jsx</code></li>
+<li><code>src/pages/TakeCoding.jsx</code></li>
+<li><code>src/api/client.js</code></li>
+<li><code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/DraftController.java</code></li>
+<li><code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/SubmissionController.java</code></li>
+</ul>
+<p><strong>Flow Description:</strong></p>
+<ol>
+<li>A student navigates to <code>&lt;TakeQuiz /&gt;</code>. As they select answers, <code>apiClient.saveDraft()</code> fires periodically.</li>
+<li>The <code>DraftController</code> stores the draft in Redis.</li>
+<li>Upon clicking "Submit", the frontend grades the objective questions and fires <code>POST /api/v1/submissions</code> to save the final payload in PostgreSQL.</li>
+</ol>
+<hr>
+<h3 id="automated-leaderboard--statistics">Automated Leaderboard &amp; Statistics </h3>
+<p><strong>Purpose:</strong> Dynamically generate a ranked leaderboard based on student scores.</p>
+<p><strong>Files Involved:</strong></p>
+<ul>
+<li><code>src/pages/Leaderboard.jsx</code></li>
+<li><code>src/context/LMSContext.jsx</code></li>
+</ul>
+<p><strong>Flow Description:</strong><br>
+When <code>&lt;Leaderboard /&gt;</code> is mounted, it calls <code>LMSContext.getLeaderboard()</code>. The frontend cross-references the <code>students</code> array and <code>submissions</code> array, mathematically scoring and sorting users into a ranked list rendered on screen.</p>
+<hr>
+<h3 id="manual--ai-submission-evaluation-grading">Manual &amp; AI Submission Evaluation (Grading) </h3>
+<p><strong>Purpose:</strong> Allows trainers to review pending submissions, manually adjust marks, provide remarks, or utilize AI to auto-evaluate descriptive answers.</p>
+<p><strong>Files Involved:</strong></p>
+<ul>
+<li><code>src/pages/Evaluation.jsx</code></li>
+<li><code>src/utils/aiService.js</code></li>
+<li><code>src/context/LMSContext.jsx</code></li>
+</ul>
+<p><strong>Frontend Components:</strong></p>
+<ul>
+<li><code>&lt;Evaluation /&gt;</code></li>
+</ul>
+<p><strong>APIs Used:</strong></p>
+<ul>
+<li><code>aiService.evaluateSubmission</code> (Client-side AI call wrapper)</li>
+</ul>
+<p><strong>Flow Description:</strong></p>
+<ol>
+<li>Trainer navigates to Evaluation and selects a pending submission.</li>
+<li>The UI renders the student's answers versus the expected answers.</li>
+<li>The Trainer can click "Auto Evaluation Using AI", which invokes <code>aiService.evaluateSubmission()</code> iteratively over each question to suggest marks.</li>
+<li>Trainer clicks "Publish Evaluation", executing <code>LMSContext.evaluateSubmission()</code> to finalize the score and dispatch an in-app notification to the student.</li>
+</ol>
+<hr>
+<h3 id="reports--analytics-dashboard">Reports &amp; Analytics Dashboard </h3>
+<p><strong>Purpose:</strong> Visualizes batch-wide and LMS-wide performance metrics (Pass/Fail rates, Score Distributions) using charts.</p>
+<p><strong>Files Involved:</strong></p>
+<ul>
+<li><code>src/pages/Reports.jsx</code></li>
+<li><code>src/context/LMSContext.jsx</code></li>
+</ul>
+<p><strong>Frontend Components:</strong></p>
+<ul>
+<li><code>&lt;Reports /&gt;</code></li>
+<li><code>Recharts</code> library components (<code>BarChart</code>, <code>PieChart</code>)</li>
+</ul>
+<p><strong>Flow Description:</strong></p>
+<ol>
+<li>The component extracts all <code>submissions</code> where <code>isEvaluated</code> is true.</li>
+<li>It calculates aggregations: Average LMS score, Pass Rate (&gt;60%), Fail Rate.</li>
+<li>It maps <code>batches</code> against their enrolled students' average scores to feed the <code>BarChart</code>.</li>
+<li>It categorizes all scores into brackets (Excellent, Above Avg, etc.) to feed the <code>PieChart</code> and renders a filterable diagnostic table of all students.</li>
+</ol>
+<hr>
+<h3 id="settings--profile-management">Settings &amp; Profile Management </h3>
+<p><strong>Purpose:</strong> Allows users (both trainers and students) to update their personal details, change avatars, reset passwords, and configure notification preferences.</p>
+<p><strong>Files Involved:</strong></p>
+<ul>
+<li><code>src/pages/Settings.jsx</code></li>
+<li><code>src/context/LMSContext.jsx</code></li>
+</ul>
+<p><strong>Frontend Components:</strong></p>
+<ul>
+<li><code>&lt;Settings /&gt;</code></li>
+</ul>
+<p><strong>Flow Description:</strong></p>
+<ol>
+<li>Renders a tabbed interface (Profile, Security, Notifications).</li>
+<li>Users can upload an image (processed locally via HTML5 <code>Canvas</code> to crop/compress into a base64 Data URL) or select a preset avatar.</li>
+<li>Upon clicking "Save Profile", <code>LMSContext.updateProfile()</code> mutates the global <code>currentUser</code> state and syncs to <code>localStorage</code> (Note: Backend sync for profile edits is currently handled entirely in local state in the provided logic).</li>
+</ol>
+<hr>
+<p><a id="database-structure"></a></p>
+<h2 id="6-database-structure">6. Database Structure </h2>
+<h3 id="entity-relationship-er-diagram">Entity Relationship (ER) Diagram </h3>
+<div class="mermaid">erDiagram
+    USERS {
+        UUID id PK
+        String name
+        String email UK
+        String role
+        String department
+        String avatar
+        Integer averageScore
+        Integer assessmentsCompleted
+    }
+
+    BATCHES {
+        UUID id PK
+        String name
+        String course
+        Integer studentCount
+        String status
+        String createdAt
+        String icon
+    }
+
+    BATCH_STUDENTS {
+        UUID batch_id FK
+        String students
+    }
+
+    ASSESSMENTS {
+        String id PK
+        String title
+        String description
+        Text instructions
+        String difficulty
+        Integer marks
+        Integer passingMarks
+        Integer duration
+        String startDate
+        String startTime
+        String endDate
+        String endTime
+        Integer attemptsAllowed
+        Boolean autoGrade
+        Boolean manualGrade
+        String status
+        String type
+        String createdBy
+        String createdAt
+        String topic
+        Boolean shuffleQuestions
+        Boolean randomizeOptions
+        Boolean negativeMarking
+        Integer negativeMarksValue
+        Boolean autoSubmit
+    }
+
+    ASSESSMENT_BATCHES {
+        String assessment_id FK
+        String batches
+    }
+
+    QUESTIONS {
+        UUID id PK
+        String type
+        Text question
+        Integer marks
+        Boolean required
+        String correctAnswer
+        Text explanation
+        String assessment_id FK
+    }
+
+    QUESTION_OPTIONS {
+        UUID question_id FK
+        String options
+    }
+
+    SUBMISSIONS {
+        String id PK
+        String assessmentId
+        String studentId
+        String status
+        String startedAt
+        String submittedAt
+        Integer score
+        Integer percentage
+        Integer timeTaken
+        Boolean isEvaluated
+        Text remarks
+        String evaluatedBy
+    }
+
+    ANSWERS {
+        UUID id PK
+        String questionId
+        Text answer
+        Integer marksAwarded
+        Text remarks
+        String submission_id FK
+    }
+
+    %% Relationships defined by @ElementCollection and @OneToMany annotations
+    BATCHES ||--o{ BATCH_STUDENTS : "has (ElementCollection)"
+    ASSESSMENTS ||--o{ ASSESSMENT_BATCHES : "assigned_to (ElementCollection)"
+    ASSESSMENTS ||--o{ QUESTIONS : "contains (@OneToMany)"
+    QUESTIONS ||--o{ QUESTION_OPTIONS : "has (ElementCollection)"
+    SUBMISSIONS ||--o{ ANSWERS : "contains (@OneToMany)"
+    
+    %% Implicit Logical Relationships (No hard DB FK constraints set via JPA, but used logically in code)
+    USERS ||--o{ SUBMISSIONS : "makes (logical via studentId)"
+    ASSESSMENTS ||--o{ SUBMISSIONS : "receives (logical via assessmentId)"
+    USERS ||--o{ BATCH_STUDENTS : "enrolled_in (logical via students)"
+</div><hr>
+<h3 id="tables--usage-details">Tables &amp; Usage Details </h3>
+<h4 id="1-table-users">1. Table: <code>users</code> </h4>
+<ul>
+<li><strong>File Location:</strong> <code>backend/user-service/src/main/java/com/xebia/userservice/model/User.java</code></li>
+<li><strong>Keys:</strong> <code>id</code> (PK, UUID generated)</li>
+<li><strong>Columns:</strong>
+<ul>
+<li><code>name</code>, <code>role</code>, <code>department</code>, <code>avatar</code> (VARCHAR)</li>
+<li><code>email</code> (VARCHAR, Unique Constraint)</li>
+<li><code>averageScore</code>, <code>assessmentsCompleted</code> (INTEGER)</li>
+</ul>
+</li>
+<li><strong>Relationships:</strong> None defined explicitly at DB level.</li>
+<li><strong>Usage in Code:</strong> Fetched during app initialization to simulate authentication, partition dashboards by <code>role</code>, and calculate Leaderboard rankings using the stat integer columns.</li>
+</ul>
+<h4 id="2-table-batches">2. Table: <code>batches</code> </h4>
+<ul>
+<li><strong>File Location:</strong> <code>backend/batch-service/src/main/java/com/xebia/batchservice/model/Batch.java</code></li>
+<li><strong>Keys:</strong> <code>id</code> (PK, UUID generated)</li>
+<li><strong>Columns:</strong> <code>name</code>, <code>course</code>, <code>studentCount</code>, <code>status</code>, <code>createdAt</code>, <code>icon</code></li>
+<li><strong>Relationships:</strong>
+<ul>
+<li>Generates secondary table <code>batch_students</code> (via <code>@ElementCollection</code>) storing a list of Student string IDs attached to a <code>batch_id</code>.</li>
+</ul>
+</li>
+<li><strong>Usage in Code:</strong> Grouping students logically. Filtered in <code>Reports.jsx</code> to show cohort-wide analytics.</li>
+</ul>
+<h4 id="3-table-assessments">3. Table: <code>assessments</code> </h4>
+<ul>
+<li><strong>File Location:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/model/Assessment.java</code></li>
+<li><strong>Keys:</strong> <code>id</code> (PK, Custom String provided by frontend)</li>
+<li><strong>Columns:</strong> Heavy configuration table. Contains 24 distinct columns managing metadata, scheduling (<code>startDate</code>, <code>duration</code>), and rule-sets (<code>shuffleQuestions</code>, <code>negativeMarking</code>, <code>autoGrade</code>).</li>
+<li><strong>Relationships:</strong>
+<ul>
+<li><code>assessment_batches</code> (Secondary table via <code>@ElementCollection</code> tracking which batches can take it).</li>
+<li><code>@OneToMany</code> to <code>questions</code> (Generates an implicit <code>assessment_id</code> FK inside the <code>questions</code> table).</li>
+</ul>
+</li>
+<li><strong>Usage in Code:</strong> The core entity managed in <code>AssessmentBuilder.jsx</code>. Pulled into memory to render the test-taking UI.</li>
+</ul>
+<h4 id="4-table-questions">4. Table: <code>questions</code> </h4>
+<ul>
+<li><strong>File Location:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/model/Question.java</code></li>
+<li><strong>Keys:</strong> <code>id</code> (PK, UUID generated)</li>
+<li><strong>Columns:</strong> <code>type</code>, <code>question</code> (TEXT), <code>marks</code>, <code>required</code>, <code>correctAnswer</code>, <code>explanation</code> (TEXT), <code>assessment_id</code> (FK assigned by parent).</li>
+<li><strong>Relationships:</strong>
+<ul>
+<li><code>question_options</code> (Secondary table via <code>@ElementCollection</code> storing array of multiple choice options).</li>
+<li>Belongs to <code>assessments</code>.</li>
+</ul>
+</li>
+<li><strong>Usage in Code:</strong> Rendered dynamically inside <code>&lt;TakeQuiz /&gt;</code>. <code>correctAnswer</code> is utilized in <code>LMSContext.jsx</code> for local auto-grading.</li>
+</ul>
+<h4 id="5-table-submissions">5. Table: <code>submissions</code> </h4>
+<ul>
+<li><strong>File Location:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/model/Submission.java</code></li>
+<li><strong>Keys:</strong> <code>id</code> (PK, Custom String)</li>
+<li><strong>Columns:</strong> <code>assessmentId</code> (Logical FK), <code>studentId</code> (Logical FK), <code>status</code>, <code>startedAt</code>, <code>submittedAt</code>, <code>score</code>, <code>percentage</code>, <code>timeTaken</code>, <code>isEvaluated</code>, <code>remarks</code> (TEXT), <code>evaluatedBy</code></li>
+<li><strong>Relationships:</strong>
+<ul>
+<li><code>@OneToMany</code> to <code>answers</code> (Generates an implicit <code>submission_id</code> FK inside the <code>answers</code> table).</li>
+</ul>
+</li>
+<li><strong>Usage in Code:</strong> Saved when a student finishes an assessment. Later retrieved by trainers in <code>Evaluation.jsx</code> to review and grade pending attempts.</li>
+</ul>
+<h4 id="6-table-answers">6. Table: <code>answers</code> </h4>
+<ul>
+<li><strong>File Location:</strong> <code>backend/assessment-service/src/main/java/com/xebia/assessmentservice/model/Answer.java</code></li>
+<li><strong>Keys:</strong> <code>id</code> (PK, UUID generated)</li>
+<li><strong>Columns:</strong> <code>questionId</code> (Logical FK to questions table), <code>answer</code> (TEXT), <code>marksAwarded</code>, <code>remarks</code> (TEXT), <code>submission_id</code> (FK assigned by parent).</li>
+<li><strong>Relationships:</strong> Belongs to <code>submissions</code>.</li>
+<li><strong>Usage in Code:</strong> Records exactly what the student typed or selected for a specific question, alongside marks given by the AI or the Trainer.</li>
+</ul>
+<hr>
+<p><a id="execution-flows"></a></p>
+<h2 id="7-execution-flows">7. Execution Flows </h2>
+<h3 id="general-request-lifecycle--api-flow">General Request Lifecycle &amp; API Flow </h3>
+<p>This flow dictates how standard data (like fetching batches or saving an assessment) traverses the full stack.</p>
+<ol>
+<li><strong>Frontend Trigger:</strong> A user interaction in a React Component (e.g., <code>src/pages/BatchManagement.jsx</code>) triggers a function in <code>LMSContext</code> (<code>src/context/LMSContext.jsx</code>).</li>
+<li><strong>HTTP Client:</strong> <code>LMSContext</code> delegates the network call to <code>src/api/client.js</code> (<code>apiClient</code>), which executes a native <code>fetch()</code> to <code>/api/v1/{resource}</code>.</li>
+<li><strong>API Gateway Routing:</strong> The request hits the Spring Cloud Gateway configured in <code>backend/api-gateway/src/main/resources/application.yml</code> (port 8080). The gateway matches the URI path and routes it to the specific downstream microservice (e.g., <code>batch-service</code>).</li>
+<li><strong>Controller:</strong> The respective Spring Boot <code>@RestController</code> (e.g., <code>backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java</code>) intercepts the HTTP request, deserializes the JSON body, and passes it to the <code>@Service</code> layer.</li>
+<li><strong>Service &amp; Repository:</strong> The <code>@Service</code> (e.g., <code>BatchService.java</code>) contains business logic and delegates data persistence to the Spring Data JPA <code>@Repository</code> (e.g., <code>BatchRepository.java</code>).</li>
+<li><strong>Database:</strong> The repository executes the SQL statement against the PostgreSQL database (or Redis if it's a draft) and returns the data entity back up the chain.</li>
+</ol>
+<div class="mermaid">sequenceDiagram
+    participant UI as Frontend Component&lt;br/&gt;(src/pages/*.jsx)
+    participant Context as LMSContext&lt;br/&gt;(src/context/LMSContext.jsx)
+    participant APIClient as apiClient&lt;br/&gt;(src/api/client.js)
+    participant Gateway as API Gateway&lt;br/&gt;(backend/api-gateway/.../application.yml)
+    participant Service as Microservice Controller&lt;br/&gt;(backend/*-service/.../controller/*.java)
+    participant DB as PostgreSQL Database
+
+    UI-&gt;&gt;Context: Action Triggered
+    Context-&gt;&gt;APIClient: Execute Method (e.g., getBatches)
+    APIClient-&gt;&gt;Gateway: HTTP Request (/api/v1/...)
+    Gateway-&gt;&gt;Service: Route Request to Service
+    Service-&gt;&gt;DB: JPA query execution
+    DB--&gt;&gt;Service: Return Result Set
+    Service--&gt;&gt;Gateway: HTTP 200 OK (JSON)
+    Gateway--&gt;&gt;APIClient: Forward Response
+    APIClient--&gt;&gt;Context: Resolve Promise (Data)
+    Context--&gt;&gt;UI: Update React State &amp; Re-render
+</div><hr>
+<h3 id="simulated-authentication-flow">Simulated Authentication Flow </h3>
+<p>Because there is no backend authentication logic explicitly defined in the provided code, the authentication flow happens entirely on the client side.</p>
+<ol>
+<li><strong>Hydration:</strong> When the frontend boots up, <code>src/context/LMSContext.jsx</code> immediately fetches all known users from <code>GET /api/v1/users</code> via <code>src/api/client.js</code>.</li>
+<li><strong>Login Attempt:</strong> A user enters an email address in <code>src/pages/Login.jsx</code> and clicks "Sign in as Trainer" or "Sign in as Student".</li>
+<li><strong>Validation:</strong> <code>LMSContext.login()</code> executes an <code>Array.find()</code> on the pre-loaded users array to match the provided email.</li>
+<li><strong>State Commitment:</strong> If a match is found, the user object is set to the <code>currentUser</code> state variable and redundantly saved to browser <code>localStorage</code>.</li>
+<li><strong>Route Unlock:</strong> The <code>&lt;AppContent /&gt;</code> wrapper in <code>src/App.jsx</code> observes the <code>currentUser</code> state change and dynamically mounts the protected routes.</li>
+</ol>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant Login as Login.jsx&lt;br/&gt;(src/pages/Login.jsx)
+    participant Context as LMSContext&lt;br/&gt;(src/context/LMSContext.jsx)
+    participant Local as localStorage&lt;br/&gt;(Browser Storage)
+    participant API as API Gateway&lt;br/&gt;(backend/api-gateway/)
+
+    Note over Context, API: 1. App Initialization
+    Context-&gt;&gt;API: GET /api/v1/users (via apiClient)
+    API--&gt;&gt;Context: Returns List of Users
+    
+    Note over User, Context: 2. User Authentication
+    User-&gt;&gt;Login: Enters Email &amp; Selects Role
+    Login-&gt;&gt;Context: Call login(email, role)
+    Context-&gt;&gt;Context: Find user by email in local array
+    
+    alt User Found
+        Context-&gt;&gt;Context: Set currentUser State
+        Context-&gt;&gt;Local: Persist currentUser Object
+        Context--&gt;&gt;User: Re-route to Dashboard (App.jsx)
+    else User Not Found
+        Context--&gt;&gt;Login: Throw Error (User not found)
+        Login--&gt;&gt;User: Display Toast Error
+    end
+</div><hr>
+<h3 id="data-flow-assessment-submission--auto-grading">Data Flow: Assessment Submission &amp; Auto-Grading </h3>
+<p>This flow describes what happens when a student takes a test and submits it. It involves draft caching, local evaluation, and final persistence.</p>
+<ol>
+<li><strong>Drafts (In-Progress):</strong> As a student selects options in <code>src/pages/TakeQuiz.jsx</code>, <code>apiClient.saveDraft()</code> (<code>src/api/client.js</code>) is called periodically.</li>
+<li><strong>Redis Caching:</strong> The <code>backend/assessment-service/.../controller/DraftController.java</code> intercepts this and stores the draft <code>Map</code> into Redis.</li>
+<li><strong>Submission Trigger:</strong> The student clicks "Submit" in <code>TakeQuiz.jsx</code>.</li>
+<li><strong>Local Auto-Grading:</strong> <code>LMSContext.submitAssessment()</code> in <code>src/context/LMSContext.jsx</code> intercepts the submission. It cross-references the student's answers with the assessment's expected <code>correctAnswer</code> in memory, mutating the answer payload to include <code>marksAwarded</code>.</li>
+<li><strong>Persistence:</strong> The graded payload is POSTed to <code>apiClient.createSubmission()</code>.</li>
+<li><strong>Database Save:</strong> <code>backend/assessment-service/.../controller/SubmissionController.java</code> receives it and persists the final graded entity into the <code>submissions</code> PostgreSQL table.</li>
+<li><strong>Stat Updates:</strong> Synchronously, <code>LMSContext.jsx</code> increments the student's <code>assessmentsCompleted</code> and recalculates their <code>averageScore</code> to reflect immediately on <code>src/pages/Leaderboard.jsx</code>.</li>
+</ol>
+<div class="mermaid">sequenceDiagram
+    participant Student
+    participant Quiz as TakeQuiz.jsx&lt;br/&gt;(src/pages/TakeQuiz.jsx)
+    participant Context as LMSContext&lt;br/&gt;(src/context/LMSContext.jsx)
+    participant AssessmentSVC as Assessment Service&lt;br/&gt;(backend/assessment-service/)
+    participant Redis as Redis Cache
+    participant Postgres as PostgreSQL (submissions)
+
+    Note over Student, Postgres: Periodic Draft Saving
+    Student-&gt;&gt;Quiz: Selects Answer
+    Quiz-&gt;&gt;AssessmentSVC: POST /drafts/{studentId}/{assessId} (via DraftController.java)
+    AssessmentSVC-&gt;&gt;Redis: Save Draft Data
+
+    Note over Student, Postgres: Final Submission
+    Student-&gt;&gt;Quiz: Clicks "Submit"
+    Quiz-&gt;&gt;Context: call submitAssessment()
+    Context-&gt;&gt;Context: Grade objective answers locally
+    Context-&gt;&gt;AssessmentSVC: POST /api/v1/submissions (via SubmissionController.java)
+    AssessmentSVC-&gt;&gt;Postgres: INSERT into submissions table
+    Postgres--&gt;&gt;AssessmentSVC: Return generated ID
+    AssessmentSVC--&gt;&gt;Context: 200 OK
+    Context-&gt;&gt;Context: Update Student Stats (avg score)
+    Context--&gt;&gt;Quiz: Success! Re-route to Results (src/pages/Results.jsx)
+</div><hr>
+<p><a id="configuration--deployment"></a></p>
+<h2 id="8-configuration--deployment">8. Configuration &amp; Deployment </h2>
+<h3 id="frontend-configuration">Frontend Configuration </h3>
+<h3 id="build-tools--frameworks">Build Tools &amp; Frameworks </h3>
+<ul>
+<li><strong>Framework:</strong> React 19 (managed via Vite)</li>
+<li><strong>Bundler / Dev Server:</strong> Vite (<code>vite: ^6.2.3</code>)</li>
+<li><strong>Styling:</strong> TailwindCSS 4 (<code>@tailwindcss/vite: ^4.1.14</code>)</li>
+<li><strong>Commands:</strong> Defined in <code>package.json</code>:
+<ul>
+<li><code>npm run dev</code>: Starts the Vite server on <code>http://0.0.0.0:3000</code>.</li>
+<li><code>npm run build</code>: Bundles the app for production via <code>vite build</code>.</li>
+<li><code>npm run preview</code>: Locally previews the production build.</li>
+</ul>
+</li>
+</ul>
+<h3 id="environment-variables">Environment Variables </h3>
+<p>Located in <code>C:\Users\HP\Documents\Xebia-Intern\STUDENT portal\Xebia-Student-Trainer\.env</code>:</p>
+<pre data-role="codeBlock" data-info="env" class="language-env env"><code>VITE_GROQ_API_KEY="gsk_..." # Used in src/utils/aiService.js for external LLM API calls
+</code></pre><h3 id="local-development-proxy-viteconfigjs">Local Development Proxy (<code>vite.config.js</code>) </h3>
+<p>During local development, the Vite server (<code>localhost:3000</code>) is configured to intercept <code>/api/v1/*</code> requests and proxy them directly to the backend microservices, bypassing the API Gateway to prevent CORS issues locally.</p>
+<ul>
+<li><code>/api/v1/users</code> → proxied to <code>http://localhost:8081</code></li>
+<li><code>/api/v1/batches</code> → proxied to <code>http://localhost:8082</code></li>
+<li><code>/api/v1/assessments</code>, <code>/questions</code>, <code>/submissions</code> → proxied to <code>http://localhost:8083</code></li>
+</ul>
+<p><em>(Note: Vite is configured to respect the <code>DISABLE_HMR</code> environment variable, turning off Hot Module Replacement if set to 'true').</em></p>
+<hr>
+<h3 id="backend-configuration">Backend Configuration </h3>
+<h3 id="build-tools--architecture">Build Tools &amp; Architecture </h3>
+<ul>
+<li><strong>Framework:</strong> Spring Boot (Java)</li>
+<li><strong>Build Tool:</strong> Maven (Implied via standard Spring Boot Microservice architecture layout).</li>
+<li><strong>Architecture:</strong> API Gateway Pattern with 3 distinct domain microservices.</li>
+</ul>
+<h3 id="api-gateway-applicationyml">API Gateway (<code>application.yml</code>) </h3>
+<p>Located in <code>backend/api-gateway/src/main/resources/application.yml</code>.</p>
+<p><strong>Server Configuration:</strong></p>
+<ul>
+<li><strong>Port:</strong> <code>8080</code> (The centralized entry point for production deployments).</li>
+<li><strong>CORS:</strong> Configured globally to allow all origins (<code>*</code>), methods (<code>*</code>), and headers (<code>*</code>) across <code>[/**]</code>.</li>
+</ul>
+<p><strong>Routing Rules:</strong><br>
+The Spring Cloud Gateway routes incoming requests based on path predicates:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Target Service</th>
+<th style="text-align:left">Local URI</th>
+<th style="text-align:left">Path Predicates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>user-service</code></td>
+<td style="text-align:left"><code>http://localhost:8081</code></td>
+<td style="text-align:left"><code>/api/v1/users</code>, <code>/api/v1/users/**</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>batch-service</code></td>
+<td style="text-align:left"><code>http://localhost:8082</code></td>
+<td style="text-align:left"><code>/api/v1/batches</code>, <code>/api/v1/batches/**</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><code>assessment-service</code></td>
+<td style="text-align:left"><code>http://localhost:8083</code></td>
+<td style="text-align:left"><code>/api/v1/assessments/**</code>, <code>/api/v1/questions/**</code>, <code>/api/v1/submissions/**</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="database-dependencies-implied-by-code">Database Dependencies (Implied by Code) </h3>
+<p>While no <code>docker-compose.yml</code> is present, the following infrastructure must be running locally for the backend to start:</p>
+<ul>
+<li><strong>PostgreSQL:</strong> Running on localhost, utilizing the default <code>postgres</code> database schema.</li>
+<li><strong>Redis:</strong> Running on localhost, utilized by the <code>assessment-service</code> for caching assessment drafts.</li>
+</ul>
+<hr>
+<h3 id="deployment-setup">Deployment Setup </h3>
+<p>Based on the visible files, there is no explicit containerization (e.g., <code>Dockerfile</code>) or CI/CD pipeline (e.g., <code>.github/workflows</code>) defined in the codebase.</p>
+<p><strong>Expected Local Execution Flow:</strong></p>
+<ol>
+<li>Start PostgreSQL &amp; Redis services locally.</li>
+<li>Boot <code>user-service</code> (Port 8081).</li>
+<li>Boot <code>batch-service</code> (Port 8082).</li>
+<li>Boot <code>assessment-service</code> (Port 8083).</li>
+<li>Boot <code>api-gateway</code> (Port 8080).</li>
+<li>Run <code>npm install</code> &amp;&amp; <code>npm run dev</code> in the frontend root to start the React application (Port 3000).</li>
+</ol>
+
+      </div>
+      
+      
+    
+    
+    <script type="module">
+// TODO: If ZenUML gets integrated into mermaid in the future,
+//      we can remove the following lines.
+
+
+var MERMAID_CONFIG = ({"startOnLoad":false});
+if (typeof MERMAID_CONFIG !== 'undefined') {
+  MERMAID_CONFIG.startOnLoad = false
+  MERMAID_CONFIG.cloneCssStyles = false
+  MERMAID_CONFIG.theme = "default"
+}
+
+mermaid.initialize(MERMAID_CONFIG || {})
+if (typeof(window['Reveal']) !== 'undefined') {
+  function mermaidRevealHelper(event) {
+    var currentSlide = event.currentSlide
+    var diagrams = currentSlide.querySelectorAll('div.mermaid')
+    for (var i = 0; i < diagrams.length; i++) {
+      var diagram = diagrams[i]
+      if (!diagram.hasAttribute('data-processed')) {
+        mermaid.init(null, diagram, ()=> {
+          Reveal.slide(event.indexh, event.indexv)
+        })
+      }
+    }
+  }
+  Reveal.addEventListener('slidetransitionend', mermaidRevealHelper)
+  Reveal.addEventListener('ready', mermaidRevealHelper)
+  await mermaid.run({
+    nodes: document.querySelectorAll('div.mermaid')
+  })
+} else {
+  await mermaid.run({
+    nodes: document.querySelectorAll('div.mermaid')
+  })
+}
+</script>
+    
+    
+    
+  
+    </body></html>

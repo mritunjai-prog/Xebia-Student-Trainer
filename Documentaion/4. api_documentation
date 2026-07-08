@@ -1,0 +1,154 @@
+# API Documentation
+
+The following details all REST endpoints explicitly defined in the provided microservices codebase.
+
+---
+
+## User Service APIs
+
+### 1. Retrieve Users
+- **Method:** `GET`
+- **URL:** `/api/v1/users` (Optional Query Param: `?role=`)
+- **Controller:** `backend/user-service/src/main/java/com/xebia/userservice/controller/UserController.java`
+- **Service Used:** `UserService`
+- **Request Body:** None
+- **Response:** `List<User>` (JSON Array)
+- **Status Codes:** `200 OK`
+- **Database Interaction:** Executes `userRepository.findAll()` or `userRepository.findByRole(role)`.
+- **Execution Flow:** API Gateway routing → `UserController.getAllUsers()` → `UserService` → `UserRepository` → PostgreSQL `users` table.
+
+### 2. Create User
+- **Method:** `POST`
+- **URL:** `/api/v1/users`
+- **Controller:** `backend/user-service/src/main/java/com/xebia/userservice/controller/UserController.java`
+- **Service Used:** `UserService`
+- **Request Body:** `User` JSON object
+- **Response:** `User` JSON object (with generated UUID)
+- **Status Codes:** `200 OK`
+- **Database Interaction:** Executes `userRepository.save(user)`.
+- **Execution Flow:** API Gateway routing → `UserController.createUser()` → `UserService.createUser()` → `UserRepository.save()` → PostgreSQL `users` table.
+
+---
+
+## Batch Service APIs
+
+### 3. Retrieve Batches
+- **Method:** `GET`
+- **URL:** `/api/v1/batches`
+- **Controller:** `backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java`
+- **Service Used:** `BatchService`
+- **Request Body:** None
+- **Response:** `List<Batch>` (JSON Array)
+- **Status Codes:** `200 OK`
+- **Database Interaction:** `batchRepository.findAll()`
+- **Execution Flow:** Gateway → `BatchController.getAllBatches()` → `BatchService.getAllBatches()` → DB.
+
+### 4. Create Batch
+- **Method:** `POST`
+- **URL:** `/api/v1/batches`
+- **Controller:** `backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java`
+- **Service Used:** `BatchService`
+- **Request Body:** `Batch` JSON object
+- **Response:** `Batch` JSON object (with generated UUID)
+- **Status Codes:** `200 OK`
+- **Database Interaction:** `batchRepository.save(batch)`
+- **Execution Flow:** Gateway → `BatchController.createBatch()` → `BatchService.createBatch()` → DB.
+
+### 5. Update Batch
+- **Method:** `PUT`
+- **URL:** `/api/v1/batches/{id}`
+- **Controller:** `backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java`
+- **Service Used:** `BatchService`
+- **Request Body:** `Batch` JSON object
+- **Response:** `Batch` JSON object (Updated record)
+- **Status Codes:** `200 OK`
+- **Database Interaction:** Fetches via `findById(id)`, modifies fields conditionally in memory, saves via `save(batch)`.
+- **Execution Flow:** Gateway → `BatchController.updateBatch()` → `BatchService.updateBatch()` → DB.
+
+### 6. Delete Batch
+- **Method:** `DELETE`
+- **URL:** `/api/v1/batches/{id}`
+- **Controller:** `backend/batch-service/src/main/java/com/xebia/batchservice/controller/BatchController.java`
+- **Service Used:** `BatchService`
+- **Request Body:** None
+- **Response:** Empty Body
+- **Status Codes:** `204 No Content`
+- **Database Interaction:** `batchRepository.deleteById(id)`
+- **Execution Flow:** Gateway → `BatchController.deleteBatch()` → `BatchService.deleteBatch()` → returns `ResponseEntity.noContent()`.
+
+---
+
+## Assessment Service APIs
+
+### 7. Retrieve Assessments
+- **Method:** `GET`
+- **URL:** `/api/v1/assessments`
+- **Controller:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/AssessmentController.java`
+- **Service Used:** `AssessmentService`
+- **Request Body:** None
+- **Response:** `List<Assessment>` (JSON Array)
+- **Status Codes:** `200 OK`
+- **Database Interaction:** `assessmentRepository.findAll()`
+
+### 8. Create / Update / Delete Assessments
+*(Behaves identically to Batch Service logic structure across `POST /api/v1/assessments`, `PUT /api/v1/assessments/{id}`, and `DELETE /api/v1/assessments/{id}`).*
+
+---
+
+## Submission & Draft APIs (Assessment Service)
+
+### 9. Retrieve Submissions
+- **Method:** `GET`
+- **URL:** `/api/v1/submissions` (Optional Query Param: `?studentId=`)
+- **Controller:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/SubmissionController.java`
+- **Service Used:** `SubmissionService`
+- **Request Body:** None
+- **Response:** `List<Submission>`
+- **Status Codes:** `200 OK`
+- **Database Interaction:** `submissionRepository.findAll()` or `findByStudentId()`
+
+### 10. Create Submission
+- **Method:** `POST`
+- **URL:** `/api/v1/submissions`
+- **Controller:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/SubmissionController.java`
+- **Service Used:** `SubmissionService`
+- **Request Body:** `Submission` JSON object
+- **Response:** `Submission` JSON object
+- **Status Codes:** `200 OK`
+- **Database Interaction:** `submissionRepository.save(submission)`
+
+### 11. Save Assessment Draft
+- **Method:** `POST`
+- **URL:** `/api/v1/assessments/drafts/{studentId}/{assessmentId}`
+- **Controller:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/DraftController.java`
+- **Service Used:** `AssessmentCacheService`
+- **Request Body:** `Map<String, Object>` draftData JSON
+- **Response:** None
+- **Status Codes:** `200 OK`
+- **Database Interaction:** **None.** Uses Spring Cache/Redis templates (`cacheService.saveDraft()`).
+- **Execution Flow:** Gateway → `DraftController.saveDraft()` → `AssessmentCacheService` → Redis Cluster.
+
+### 12. Get Assessment Draft
+- **Method:** `GET`
+- **URL:** `/api/v1/assessments/drafts/{studentId}/{assessmentId}`
+- **Controller:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/DraftController.java`
+- **Service Used:** `AssessmentCacheService`
+- **Request Body:** None
+- **Response:** JSON Object (draft data) or null
+- **Status Codes:** `200 OK`
+- **Database Interaction:** **None.** Fetched from Redis.
+
+---
+
+## AI APIs (Assessment Service)
+
+### 13. Generate Assessment Description (AI)
+- **Method:** `POST`
+- **URL:** `/api/v1/assessments/ai/generate-description`
+- **Controller:** `backend/assessment-service/src/main/java/com/xebia/assessmentservice/controller/AIController.java`
+- **Service Used:** `AIService`
+- **Request Body:** `Map<String, String>` containing `{"topic": "..."}`
+- **Response:** `Map<String, String>` containing `{"content": "..."}`
+- **Status Codes:** `200 OK`
+- **Database Interaction:** **None.** 
+- **Execution Flow:** Gateway → `AIController.generateDescription()` → `AIService.generateAssessmentDescription()` → Calls external LLM API synchronously → Returns wrapped JSON map.
