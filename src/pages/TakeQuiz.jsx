@@ -22,7 +22,10 @@ import {
   List,
   LogOut,
   Flag,
-  X
+  X,
+  FileQuestion,
+  Home,
+  RefreshCw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -283,9 +286,84 @@ export const TakeQuiz = () => {
     navigate(`/results/${slug}/${completed.id}`);
   };
 
-  const currentQ = assessment.questions[currentQIndex];
-  const totalQuestions = assessment.questions.length;
-  const progressPercentage = Math.round((currentQIndex + 1) / totalQuestions * 100);
+  const currentQ = assessment.questions?.[currentQIndex];
+  const totalQuestions = assessment.questions?.length || 0;
+  const progressPercentage = totalQuestions > 0 ? Math.round((currentQIndex + 1) / totalQuestions * 100) : 0;
+
+  // ---- EMPTY QUESTIONS GUARD ----
+  if (!assessment.questions || assessment.questions.length === 0) {
+    return (
+      <div className={`min-h-screen bg-brand-bg-light dark:bg-[#0a0a0a] flex flex-col items-center justify-center p-6`}>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, type: 'spring', bounce: 0.4 }}
+          className="max-w-lg w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl shadow-2xl p-10 text-center flex flex-col items-center gap-6"
+        >
+          {/* Animated Icon */}
+          <motion.div
+            animate={{ rotate: [0, -8, 8, -8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 3 }}
+            className="w-24 h-24 rounded-3xl bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 border-2 border-amber-200 dark:border-amber-700/50 flex items-center justify-center"
+          >
+            <FileQuestion className="w-12 h-12 text-amber-500" />
+          </motion.div>
+
+          {/* Messaging */}
+          <div className="space-y-2">
+            <h2 className="text-2xl font-black text-neutral-900 dark:text-white tracking-tight">
+              No Questions Yet
+            </h2>
+            <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-sm">
+              This assessment — <span className="font-bold text-neutral-700 dark:text-neutral-300">{assessment.title}</span> — has been published but the trainer hasn't added any questions to it yet.
+            </p>
+          </div>
+
+          {/* Info Box */}
+          <div className="w-full p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/40 rounded-2xl flex items-start gap-3 text-left">
+            <AlertCircle className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+            <div className="text-xs text-blue-700 dark:text-blue-300">
+              <p className="font-bold mb-1">What to do?</p>
+              <p className="leading-relaxed opacity-90">Please inform your trainer that this assessment has no content. You will not lose any attempt by going back — you haven't started yet.</p>
+            </div>
+          </div>
+
+          {/* Assessment Metadata Pills */}
+          <div className="flex flex-wrap gap-2 justify-center">
+            <span className="px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-xl text-xs font-bold text-neutral-600 dark:text-neutral-400 flex items-center gap-1.5">
+              <Clock className="w-3 h-3" /> {assessment.duration || 0} mins
+            </span>
+            <span className="px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 rounded-xl text-xs font-bold text-neutral-600 dark:text-neutral-400">
+              {assessment.type?.replace('_', ' ').toUpperCase() || 'ASSESSMENT'}
+            </span>
+            <span className={`px-3 py-1.5 rounded-xl text-xs font-bold ${
+              assessment.difficulty === 'Easy' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+              assessment.difficulty === 'Hard' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' :
+              'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+            }`}>
+              {assessment.difficulty || 'Medium'}
+            </span>
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 w-full">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex-1 flex items-center justify-center gap-2 py-3 px-5 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded-2xl text-sm font-bold transition-all cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" /> Go Back
+            </button>
+            <button
+              onClick={() => navigate('/student-dashboard')}
+              className="flex-1 flex items-center justify-center gap-2 py-3 px-5 bg-[#6C1D5F] hover:bg-[#84117C] text-white rounded-2xl text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer"
+            >
+              <Home className="w-4 h-4" /> Dashboard
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   // Drag over styling
   const [isDragOver, setIsDragOver] = useState(false);
