@@ -1,0 +1,8 @@
+{
+  "name": "Remix: LMS Assessment System",
+  "description": "A complete, premium Learning Management System (LMS) assessment platform for teachers and students featuring robust local persistence and performance metrics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

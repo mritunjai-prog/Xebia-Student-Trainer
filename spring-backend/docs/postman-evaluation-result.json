@@ -1,0 +1,88 @@
+{
+  "info": {
+    "name": "Xebia Portal Evaluation and Result APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8082" },
+    { "key": "teacherToken", "value": "" },
+    { "key": "studentToken", "value": "" },
+    { "key": "batchId", "value": "" },
+    { "key": "studentId", "value": "" },
+    { "key": "assessmentId", "value": "" },
+    { "key": "submissionId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Login teacher",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"TEACHER\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Login student",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"STUDENT\"\n}"
+        }
+      }
+    },
+    {
+      "name": "List submissions as teacher",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/submissions?status=SUBMITTED&assessmentId={{assessmentId}}&studentId={{studentId}}"
+      }
+    },
+    {
+      "name": "Get result as teacher",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/submissions/{{submissionId}}/result"
+      }
+    },
+    {
+      "name": "Evaluate submission",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/submissions/{{submissionId}}/evaluation",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"overallRemarks\": \"Good work. Improve explanation clarity.\",\n  \"questionEvaluations\": [\n    {\n      \"questionId\": \"PASTE_MANUAL_QUESTION_ID_FROM_SUBMISSION_RESULT\",\n      \"marksAwarded\": 8,\n      \"remarks\": \"Correct approach with minor missing details.\"\n    }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "Get result as student",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+        "url": "{{baseUrl}}/api/v1/submissions/{{submissionId}}/result"
+      }
+    },
+    {
+      "name": "List own submissions as student",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+        "url": "{{baseUrl}}/api/v1/submissions"
+      }
+    }
+  ]
+}

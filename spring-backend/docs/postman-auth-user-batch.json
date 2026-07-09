@@ -1,0 +1,139 @@
+{
+  "info": {
+    "name": "Xebia Portal Auth User Batch APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8081" },
+    { "key": "teacherToken", "value": "" },
+    { "key": "studentToken", "value": "" },
+    { "key": "batchId", "value": "" },
+    { "key": "studentId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Login as teacher",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"TEACHER\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Login as student",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"STUDENT\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Get current user",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/users/me"
+      }
+    },
+    {
+      "name": "Update profile",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/users/me",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Teacher Demo\",\n  \"email\": \"teacher@example.com\",\n  \"phone\": \"9999999999\",\n  \"bio\": \"Trainer profile for API testing\",\n  \"avatarUrl\": null\n}"
+        }
+      }
+    },
+    {
+      "name": "List students",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/users?role=STUDENT"
+      }
+    },
+    {
+      "name": "Create batch",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/batches",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Java Spring Boot Batch\",\n  \"course\": \"Backend Development\",\n  \"icon\": \"BookOpen\",\n  \"status\": \"ACTIVE\",\n  \"studentIds\": [\"{{studentId}}\"]\n}"
+        }
+      }
+    },
+    {
+      "name": "List batches",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/batches"
+      }
+    },
+    {
+      "name": "Get batch by id",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/batches/{{batchId}}"
+      }
+    },
+    {
+      "name": "Update batch",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/batches/{{batchId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Advanced Java Spring Boot Batch\",\n  \"course\": \"Backend Development\",\n  \"icon\": \"Code\",\n  \"status\": \"ACTIVE\",\n  \"studentIds\": [\"{{studentId}}\"]\n}"
+        }
+      }
+    },
+    {
+      "name": "Enroll students into batch",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/batches/{{batchId}}/students",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentIds\": [\"{{studentId}}\"]\n}"
+        }
+      }
+    },
+    {
+      "name": "Delete batch",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/batches/{{batchId}}"
+      }
+    }
+  ]
+}

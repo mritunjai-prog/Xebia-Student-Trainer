@@ -1,0 +1,112 @@
+{
+  "info": {
+    "name": "Xebia Portal Dashboard Reports Leaderboard Notifications",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8082" },
+    { "key": "teacherToken", "value": "" },
+    { "key": "studentToken", "value": "" },
+    { "key": "batchId", "value": "" },
+    { "key": "assessmentId", "value": "" },
+    { "key": "notificationId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Login teacher",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"TEACHER\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Login student",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"STUDENT\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Teacher dashboard",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/dashboard/teacher"
+      }
+    },
+    {
+      "name": "Student dashboard",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+        "url": "{{baseUrl}}/api/v1/dashboard/student"
+      }
+    },
+    {
+      "name": "Reports overview",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/reports/overview"
+      }
+    },
+    {
+      "name": "Batch reports",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/reports/batches"
+      }
+    },
+    {
+      "name": "Student diagnostics",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/reports/students?batchId={{batchId}}&assessmentId={{assessmentId}}&search=student"
+      }
+    },
+    {
+      "name": "Leaderboard",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/leaderboard?batchId={{batchId}}&assessmentId={{assessmentId}}"
+      }
+    },
+    {
+      "name": "Get notifications",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+        "url": "{{baseUrl}}/api/v1/notifications"
+      }
+    },
+    {
+      "name": "Mark notification read",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+        "url": "{{baseUrl}}/api/v1/notifications/{{notificationId}}/read"
+      }
+    },
+    {
+      "name": "Mark all read",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+        "url": "{{baseUrl}}/api/v1/notifications/read-all"
+      }
+    }
+  ]
+}

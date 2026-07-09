@@ -1,0 +1,49 @@
+{
+  "info": {
+    "name": "Xebia Portal Assessment Draft APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8082" },
+    { "key": "studentToken", "value": "" },
+    { "key": "studentId", "value": "" },
+    { "key": "assessmentId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Login student",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"STUDENT\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Save assessment draft",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{studentToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/assessments/drafts/{{studentId}}/{{assessmentId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"draftData\": {\n    \"timeTaken\": 180,\n    \"currentQuestionIndex\": 1,\n    \"answers\": [\n      {\n        \"questionId\": \"PASTE_QUESTION_ID_FROM_ASSESSMENT_RESPONSE\",\n        \"answerText\": \"extends\"\n      }\n    ]\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "Get assessment draft",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+        "url": "{{baseUrl}}/api/v1/assessments/drafts/{{studentId}}/{{assessmentId}}"
+      }
+    }
+  ]
+}

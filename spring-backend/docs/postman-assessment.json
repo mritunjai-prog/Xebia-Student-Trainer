@@ -1,0 +1,156 @@
+{
+  "info": {
+    "name": "Xebia Portal Assessment APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8082" },
+    { "key": "teacherToken", "value": "" },
+    { "key": "studentToken", "value": "" },
+    { "key": "batchId", "value": "" },
+    { "key": "assessmentId", "value": "" },
+    { "key": "studentId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Login teacher",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"teacher@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"TEACHER\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Login student",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/v1/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"STUDENT\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Create batch",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/batches",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Assessment API Batch\",\n  \"course\": \"Backend Development\",\n  \"icon\": \"BookOpen\",\n  \"status\": \"ACTIVE\",\n  \"studentIds\": []\n}"
+        }
+      }
+    },
+    {
+      "name": "List students",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/users?role=STUDENT"
+      }
+    },
+    {
+      "name": "Enroll student",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/batches/{{batchId}}/students",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentIds\": [\"{{studentId}}\"]\n}"
+        }
+      }
+    },
+    {
+      "name": "Create assessment draft",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/assessments",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Java Basics Assessment\",\n  \"topic\": \"Java Fundamentals\",\n  \"course\": \"Backend Development\",\n  \"subject\": \"Java\",\n  \"description\": \"Quiz and coding assessment for backend trainees.\",\n  \"type\": \"MIXED\",\n  \"difficulty\": \"MEDIUM\",\n  \"status\": \"DRAFT\",\n  \"duration\": 60,\n  \"marks\": 30,\n  \"passingMarks\": 15,\n  \"maxAttempts\": 1,\n  \"negativeMarking\": false,\n  \"negativeMarksValue\": 0,\n  \"shuffleQuestions\": true,\n  \"autoSubmit\": true,\n  \"batchIds\": [\"{{batchId}}\"],\n  \"questions\": [\n    {\n      \"type\": \"MCQ\",\n      \"questionText\": \"Which keyword creates a subclass in Java?\",\n      \"marks\": 5,\n      \"required\": true,\n      \"explanation\": \"Java uses extends for class inheritance.\",\n      \"sortOrder\": 0,\n      \"options\": [\n        { \"optionText\": \"extends\", \"correct\": true, \"sortOrder\": 0 },\n        { \"optionText\": \"implements\", \"correct\": false, \"sortOrder\": 1 },\n        { \"optionText\": \"inherits\", \"correct\": false, \"sortOrder\": 2 },\n        { \"optionText\": \"super\", \"correct\": false, \"sortOrder\": 3 }\n      ]\n    },\n    {\n      \"type\": \"MULTIPLE_SELECT\",\n      \"questionText\": \"Which are valid Java access modifiers?\",\n      \"marks\": 5,\n      \"required\": true,\n      \"sortOrder\": 1,\n      \"options\": [\n        { \"optionText\": \"public\", \"correct\": true, \"sortOrder\": 0 },\n        { \"optionText\": \"private\", \"correct\": true, \"sortOrder\": 1 },\n        { \"optionText\": \"protected\", \"correct\": true, \"sortOrder\": 2 },\n        { \"optionText\": \"internal\", \"correct\": false, \"sortOrder\": 3 }\n      ]\n    },\n    {\n      \"type\": \"CODING\",\n      \"questionText\": \"Write a function that returns the sum of two integers.\",\n      \"marks\": 20,\n      \"required\": true,\n      \"sortOrder\": 2,\n      \"codingDetails\": {\n        \"difficulty\": \"EASY\",\n        \"timeLimitMs\": 1000,\n        \"memoryLimitMb\": 128,\n        \"constraintsText\": \"Inputs are integers between -1000 and 1000.\",\n        \"inputFormat\": \"Two integers a and b.\",\n        \"outputFormat\": \"Single integer sum.\",\n        \"sampleInput\": \"2 3\",\n        \"sampleOutput\": \"5\",\n        \"notes\": \"Return the sum only.\",\n        \"languagesAllowedJson\": \"[\\\"java\\\"]\",\n        \"templates\": [\n          { \"language\": \"java\", \"starterCode\": \"public class Solution { public int sum(int a, int b) { return 0; } }\" }\n        ],\n        \"testCases\": [\n          { \"input\": \"2 3\", \"expectedOutput\": \"5\", \"weight\": 1, \"visibility\": \"public\" },\n          { \"input\": \"-2 7\", \"expectedOutput\": \"5\", \"weight\": 2, \"visibility\": \"hidden\" }\n        ]\n      }\n    }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "Get assessment",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/assessments/{{assessmentId}}"
+      }
+    },
+    {
+      "name": "Update assessment",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{teacherToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/v1/assessments/{{assessmentId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Java Basics Assessment Updated\",\n  \"topic\": \"Java Fundamentals\",\n  \"course\": \"Backend Development\",\n  \"subject\": \"Java\",\n  \"description\": \"Updated draft before publishing.\",\n  \"type\": \"MIXED\",\n  \"difficulty\": \"MEDIUM\",\n  \"status\": \"DRAFT\",\n  \"duration\": 60,\n  \"marks\": 30,\n  \"passingMarks\": 15,\n  \"maxAttempts\": 1,\n  \"negativeMarking\": false,\n  \"negativeMarksValue\": 0,\n  \"shuffleQuestions\": true,\n  \"autoSubmit\": true,\n  \"batchIds\": [\"{{batchId}}\"],\n  \"questions\": [\n    {\n      \"type\": \"MCQ\",\n      \"questionText\": \"Which keyword creates a subclass in Java?\",\n      \"marks\": 5,\n      \"required\": true,\n      \"sortOrder\": 0,\n      \"options\": [\n        { \"optionText\": \"extends\", \"correct\": true, \"sortOrder\": 0 },\n        { \"optionText\": \"implements\", \"correct\": false, \"sortOrder\": 1 }\n      ]\n    },\n    {\n      \"type\": \"MULTIPLE_SELECT\",\n      \"questionText\": \"Which are valid Java access modifiers?\",\n      \"marks\": 5,\n      \"required\": true,\n      \"sortOrder\": 1,\n      \"options\": [\n        { \"optionText\": \"public\", \"correct\": true, \"sortOrder\": 0 },\n        { \"optionText\": \"private\", \"correct\": true, \"sortOrder\": 1 },\n        { \"optionText\": \"internal\", \"correct\": false, \"sortOrder\": 2 }\n      ]\n    },\n    {\n      \"type\": \"CODING\",\n      \"questionText\": \"Write a function that returns the sum of two integers.\",\n      \"marks\": 20,\n      \"required\": true,\n      \"sortOrder\": 2,\n      \"codingDetails\": {\n        \"difficulty\": \"EASY\",\n        \"timeLimitMs\": 1000,\n        \"memoryLimitMb\": 128,\n        \"templates\": [\n          { \"language\": \"java\", \"starterCode\": \"public class Solution { public int sum(int a, int b) { return 0; } }\" }\n        ],\n        \"testCases\": [\n          { \"input\": \"2 3\", \"expectedOutput\": \"5\", \"weight\": 1, \"visibility\": \"public\" }\n        ]\n      }\n    }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "Publish assessment",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/assessments/{{assessmentId}}/publish"
+      }
+    },
+    {
+      "name": "Duplicate assessment",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/assessments/{{assessmentId}}/duplicate"
+      }
+    },
+    {
+      "name": "List assessments as teacher",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/assessments"
+      }
+    },
+    {
+      "name": "Get assigned assessments as student",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{studentToken}}" }],
+        "url": "{{baseUrl}}/api/v1/students/me/assessments"
+      }
+    },
+    {
+      "name": "Delete assessment",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{teacherToken}}" }],
+        "url": "{{baseUrl}}/api/v1/assessments/{{assessmentId}}"
+      }
+    }
+  ]
+}
