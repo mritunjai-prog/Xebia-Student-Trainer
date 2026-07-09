@@ -139,5 +139,23 @@ export const apiClient = {
     const res = await fetch(`${API_GATEWAY}/certificates/user/${userId}`);
     if (res.ok) return res.json();
     return [];
+  },
+  getAllCertificates: async () => {
+    const res = await fetch(`${API_GATEWAY}/certificates`);
+    if (res.ok) return res.json();
+    return [];
+  },
+  updateCertificateStatus: async (id, status, reason, userRole, userId) => {
+    const res = await fetch(`${API_GATEWAY}/certificates/${id}/status`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-User-Role': userRole,
+        'X-User-Id': userId
+      },
+      body: JSON.stringify({ status, reason })
+    });
+    if (res.ok) return res.json();
+    throw new Error('Failed to update certificate status');
   }
 };

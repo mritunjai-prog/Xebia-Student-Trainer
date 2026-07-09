@@ -149,11 +149,13 @@ public class SubmissionService {
     }
     
     private void checkAndGenerateCertificate(Submission submission, Assessment assessment) {
-        if ("GRADED".equals(submission.getStatus()) && submission.getFinalScore() != null) {
+        if (Boolean.TRUE.equals(assessment.getIsCertificateEnabled()) && "GRADED".equals(submission.getStatus()) && submission.getFinalScore() != null) {
             double maxMarks = assessment.getMarks() != null ? assessment.getMarks() : 0.0;
             double percentage = maxMarks > 0 ? (submission.getFinalScore() / maxMarks) * 100 : 0;
             
-            if (percentage >= 60.0) {
+            double threshold = assessment.getCertificateThreshold() != null ? assessment.getCertificateThreshold() : 60.0;
+            
+            if (percentage >= threshold) {
                 if (!certificateRepository.existsBySubmissionId(submission.getId())) {
                     com.xebia.assessmentservice.model.Certificate cert = new com.xebia.assessmentservice.model.Certificate();
                     cert.setCertificateUuid(java.util.UUID.randomUUID().toString());
@@ -168,6 +170,7 @@ public class SubmissionService {
                     cert.setSubmissionId(submission.getId());
                     cert.setIssuedAt(LocalDateTime.now());
                     cert.setFinalScore(percentage);
+                    cert.setStatus(com.xebia.assessmentservice.model.CertificateStatus.ACTIVE);
                     
                     certificateRepository.save(cert);
                 }

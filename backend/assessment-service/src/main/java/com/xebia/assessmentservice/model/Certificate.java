@@ -37,4 +37,11 @@ public class Certificate {
     
     @Column(nullable = false)
     private Double finalScore;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CertificateStatus status;
+    
+    private String lastModifiedBy;
+    private String modificationReason;
 }

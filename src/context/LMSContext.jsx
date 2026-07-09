@@ -96,10 +96,16 @@ export const LMSProvider = ({ children }) => {
         
         const s = await apiClient.getSubmissions();
         setSubmissions(s);
-        const subUserId = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')).id : null;
-        if (subUserId) {
-          const userCerts = await apiClient.getCertificatesByUser(subUserId);
-          setCertificates(userCerts);
+        const storedSession = localStorage.getItem('session');
+        const sessionObj = storedSession ? JSON.parse(storedSession) : null;
+        if (sessionObj) {
+          if (sessionObj.role === 'teacher' || sessionObj.role === 'admin') {
+             const allCerts = await apiClient.getAllCertificates();
+             setCertificates(allCerts);
+          } else {
+             const userCerts = await apiClient.getCertificatesByUser(sessionObj.id);
+             setCertificates(userCerts);
+          }
         }
 
       } catch (err) {
@@ -814,6 +820,17 @@ export const LMSProvider = ({ children }) => {
     });
   };
 
+  const updateCertificateStatus = async (id, status, reason) => {
+    try {
+      const updated = await apiClient.updateCertificateStatus(id, status, reason, currentUser?.role, currentUser?.id);
+      setCertificates(prev => prev.map(c => c.id === id ? updated : c));
+      return updated;
+    } catch (err) {
+      console.error("Failed to update certificate status", err);
+      throw err;
+    }
+  };
+
   return (
     <LMSContext.Provider value={{
       teachers,
@@ -855,7 +872,8 @@ export const LMSProvider = ({ children }) => {
       submitCodingSubmission,
 
       certificates,
-      setCertificates
+      setCertificates,
+      updateCertificateStatus
     }}>
       {children}
     </LMSContext.Provider>);

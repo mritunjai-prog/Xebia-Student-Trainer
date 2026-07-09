@@ -5,12 +5,16 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, CheckCircle, Clock, FileText, User, ChevronRight, 
   Bot, AlertCircle, Award, MessageSquare, Send, CheckSquare, 
-  Layers, ChevronDown, Loader2
+  Layers, ChevronDown, Loader2, FileBadge, Ban, RefreshCw
 } from 'lucide-react';
 import { evaluateSubmission as evaluateSubmissionAI } from '../utils/aiService';
 
 export const Evaluation = () => {
-  const { submissions, students, assessments, evaluateSubmission } = useLMS();
+  const { submissions, students, assessments, evaluateSubmission, certificates, updateCertificateStatus } = useLMS();
+
+  const [activeView, setActiveView] = useState('evaluations'); // 'evaluations' | 'ledger'
+  const [ledgerSearch, setLedgerSearch] = useState('');
+  const [ledgerStatusFilter, setLedgerStatusFilter] = useState('ALL');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterGraded, setFilterGraded] = useState('pending');
@@ -164,12 +168,28 @@ export const Evaluation = () => {
         <div className="p-5 border-b border-neutral-200 dark:border-neutral-800 space-y-4">
           <div>
             <h2 className="font-display font-black text-xl text-neutral-900 dark:text-white flex items-center gap-2">
-              <CheckSquare className="w-6 h-6 text-[#6C1D5F]" /> Evaluation
+              <CheckSquare className="w-6 h-6 text-[#6C1D5F]" /> Workspace
             </h2>
-            <p className="text-xs text-neutral-500 mt-1">Review submissions and provide feedback.</p>
+            <p className="text-xs text-neutral-500 mt-1">Manage submissions and certificates.</p>
           </div>
 
-          <div className="relative">
+          <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl">
+            <button
+              onClick={() => setActiveView('evaluations')}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${activeView === 'evaluations' ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-white' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
+            >
+              Evaluations
+            </button>
+            <button
+              onClick={() => setActiveView('ledger')}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all ${activeView === 'ledger' ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-white' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
+            >
+              Certificates
+            </button>
+          </div>
+
+          {activeView === 'evaluations' && (
+            <div className="relative">
             <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-2.5" />
             <input
               type="text"
@@ -179,7 +199,9 @@ export const Evaluation = () => {
               className="w-full pl-9 pr-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F]"
             />
           </div>
+          )}
 
+          {activeView === 'evaluations' && (
           <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl">
             {['pending', 'graded', 'all'].map(mode => (
               <button
@@ -191,9 +213,11 @@ export const Evaluation = () => {
               </button>
             ))}
           </div>
+          )}
         </div>
 
         {/* Submission List */}
+        {activeView === 'evaluations' && (
         <div className="flex-1 overflow-y-auto p-3 space-y-2">
           {filteredSubs.length === 0 ? (
             <div className="p-8 text-center text-neutral-400">
@@ -246,6 +270,7 @@ export const Evaluation = () => {
             })
           )}
         </div>
+        )}
       </div>
 
       {/* CENTER & RIGHT COLUMNS */}
@@ -415,11 +440,131 @@ export const Evaluation = () => {
           </div>
 
         </div>
-      ) : (
+      ) : activeView === 'evaluations' ? (
         <div className="flex-1 flex flex-col items-center justify-center text-neutral-400 bg-neutral-50/50 dark:bg-neutral-950/20">
           <Layers className="w-16 h-16 mb-4 opacity-20" />
           <p className="text-lg font-bold text-neutral-500 dark:text-neutral-400">Select a submission to evaluate</p>
           <p className="text-sm mt-1">Click on any student in the queue to begin grading.</p>
+        </div>
+      ) : (
+        <div className="flex-1 overflow-y-auto p-6 bg-neutral-50 dark:bg-neutral-950/20">
+          <div className="mb-6 flex justify-between items-center">
+            <div>
+              <h2 className="text-2xl font-black text-neutral-900 dark:text-white flex items-center gap-2">
+                <FileBadge className="w-6 h-6 text-[#6C1D5F]" /> Certificate Master Ledger
+              </h2>
+              <p className="text-sm text-neutral-500 mt-1">Audit, revoke, and force-issue credentials.</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                placeholder="Search certificates..."
+                value={ledgerSearch}
+                onChange={(e) => setLedgerSearch(e.target.value)}
+                className="px-4 py-2 w-64 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-[#6C1D5F]"
+              />
+              <select
+                value={ledgerStatusFilter}
+                onChange={(e) => setLedgerStatusFilter(e.target.value)}
+                className="px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:ring-2 focus:ring-[#6C1D5F]"
+              >
+                <option value="ALL">All Statuses</option>
+                <option value="ACTIVE">Active</option>
+                <option value="REVOKED">Revoked</option>
+                <option value="PENDING_REVIEW">Pending Review</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm overflow-hidden">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-neutral-50 dark:bg-neutral-950/50 border-b border-neutral-200 dark:border-neutral-800 text-xs uppercase tracking-wider text-neutral-500 font-bold">
+                  <th className="p-4">Student</th>
+                  <th className="p-4">Assessment</th>
+                  <th className="p-4">Score</th>
+                  <th className="p-4">Date Issued</th>
+                  <th className="p-4">Status</th>
+                  <th className="p-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {certificates
+                  .filter(c => ledgerStatusFilter === 'ALL' || c.status === ledgerStatusFilter)
+                  .filter(c => {
+                     const stu = students.find(s => s.id === c.userId)?.name || '';
+                     const asm = assessments.find(a => a.id === c.assessmentId)?.title || '';
+                     return stu.toLowerCase().includes(ledgerSearch.toLowerCase()) || asm.toLowerCase().includes(ledgerSearch.toLowerCase()) || c.serialNumber.toLowerCase().includes(ledgerSearch.toLowerCase());
+                  })
+                  .map((cert) => {
+                    const student = students.find(s => s.id === cert.userId);
+                    const assessment = assessments.find(a => a.id === cert.assessmentId);
+                    
+                    return (
+                      <tr key={cert.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors">
+                        <td className="p-4">
+                          <div className="font-bold text-neutral-900 dark:text-white">{student?.name || 'Unknown'}</div>
+                          <div className="text-xs text-neutral-500 font-mono mt-0.5">{cert.serialNumber}</div>
+                        </td>
+                        <td className="p-4 text-neutral-700 dark:text-neutral-300 font-medium">
+                          {assessment?.title || 'Unknown Assessment'}
+                        </td>
+                        <td className="p-4">
+                          <span className={`px-2 py-1 rounded-lg font-bold text-xs ${cert.finalScore >= (assessment?.certificateThreshold || 60) ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'}`}>
+                            {cert.finalScore.toFixed(1)}%
+                          </span>
+                        </td>
+                        <td className="p-4 text-neutral-600 dark:text-neutral-400">
+                          {new Date(cert.issuedAt).toLocaleDateString()}
+                        </td>
+                        <td className="p-4">
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
+                            cert.status === 'ACTIVE' ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-950 dark:border-emerald-800 dark:text-emerald-400' : 
+                            cert.status === 'REVOKED' ? 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-950 dark:border-rose-800 dark:text-rose-400' : 
+                            'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-400'
+                          }`}>
+                            {cert.status}
+                          </span>
+                        </td>
+                        <td className="p-4 text-right space-x-2">
+                          {cert.status === 'ACTIVE' ? (
+                            <button 
+                              onClick={() => {
+                                const reason = prompt('Reason for revocation:');
+                                if (reason) {
+                                  updateCertificateStatus(cert.id, 'REVOKED', reason).then(() => toast.add('Certificate Revoked', 'success'));
+                                }
+                              }}
+                              className="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950 rounded-lg transition-colors"
+                              title="Revoke Certificate"
+                            >
+                              <Ban className="w-4 h-4" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                updateCertificateStatus(cert.id, 'ACTIVE', 'Trainer Override').then(() => toast.add('Certificate Restored', 'success'));
+                              }}
+                              className="p-1.5 text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950 rounded-lg transition-colors"
+                              title="Restore/Force-Issue"
+                            >
+                              <RefreshCw className="w-4 h-4" />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                })}
+                {certificates.length === 0 && (
+                  <tr>
+                    <td colSpan="6" className="p-8 text-center text-neutral-500 text-sm">
+                      No certificates have been issued yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

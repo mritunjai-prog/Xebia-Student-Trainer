@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Calendar, Clock, Wand2, Sparkles, BookOpen, Layers, Loader2, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
+import { Settings, Calendar, Clock, Wand2, Sparkles, BookOpen, Layers, Loader2, SlidersHorizontal, ChevronDown, ChevronUp, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { toast } from '../Toast';
 import { generateAssessmentDescription } from '../../utils/aiService';
@@ -327,6 +327,83 @@ export const ConfigPanel = ({ config, setConfig }) => {
               placeholder="Enter assessment guidelines, rules, or instructions..."
             ></textarea>
           </div>
+        </section>
+
+        {/* Certification Settings */}
+        <section className="border border-neutral-200 dark:border-neutral-800 rounded-2xl overflow-hidden mb-4">
+          <div className="w-full p-4 flex items-center justify-between bg-neutral-50 dark:bg-neutral-950/50">
+            <span className="text-xs font-bold flex items-center gap-2 text-neutral-700 dark:text-neutral-300">
+              <Award className="w-4 h-4 text-[#6C1D5F]" /> Certification Settings
+            </span>
+            <label className="relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer" style={{ backgroundColor: config.isCertificateEnabled ? '#6C1D5F' : '#e5e5e5' }}>
+              <input 
+                type="checkbox"
+                className="sr-only"
+                checked={!!config.isCertificateEnabled}
+                onChange={(e) => setConfig(prev => ({...prev, isCertificateEnabled: e.target.checked}))}
+              />
+              <span className={`inline-block h-3 w-3 rounded-full bg-white transition-transform ${config.isCertificateEnabled ? 'translate-x-5' : 'translate-x-1'}`} />
+            </label>
+          </div>
+          
+          <AnimatePresence>
+            {config.isCertificateEnabled && (
+              <motion.div 
+                initial={{ height: 0, opacity: 0 }} 
+                animate={{ height: 'auto', opacity: 1 }} 
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="p-4 bg-white dark:bg-neutral-900 space-y-4 border-t border-neutral-200 dark:border-neutral-800">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-1.5">Passing Threshold (%)</label>
+                      <input 
+                        type="number" 
+                        value={config.certificateThreshold || 60} 
+                        onChange={(e) => setConfig(prev => ({...prev, certificateThreshold: parseInt(e.target.value)}))} 
+                        className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F]" 
+                        min={0} 
+                        max={100}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-1.5">Template Style</label>
+                      <select 
+                        value={config.certificateTemplateType || 'Corporate'} 
+                        onChange={(e) => setConfig(prev => ({...prev, certificateTemplateType: e.target.value}))} 
+                        className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F]"
+                      >
+                        <option value="Corporate">Xebia Corporate Dark</option>
+                        <option value="Dynamic">AI Dynamic Theme</option>
+                        <option value="Minimalist">Academic Minimalist</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-1.5">Custom Authority Title (Override)</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g., Xebia Tech Team"
+                      value={config.customAuthorityTitle || ''} 
+                      onChange={(e) => setConfig(prev => ({...prev, customAuthorityTitle: e.target.value}))} 
+                      className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F]" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-1.5">Custom Narrative Text (Override)</label>
+                    <textarea 
+                      rows={2}
+                      placeholder="e.g., For exceptional dedication to software engineering..."
+                      value={config.customNarrativeText || ''} 
+                      onChange={(e) => setConfig(prev => ({...prev, customNarrativeText: e.target.value}))} 
+                      className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F]" 
+                    ></textarea>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </section>
 
         {/* Quick Settings Accordion */}

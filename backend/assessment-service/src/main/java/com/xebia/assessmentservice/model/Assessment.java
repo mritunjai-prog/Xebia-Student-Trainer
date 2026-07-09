@@ -50,6 +50,13 @@ public class Assessment {
     @ElementCollection
     private List<String> batches;
 
+    // Certificate Settings
+    private Boolean isCertificateEnabled;
+    private Double certificateThreshold;
+    private String certificateTemplateType;
+    @Column(columnDefinition = "TEXT")
+    private String customCertificateText;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "assessment_id")
     private List<Question> questions;
