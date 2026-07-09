@@ -119,6 +119,23 @@ export const ConfigPanel = ({ config, setConfig }) => {
                       </span>
                     </label>
                   )}
+                  {batches.length > 0 && (
+                    <label className="flex items-center gap-2 px-2 py-1.5 mb-1 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-lg cursor-pointer border-b border-neutral-100 dark:border-neutral-800">
+                      <input 
+                        type="checkbox"
+                        checked={config.batches?.length === 0 || !config.batches}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setConfig(prev => ({...prev, batches: []}));
+                          }
+                        }}
+                        className="w-4 h-4 text-[#6C1D5F] rounded"
+                      />
+                      <span className="text-sm font-bold text-neutral-800 dark:text-neutral-200">
+                        None (Do not allocate)
+                      </span>
+                    </label>
+                  )}
                   {batches.map((b, i) => (
                     <label key={i} className="flex items-center gap-2 px-2 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-lg cursor-pointer">
                       <input 

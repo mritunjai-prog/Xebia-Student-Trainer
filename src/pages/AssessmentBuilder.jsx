@@ -180,7 +180,7 @@ export const AssessmentBuilder = () => {
     setTitle(as.title);
     setDescription(as.description);
     setInstructions(as.instructions);
-    setSelectedBatches(as.batches);
+    setSelectedBatches(as.batches || []);
     setDifficulty(as.difficulty);
     setDuration(as.duration);
     setPassingMarks(as.passingMarks);
@@ -314,10 +314,6 @@ export const AssessmentBuilder = () => {
     e.preventDefault();
     if (!title.trim()) {
       toast.add('Please supply assessment title', 'warning');
-      return;
-    }
-    if (selectedBatches.length === 0) {
-      toast.add('Please assign to at least one batch', 'warning');
       return;
     }
     if (questions.length === 0) {
@@ -602,7 +598,7 @@ export const AssessmentBuilder = () => {
                       </tr> :
 
                       filteredAssessments.map((as) => {
-                        const batchNames = as.batches.map((bId) => batches.find((b) => b.id === bId)?.name || bId).join(', ');
+                        const batchNames = (as.batches || []).map((bId) => batches.find((b) => b.id === bId)?.name || bId).join(', ');
 
                         const statusColor = {
                           published: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',

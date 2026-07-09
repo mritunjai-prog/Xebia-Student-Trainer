@@ -178,7 +178,7 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
             <Save className="w-4 h-4" /> Save Draft
           </button>
           <button onClick={() => {
-            const isConfigComplete = config && config.title && config.topic && config.course && config.batches?.length > 0 && config.difficulty && config.duration && config.marks;
+            const isConfigComplete = config && config.title && config.topic && config.course && config.difficulty && config.duration && config.marks;
             if (!isConfigComplete) {
               toast.add('Please fill all mandatory configuration fields before publishing.', 'error');
               return;
