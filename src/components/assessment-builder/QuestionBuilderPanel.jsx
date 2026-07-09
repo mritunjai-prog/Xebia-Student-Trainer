@@ -16,6 +16,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
   const [evaluationType, setEvaluationType] = useState('AUTO');
   const [aiRubric, setAiRubric] = useState('');
   const [correctAnswer, setCorrectAnswer] = useState('');
+  const [draftMarks, setDraftMarks] = useState(1);
   
   // Enforce configuration completeness
   const isConfigComplete = config && config.title && config.topic && config.type && config.difficulty && config.duration && config.marks;
@@ -80,7 +81,11 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
 
   const handleEdit = (index) => {
     const q = questions[index];
-    setDraftText(q.text);
+    setDraftText(q.question || q.text || '');
+    setDraftMarks(q.marks || 1);
+    setCorrectAnswer(q.correctAnswer || '');
+    setEvaluationType(q.evaluationType || 'AUTO');
+    setAiRubric(q.aiRubric || '');
     if (q.options) {
       setDraftOptions(q.options.concat(['', '', '', '']).slice(0, 4));
     }
@@ -98,7 +103,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
       id: `q_manual_${Date.now()}`,
       type: config?.type || 'mcq',
       question: draftText,
-      marks: 1,
+      marks: Number(draftMarks) || 1,
       options: ['mcq', 'multiple_select', 'true_false'].includes(config?.type) 
         ? draftOptions.filter(o => o.trim() !== '') 
         : undefined,
@@ -113,6 +118,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
     setEvaluationType('AUTO');
     setAiRubric('');
     setCorrectAnswer('');
+    setDraftMarks(1);
     toast.add('Question added successfully', 'success');
   };
 
@@ -548,7 +554,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
                     <div className="flex items-center justify-between pt-4 border-t border-neutral-100 dark:border-neutral-800 mt-6">
                       <div className="flex gap-3">
                         <label className="text-xs font-bold text-neutral-500 flex items-center gap-1.5">
-                          Marks: <input type="number" defaultValue={config.marks || 1} className="w-16 px-2 py-1 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg" />
+                          Marks: <input type="number" value={draftMarks} onChange={(e) => setDraftMarks(Number(e.target.value))} className="w-16 px-2 py-1 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg font-bold text-center" />
                         </label>
                       </div>
                       <div className="flex gap-2">
