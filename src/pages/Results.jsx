@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useLMS } from '../context/LMSContext';
 import Editor from '@monaco-editor/react';
+import { CertificateViewer } from '../components/certificates/CertificateViewer';
 import {
 
   CheckCircle,
@@ -13,14 +14,18 @@ import {
 
 
   MessageSquare,
+  Award,
+  Sparkles,
   FileText } from
 'lucide-react';
 
 
 export const Results = () => {
   const { id } = useParams();
-  const { submissions, assessments, students } = useLMS();
+  const { submissions, assessments, students, certificates } = useLMS();
   const navigate = useNavigate();
+
+  const [showCertificate, setShowCertificate] = useState(false);
 
   const submission = submissions.find((s) => s.id === id);
   if (!submission) {
@@ -33,6 +38,7 @@ export const Results = () => {
 
   const assessment = assessments.find((a) => a.id === submission.assessmentId);
   const student = students.find((s) => s.id === submission.studentId);
+  const earnedCertificate = certificates?.find((c) => c.submissionId === submission.id && c.status === 'ACTIVE');
 
   if (!assessment) {
     return (
@@ -307,9 +313,63 @@ export const Results = () => {
           })}
         </div>
       </div>
+    )}
+
+      {/* Certificate Achievement Section */}
+      {earnedCertificate && (
+        <div className="relative overflow-hidden rounded-2xl border border-amber-300/40 dark:border-amber-600/30 shadow-xl">
+          {/* Animated gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-amber-950/40 dark:via-yellow-950/30 dark:to-orange-950/40" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-300/10 rounded-full blur-3xl -ml-12 -mb-12 pointer-events-none" />
+          
+          <div className="relative z-10 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
+            {/* Trophy Icon */}
+            <div className="shrink-0 w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/30">
+              <Award className="w-10 h-10 text-white" />
+            </div>
+            
+            {/* Text Content */}
+            <div className="flex-1 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest">Achievement Unlocked</span>
+              </div>
+              <h3 className="text-xl md:text-2xl font-black text-neutral-900 dark:text-white mb-1">
+                You've Earned a Certificate! 🎉
+              </h3>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-1">
+                Congratulations <span className="font-bold text-neutral-900 dark:text-white">{student?.name}</span> — you passed <span className="font-bold">{assessment?.title}</span> with a score of <span className="font-bold text-amber-600">{earnedCertificate.finalScore.toFixed(1)}%</span>.
+              </p>
+              <p className="text-xs text-neutral-500 dark:text-neutral-500 font-mono">
+                Credential ID: {earnedCertificate.serialNumber}
+              </p>
+            </div>
+            
+            {/* Action Button */}
+            <div className="shrink-0">
+              <button
+                onClick={() => setShowCertificate(true)}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-amber-500/30 hover:shadow-amber-500/50 hover:-translate-y-0.5 transition-all text-sm"
+              >
+                <Award className="w-4 h-4" />
+                View Certificate
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Certificate Modal */}
+      {showCertificate && earnedCertificate && (
+        <CertificateViewer
+          certificate={earnedCertificate}
+          studentName={student?.name}
+          assessmentTitle={assessment?.title}
+          onClose={() => setShowCertificate(false)}
+        />
       )}
 
     </div>);
 
 };
-
