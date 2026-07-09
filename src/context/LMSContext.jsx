@@ -49,6 +49,7 @@ export const LMSProvider = ({ children }) => {
   const [students, setStudents] = useState([]);
   const [assessments, setAssessments] = useState([]);
   const [submissions, setSubmissions] = useState([]);
+  const [certificates, setCertificates] = useState([]);
   
   // Local coding states
   const [codingSubmissions, setCodingSubmissions] = useState(() => {
@@ -95,6 +96,12 @@ export const LMSProvider = ({ children }) => {
         
         const s = await apiClient.getSubmissions();
         setSubmissions(s);
+        const subUserId = localStorage.getItem('currentUser') ? JSON.parse(localStorage.getItem('currentUser')).id : null;
+        if (subUserId) {
+          const userCerts = await apiClient.getCertificatesByUser(subUserId);
+          setCertificates(userCerts);
+        }
+
       } catch (err) {
         console.error("Backend connection failed.", err);
       }
@@ -845,7 +852,10 @@ export const LMSProvider = ({ children }) => {
       setCodingSubmissions,
       codingLeaderboard,
       setCodingLeaderboard,
-      submitCodingSubmission
+      submitCodingSubmission,
+
+      certificates,
+      setCertificates
     }}>
       {children}
     </LMSContext.Provider>);

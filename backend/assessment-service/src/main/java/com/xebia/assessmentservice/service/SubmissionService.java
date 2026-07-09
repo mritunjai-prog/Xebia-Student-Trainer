@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 @Service
 public class SubmissionService {
@@ -22,6 +23,9 @@ public class SubmissionService {
     
     @Autowired
     private AIService aiService;
+
+    @Autowired
+    private com.xebia.assessmentservice.repository.CertificateRepository certificateRepository;
 
     public List<Submission> getAllSubmissions() {
         return submissionRepository.findAll();
@@ -74,6 +78,10 @@ public class SubmissionService {
         }
         
         Submission savedSubmission = submissionRepository.save(submission);
+        
+        if (assessment != null) {
+            checkAndGenerateCertificate(savedSubmission, assessment);
+        }
         
         if (hasAiQuestions && assessment != null) {
             aiService.evaluateSubmissionAsync(savedSubmission.getId(), assessment.getId());
@@ -132,11 +140,39 @@ public class SubmissionService {
         // If there are no AI or Manual questions, it's fully evaluated
         if (!hasAiQuestions && !hasManualQuestions) {
             submission.setIsEvaluated(true);
+            submission.setStatus("GRADED");
         } else {
             submission.setIsEvaluated(false);
         }
         
         return hasAiQuestions;
+    }
+    
+    private void checkAndGenerateCertificate(Submission submission, Assessment assessment) {
+        if ("GRADED".equals(submission.getStatus()) && submission.getFinalScore() != null) {
+            double maxMarks = assessment.getMarks() != null ? assessment.getMarks() : 0.0;
+            double percentage = maxMarks > 0 ? (submission.getFinalScore() / maxMarks) * 100 : 0;
+            
+            if (percentage >= 60.0) {
+                if (!certificateRepository.existsBySubmissionId(submission.getId())) {
+                    com.xebia.assessmentservice.model.Certificate cert = new com.xebia.assessmentservice.model.Certificate();
+                    cert.setCertificateUuid(java.util.UUID.randomUUID().toString());
+                    
+                    String assessIdStr = assessment.getId().length() > 5 ? assessment.getId().substring(0, 5).toUpperCase() : assessment.getId().toUpperCase();
+                    String hash = submission.getId().length() > 4 ? submission.getId().substring(submission.getId().length() - 4).toUpperCase() : submission.getId().toUpperCase();
+                    String dateStr = LocalDateTime.now().toLocalDate().toString();
+                    
+                    cert.setSerialNumber("XEB-" + assessIdStr + "-" + dateStr + "-" + hash);
+                    cert.setUserId(submission.getStudentId());
+                    cert.setAssessmentId(assessment.getId());
+                    cert.setSubmissionId(submission.getId());
+                    cert.setIssuedAt(LocalDateTime.now());
+                    cert.setFinalScore(percentage);
+                    
+                    certificateRepository.save(cert);
+                }
+            }
+        }
     }
     
     private double evaluateAuto(Question question, String studentAnswer) {

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLMS } from '../context/LMSContext';
 import { useNavigate } from 'react-router-dom';
+import { CertificateViewer } from '../components/certificates/CertificateViewer';
 import {
   ClipboardList,
   Trophy,
@@ -8,7 +9,10 @@ import {
   Calendar as CalendarIcon,
   Clock,
   HelpCircle,
-  ArrowRight
+  ArrowRight,
+  Medal,
+  Award,
+  ShieldCheck
 } from
 
 
@@ -27,8 +31,10 @@ import {
 
 
 export const StudentDashboard = () => {
-  const { currentUser, assessments, submissions, getLeaderboard } = useLMS();
+  const { currentUser, assessments, submissions, getLeaderboard, certificates } = useLMS();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [selectedCert, setSelectedCert] = useState(null);
 
   if (!currentUser) return null;
 
@@ -112,7 +118,25 @@ export const StudentDashboard = () => {
   return (
     <div className="space-y-6">
 
-      {/* Student Welcome Card */}
+      {/* Tabs */}
+      <div className="flex space-x-2 border-b border-neutral-200 dark:border-neutral-800 pb-2">
+        <button
+          onClick={() => setActiveTab('dashboard')}
+          className={`px-4 py-2 text-sm font-bold rounded-xl transition-colors ${activeTab === 'dashboard' ? 'bg-[#6C1D5F] text-white' : 'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
+        >
+          Dashboard
+        </button>
+        <button
+          onClick={() => setActiveTab('portfolio')}
+          className={`px-4 py-2 text-sm font-bold rounded-xl transition-colors flex items-center gap-2 ${activeTab === 'portfolio' ? 'bg-[#6C1D5F] text-white' : 'text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800'}`}
+        >
+          <Medal className="w-4 h-4" /> Portfolio & Achievements
+        </button>
+      </div>
+
+      {activeTab === 'dashboard' ? (
+        <>
+          {/* Student Welcome Card */}
       <div className="bg-gradient-to-r from-[#4A1E47] via-[#6C1D5F] to-[#84117C] text-white p-6 md:p-8 rounded-3xl shadow-xl dark:shadow-purple-900/20 border border-white/10 dark:border-white/5 relative overflow-hidden flex flex-col justify-center min-h-[160px]">
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
         <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl -mb-20 pointer-events-none" />
@@ -296,7 +320,82 @@ export const StudentDashboard = () => {
           </div>
         </div>
       }
+        </>
+      ) : (
+        <div className="space-y-6">
+          <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-800 rounded-3xl p-6 md:p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-xl font-black text-neutral-900 dark:text-white flex items-center gap-2">
+                  <Award className="w-6 h-6 text-[#6C1D5F]" /> Verified Certificates
+                </h3>
+                <p className="text-sm text-neutral-500 mt-1">
+                  Certificates are automatically issued for graded assessments with a score of 60% or higher.
+                </p>
+              </div>
+              <div className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl font-bold flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5" />
+                {certificates.length} Credentials
+              </div>
+            </div>
 
+            {certificates.length === 0 ? (
+              <div className="text-center py-12 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl">
+                <Medal className="w-12 h-12 text-neutral-300 mx-auto mb-3" />
+                <h4 className="text-neutral-500 font-bold">No certificates yet</h4>
+                <p className="text-xs text-neutral-400 mt-1">Complete assessments to earn credentials.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {certificates.map((cert) => {
+                  const asObj = assessments.find(a => a.id === cert.assessmentId);
+                  return (
+                    <div 
+                      key={cert.id} 
+                      className="group bg-gradient-to-br from-white to-neutral-50 dark:from-neutral-800 dark:to-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-5 hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer relative overflow-hidden"
+                      onClick={() => setSelectedCert({ cert, asTitle: asObj?.title })}
+                    >
+                      <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#6C1D5F]/10 rounded-full blur-xl group-hover:bg-[#6C1D5F]/20 transition-all" />
+                      
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 rounded-full bg-[#6C1D5F]/10 flex items-center justify-center shrink-0">
+                          <Award className="w-5 h-5 text-[#6C1D5F]" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-sm text-neutral-900 dark:text-white line-clamp-1">{asObj?.title || 'Assessment Certificate'}</h4>
+                          <p className="text-[10px] text-neutral-500 font-mono mt-0.5">ID: {cert.serialNumber}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-end justify-between pt-4 border-t border-neutral-100 dark:border-neutral-700/50">
+                        <div>
+                          <p className="text-[10px] text-neutral-500 uppercase tracking-wider font-bold mb-1">Score</p>
+                          <p className="text-lg font-black text-[#01AC9F]">{cert.finalScore}%</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[10px] text-neutral-500 uppercase tracking-wider font-bold mb-1">Issued</p>
+                          <p className="text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+                            {new Date(cert.issuedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {selectedCert && (
+        <CertificateViewer 
+          certificate={selectedCert.cert}
+          studentName={currentUser.name}
+          assessmentTitle={selectedCert.asTitle}
+          onClose={() => setSelectedCert(null)}
+        />
+      )}
     </div>);
 
 };

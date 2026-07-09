@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLMS } from '../context/LMSContext';
 import { useNavigate } from 'react-router-dom';
+import { CertificateViewer } from '../components/certificates/CertificateViewer';
 import {
   Clock,
   HelpCircle,
@@ -12,12 +13,15 @@ import {
   X,
   Calendar,
   CheckCircle2,
-  Clock3
+  Clock3,
+  Award
 } from 'lucide-react';
 
 export const StudentAssessments = () => {
-  const { currentUser, assessments, submissions } = useLMS();
+  const { currentUser, assessments, submissions, certificates } = useLMS();
   const navigate = useNavigate();
+
+  const [selectedCert, setSelectedCert] = useState(null);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All'); // All, Active, Upcoming, Completed
@@ -281,25 +285,37 @@ export const StudentAssessments = () => {
                       </td>
                       <td className="py-4 px-6 text-right">
                         <div className="font-bold text-neutral-900 dark:text-white">{as.marks} Marks</div>
+                        <div className="font-bold text-neutral-900 dark:white">{as.marks} Marks</div>
                         <div className="text-[11px] text-neutral-500 mt-0.5">{as.duration} mins</div>
                         <div className="text-[10px] text-[#01AC9F] mt-1 font-bold">Attempts: {as.attemptsMade}/{as.maxAttempts}</div>
                       </td>
                       <td className="py-4 px-6 text-center">
                         {as.computedStatus === 'Active' ? (
-                          <button
+                          <button 
                             onClick={() => handleStartAttempt(as.id)}
-                            className="bg-[#01AC9F] hover:bg-[#019388] text-white px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors cursor-pointer"
+                            className="flex-1 bg-[#6C1D5F] hover:bg-[#84117C] text-white px-4 py-2.5 rounded-xl text-xs font-black tracking-wider uppercase shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                           >
-                            {as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Start'}
+                            {as.attemptsMade >= as.maxAttempts ? 'Locked' : 'Start Exam'} <ArrowRight className="w-3.5 h-3.5" />
                           </button>
                         ) : as.computedStatus === 'Completed' ? (
-                          <button
-                            onClick={() => as.studentSubmission && handleViewResult(as.studentSubmission.id)}
-                            disabled={!as.studentSubmission}
-                            className={`bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                          >
-                            {as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Expired')}
-                          </button>
+                          <div className="flex gap-2 w-full">
+                            <button 
+                              onClick={() => as.studentSubmission && handleViewResult(as.studentSubmission.id)}
+                              disabled={!as.studentSubmission}
+                              className={`flex-1 bg-white dark:bg-neutral-800 border-2 border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center ${as.studentSubmission ? 'hover:border-[#6C1D5F] hover:text-[#6C1D5F] dark:hover:border-purple-400 dark:hover:text-purple-400 hover:-translate-y-0.5 shadow-sm hover:shadow cursor-pointer' : 'opacity-50 cursor-not-allowed'}`}
+                            >
+                              {as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Locked' : 'Expired')}
+                            </button>
+                            {as.studentSubmission && certificates && certificates.some(c => c.submissionId === as.studentSubmission.id) && (
+                              <button
+                                onClick={() => setSelectedCert({ cert: certificates.find(c => c.submissionId === as.studentSubmission.id), asTitle: as.title })}
+                                className="flex items-center justify-center bg-amber-100 hover:bg-amber-200 text-amber-700 border-2 border-amber-200 dark:bg-amber-900/30 dark:hover:bg-amber-900/50 dark:text-amber-400 dark:border-amber-700/50 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-sm hover:shadow cursor-pointer"
+                                title="View Certificate"
+                              >
+                                <Award className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
                         ) : (
                           <span className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase">
                             Locked
@@ -401,6 +417,14 @@ export const StudentAssessments = () => {
             );
           })}
         </div>
+      )}
+      {selectedCert && (
+        <CertificateViewer 
+          certificate={selectedCert.cert}
+          studentName={currentUser.name}
+          assessmentTitle={selectedCert.asTitle}
+          onClose={() => setSelectedCert(null)}
+        />
       )}
     </div>
   );

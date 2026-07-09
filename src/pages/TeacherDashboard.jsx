@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLMS } from '../context/LMSContext';
+import { toast } from '../components/Toast';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Users,
   Layers,
@@ -10,7 +12,8 @@ import {
 
   TrendingUp,
   Clock,
-  ArrowUpRight } from
+  ArrowUpRight,
+  X } from
 
 'lucide-react';
 import {
@@ -27,7 +30,29 @@ import {
 import { Link } from 'react-router-dom';
 
 export const TeacherDashboard = () => {
-  const { students, batches, assessments, submissions, notifications } = useLMS();
+  const { students, batches, assessments, submissions, notifications, editAssessment } = useLMS();
+
+  // Quick Allocate State
+  const [quickAllocateId, setQuickAllocateId] = useState(null);
+  const [selectedBatches, setSelectedBatches] = useState([]);
+
+  const handleQuickAllocate = () => {
+    if (selectedBatches.length === 0) {
+      toast.add('Please select at least one batch to allocate', 'error');
+      return;
+    }
+    const assessment = assessments.find(a => a.id === quickAllocateId);
+    if (!assessment) return;
+    
+    editAssessment(quickAllocateId, {
+      ...assessment,
+      status: 'published',
+      batches: selectedBatches
+    });
+    toast.add('Assessment successfully allocated and published!', 'success');
+    setQuickAllocateId(null);
+    setSelectedBatches([]);
+  };
 
   // Metrics Calculations
   const totalStudents = students.length;
@@ -355,9 +380,21 @@ export const TeacherDashboard = () => {
                     <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${a.status === 'unallocated' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'}`}>
                       {a.status}
                     </span>
-                    <Link to={`/assessment-builder/${a.id}`} className="text-[10px] font-bold text-[#6C1D5F] hover:underline">
-                      {a.status === 'unallocated' ? 'Allocate Now' : 'Edit Draft'}
-                    </Link>
+                    {a.status === 'unallocated' ? (
+                      <button 
+                        onClick={() => {
+                          setQuickAllocateId(a.id);
+                          setSelectedBatches([]);
+                        }} 
+                        className="text-[10px] font-bold text-[#6C1D5F] hover:underline"
+                      >
+                        Quick Allocate
+                      </button>
+                    ) : (
+                      <Link to={`/assessment-builder/${a.id}`} className="text-[10px] font-bold text-[#6C1D5F] hover:underline">
+                        Edit Draft
+                      </Link>
+                    )}
                   </div>
                 </div>
               ))
@@ -366,6 +403,71 @@ export const TeacherDashboard = () => {
         </div>
 
       </div>
+
+      {/* Quick Allocate Modal */}
+      <AnimatePresence>
+        {quickAllocateId && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black z-40"
+              onClick={() => setQuickAllocateId(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl z-50 overflow-hidden"
+            >
+              <div className="flex items-center justify-between p-5 border-b border-neutral-200 dark:border-neutral-800">
+                <div>
+                  <h3 className="font-bold text-neutral-900 dark:text-white text-lg">Quick Allocate</h3>
+                  <p className="text-xs text-neutral-500">Select batches to instantly publish this assessment</p>
+                </div>
+                <button onClick={() => setQuickAllocateId(null)} className="p-2 text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-5 max-h-[60vh] overflow-y-auto space-y-3">
+                {batches.length === 0 ? (
+                  <p className="text-sm text-neutral-500 text-center py-4">No batches available to allocate.</p>
+                ) : (
+                  batches.map(b => (
+                    <label key={b.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selectedBatches.includes(b.id) ? 'border-[#6C1D5F] bg-purple-50 dark:bg-purple-900/20' : 'border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800/50'}`}>
+                      <input 
+                        type="checkbox"
+                        checked={selectedBatches.includes(b.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) setSelectedBatches([...selectedBatches, b.id]);
+                          else setSelectedBatches(selectedBatches.filter(id => id !== b.id));
+                        }}
+                        className="w-4 h-4 text-[#6C1D5F]"
+                      />
+                      <div>
+                        <p className="text-sm font-bold text-neutral-800 dark:text-neutral-200">{b.name}</p>
+                        <p className="text-xs text-neutral-500">{b.course}</p>
+                      </div>
+                    </label>
+                  ))
+                )}
+              </div>
+              <div className="p-5 border-t border-neutral-200 dark:border-neutral-800 flex justify-end gap-3 bg-neutral-50 dark:bg-neutral-900/50">
+                <button onClick={() => setQuickAllocateId(null)} className="px-4 py-2 text-sm font-bold text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-xl">
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleQuickAllocate}
+                  className="px-6 py-2 text-sm font-bold text-white bg-[#6C1D5F] hover:bg-[#84117C] rounded-xl shadow-md"
+                >
+                  Publish Now
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
     </div>);
 

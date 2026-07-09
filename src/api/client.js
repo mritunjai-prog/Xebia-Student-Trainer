@@ -132,5 +132,12 @@ export const apiClient = {
       body: JSON.stringify({ topic })
     });
     return res.json();
+  },
+
+  // Certificates
+  getCertificatesByUser: async (userId) => {
+    const res = await fetch(`${API_GATEWAY}/certificates/user/${userId}`);
+    if (res.ok) return res.json();
+    return [];
   }
 };
