@@ -42,7 +42,8 @@ export const Results = () => {
 
   }
 
-  const isPassed = submission.percentage >= assessment.passingMarks;
+  const isMasked = assessment.scoreReleasePolicy === 'MANUAL_RELEASE_BY_TRAINER' && submission.score == null;
+  const isPassed = !isMasked && submission.percentage >= assessment.passingMarks;
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6">
@@ -63,7 +64,11 @@ export const Results = () => {
             <span className="px-2.5 py-0.5 bg-[#6C1D5F]/10 text-[#6C1D5F] dark:text-purple-300 font-bold rounded-lg text-[10px] uppercase font-mono">
               Exam Submission Closed
             </span>
-            {submission.isEvaluated ?
+            {isMasked ? (
+                <span className="px-2.5 py-0.5 bg-blue-50 text-blue-600 dark:bg-blue-950/20 dark:text-blue-400 font-bold rounded-lg text-[10px] uppercase font-mono">
+                  Pending Manual Release
+                </span>
+            ) : submission.isEvaluated ?
             isPassed ?
             <span className="px-2.5 py-0.5 bg-emerald-50 text-[#01AC9F] dark:bg-emerald-950/20 dark:text-emerald-400 font-bold rounded-lg text-[10px] uppercase font-mono">
                   Passing Outcome
@@ -103,13 +108,13 @@ export const Results = () => {
 
         {/* Visual Score Circle badge */}
         <div className="flex flex-col items-center shrink-0">
-          <div className={`w-24 h-24 rounded-full border-4 flex flex-col items-center justify-center shadow-md transition-colors ${submission.isEvaluated ? isPassed ? 'border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20' : 'border-rose-500 bg-rose-50/20 dark:bg-rose-950/20' : 'border-amber-500 bg-amber-50/20 dark:bg-amber-950/10'}`}>
+          <div className={`w-24 h-24 rounded-full border-4 flex flex-col items-center justify-center shadow-md transition-colors ${isMasked ? 'border-blue-500 bg-blue-50/20 dark:bg-blue-950/20' : submission.isEvaluated ? isPassed ? 'border-emerald-500 bg-emerald-50/20 dark:bg-emerald-950/20' : 'border-rose-500 bg-rose-50/20 dark:bg-rose-950/20' : 'border-amber-500 bg-amber-50/20 dark:bg-amber-950/10'}`}>
             <span className="text-[9px] text-neutral-500 dark:text-neutral-400 font-bold uppercase tracking-wider">Your Score</span>
             <span className="font-display font-black text-2xl text-neutral-800 dark:text-white mt-0.5">
-              {submission.isEvaluated ? `${submission.percentage}%` : 'Pending'}
+              {isMasked ? 'Hidden' : submission.isEvaluated ? `${submission.percentage}%` : 'Pending'}
             </span>
             <span className="text-[9px] text-neutral-500 dark:text-neutral-400 font-mono">
-              {submission.isEvaluated ? `${submission.score} / ${assessment.marks} pts` : '-- / --'}
+              {isMasked ? '-- / --' : submission.isEvaluated ? `${submission.score} / ${assessment.marks} pts` : '-- / --'}
             </span>
           </div>
 
@@ -121,10 +126,11 @@ export const Results = () => {
       </div>
 
       {/* Detailed Response reviews list */}
-      <div className="space-y-4">
-        <h3 className="font-display font-black text-sm text-neutral-800 dark:text-white uppercase tracking-wider">Interactive Answers Audit</h3>
-
+      {!isMasked && (
         <div className="space-y-4">
+          <h3 className="font-display font-black text-sm text-neutral-800 dark:text-white uppercase tracking-wider">Interactive Answers Audit</h3>
+
+          <div className="space-y-4">
           {assessment.questions.map((q, idx) => {
             const ansObj = submission.answers.find((sa) => sa.questionId === q.id);
             const studentAns = ansObj?.answer;
@@ -301,6 +307,7 @@ export const Results = () => {
           })}
         </div>
       </div>
+      )}
 
     </div>);
 

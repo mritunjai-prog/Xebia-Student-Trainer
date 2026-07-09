@@ -112,10 +112,10 @@ export const TeacherDashboard = () => {
     };
   });
 
-  // Upcoming Assessments (Published but start date is in the future)
-  const upcomingAssessments = assessments.
-  filter((a) => a.status === 'published' && a.startDate > new Date().toISOString().split('T')[0]).
-  slice(0, 3);
+  // Draft & Unallocated Assessments
+  const needsAttentionAssessments = assessments.
+  filter((a) => a.status === 'draft' || a.status === 'unallocated').
+  slice(0, 4);
 
   // Core color tokens from Xebia brand
   const velvetColor = '#6C1D5F';
@@ -322,6 +322,46 @@ export const TeacherDashboard = () => {
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        {/* Needs Attention (Draft / Unallocated) */}
+        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-6 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 lg:col-span-1 flex flex-col h-full">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="font-display font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wider">Needs Attention</h3>
+              <p className="text-[12px] text-neutral-500 dark:text-neutral-400 mt-1 font-medium">Draft or Unallocated assessments</p>
+            </div>
+            <Link
+              to="/assessment-builder"
+              className="text-sm text-[#01AC9F] dark:text-emerald-400 font-black hover:bg-emerald-50 dark:hover:bg-emerald-900/30 px-3 py-1.5 rounded-xl transition-colors border border-transparent hover:border-emerald-200 dark:hover:border-emerald-800"
+            >
+              Manage
+            </Link>
+          </div>
+          <div className="space-y-4 flex-grow">
+            {needsAttentionAssessments.length === 0 ? (
+              <div className="py-8 text-center text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+                No assessments need attention.
+              </div>
+            ) : (
+              needsAttentionAssessments.map((a) => (
+                <div key={a.id} className="p-3 bg-neutral-50 dark:bg-neutral-800/40 border border-neutral-200 dark:border-neutral-700/50 rounded-xl flex items-center justify-between gap-3 group">
+                  <div className="truncate">
+                    <h4 className="text-xs font-bold text-neutral-900 dark:text-white truncate">{a.title}</h4>
+                    <p className="text-[10px] text-neutral-500 mt-1 capitalize">{a.type.replace('_', ' ')} • {a.marks} pts</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${a.status === 'unallocated' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'}`}>
+                      {a.status}
+                    </span>
+                    <Link to={`/assessment-builder/${a.id}`} className="text-[10px] font-bold text-[#6C1D5F] hover:underline">
+                      {a.status === 'unallocated' ? 'Allocate Now' : 'Edit Draft'}
+                    </Link>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

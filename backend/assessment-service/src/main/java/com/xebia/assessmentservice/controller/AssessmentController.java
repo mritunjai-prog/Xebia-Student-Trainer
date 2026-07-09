@@ -30,6 +30,13 @@ public class AssessmentController {
         return assessmentService.updateAssessment(id, assessment);
     }
 
+    @PutMapping("/{id}/allocate")
+    public Assessment allocateAssessment(@PathVariable String id, @RequestBody java.util.Map<String, Object> payload) {
+        List<String> batches = (List<String>) payload.get("batches");
+        String course = (String) payload.get("course");
+        return assessmentService.allocateAssessment(id, batches, course);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteAssessment(@PathVariable String id) {
         assessmentService.deleteAssessment(id);

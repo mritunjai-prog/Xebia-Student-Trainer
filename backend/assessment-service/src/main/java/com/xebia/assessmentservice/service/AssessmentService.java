@@ -30,8 +30,20 @@ public class AssessmentService {
         }
     }
 
+    private void validateStateTransition(Assessment assessment) {
+        if (com.xebia.assessmentservice.model.AssessmentStatus.PUBLISHED.equals(assessment.getStatus())) {
+            if (assessment.getQuestions() == null || assessment.getQuestions().isEmpty()) {
+                throw new IllegalStateException("Cannot publish an assessment without questions.");
+            }
+            if (assessment.getBatches() == null || assessment.getBatches().isEmpty()) {
+                throw new IllegalStateException("Cannot publish an assessment without allocating to at least one batch.");
+            }
+        }
+    }
+
     public Assessment createAssessment(Assessment assessment) {
         sanitizeQuestionIds(assessment);
+        validateStateTransition(assessment);
         return assessmentRepository.save(assessment);
     }
 
@@ -56,6 +68,8 @@ public class AssessmentService {
             if (updated.getStatus() != null) existing.setStatus(updated.getStatus());
             if (updated.getType() != null) existing.setType(updated.getType());
             if (updated.getTopic() != null) existing.setTopic(updated.getTopic());
+            if (updated.getCourse() != null) existing.setCourse(updated.getCourse());
+            if (updated.getSubject() != null) existing.setSubject(updated.getSubject());
             if (updated.getShuffleQuestions() != null) existing.setShuffleQuestions(updated.getShuffleQuestions());
             if (updated.getRandomizeOptions() != null) existing.setRandomizeOptions(updated.getRandomizeOptions());
             if (updated.getNegativeMarking() != null) existing.setNegativeMarking(updated.getNegativeMarking());
@@ -78,10 +92,32 @@ public class AssessmentService {
                 }
             }
             sanitizeQuestionIds(existing);
+            validateStateTransition(existing);
             return assessmentRepository.save(existing);
         }
         sanitizeQuestionIds(updated);
+        validateStateTransition(updated);
         return assessmentRepository.save(updated);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public Assessment allocateAssessment(String id, List<String> batches, String course) {
+        java.util.Optional<Assessment> existingOpt = assessmentRepository.findById(id);
+        if (existingOpt.isEmpty()) {
+            throw new IllegalArgumentException("Assessment not found");
+        }
+        Assessment assessment = existingOpt.get();
+        if (batches == null || batches.isEmpty()) {
+            throw new IllegalArgumentException("At least one batch must be provided for allocation");
+        }
+        
+        assessment.setBatches(batches);
+        if (course != null && !course.isEmpty()) {
+            assessment.setCourse(course);
+            assessment.setSubject(course);
+        }
+        
+        return assessmentRepository.save(assessment);
     }
 
     public void deleteAssessment(String id) {

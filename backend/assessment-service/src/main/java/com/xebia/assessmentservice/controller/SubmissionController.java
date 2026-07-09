@@ -22,6 +22,11 @@ public class SubmissionController {
         }
         return submissionService.getAllSubmissions();
     }
+    
+    @GetMapping("/{id}")
+    public Submission getSubmissionById(@PathVariable String id, @RequestParam(required = false) String role) {
+        return submissionService.getSubmissionByIdMasked(id, role);
+    }
 
     @PostMapping
     public Submission createSubmission(@RequestBody Submission submission) {

@@ -494,6 +494,7 @@ export const AssessmentBuilder = () => {
                   <option value="All">Status: All</option>
                   <option value="published">Published</option>
                   <option value="draft">Drafts</option>
+                  <option value="unallocated">Unallocated</option>
                 </select>
 
                 <select 
@@ -603,8 +604,9 @@ export const AssessmentBuilder = () => {
                         const statusColor = {
                           published: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
                           draft: 'bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 border-amber-200 dark:border-amber-800',
+                          unallocated: 'bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-400 border-blue-200 dark:border-blue-800',
                           archived: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 border-neutral-200 dark:border-neutral-700'
-                        }[as.status];
+                        }[as.status?.toLowerCase()] || 'bg-gray-100 text-gray-800';
 
                         const difficultyColor = {
                           Easy: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/50',
@@ -687,8 +689,9 @@ export const AssessmentBuilder = () => {
                   const statusColor = {
                     published: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
                     draft: 'bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-400 border-amber-200 dark:border-amber-800',
+                    unallocated: 'bg-blue-100 text-blue-800 dark:bg-blue-950/40 dark:text-blue-400 border-blue-200 dark:border-blue-800',
                     archived: 'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 border-neutral-200 dark:border-neutral-700'
-                  }[as.status];
+                  }[as.status?.toLowerCase()] || 'bg-gray-100 text-gray-800';
 
                   const difficultyColor = {
                     Easy: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/50',

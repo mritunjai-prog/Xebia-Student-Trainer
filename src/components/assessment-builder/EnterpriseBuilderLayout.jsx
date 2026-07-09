@@ -40,7 +40,8 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
       negativeMarksValue: initialAssessment?.negativeMarksValue || 25,
       shuffleQuestions: initialAssessment?.shuffleQuestions || false,
       autoSubmit: initialAssessment?.autoSubmit || false
-    }
+    },
+    scoreReleasePolicy: initialAssessment?.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION'
   });
 
   // Dummy auto-save simulator
@@ -133,7 +134,7 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
 
         <div className="flex items-center gap-3">
           <button 
-            onClick={async () => {
+            onClick={() => {
               const nowStr = new Date().toISOString().split('T')[0];
               const draftAssessment = {
                 title: config.title || 'Untitled Assessment',
@@ -159,13 +160,14 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                 negativeMarking: config.quickSettings?.negativeMarking || false,
                 negativeMarksValue: config.quickSettings?.negativeMarksValue || 25,
                 shuffleQuestions: config.quickSettings?.shuffleQuestions || false,
-                autoSubmit: config.quickSettings?.autoSubmit || false
+                autoSubmit: config.quickSettings?.autoSubmit || false,
+                scoreReleasePolicy: config.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION'
               };
               try {
                 if (initialAssessment) {
                   editAssessment(initialAssessment.id, draftAssessment);
                 } else {
-                  await createAssessment(draftAssessment);
+                  createAssessment(draftAssessment);
                 }
                 toast.add('Draft saved successfully!', 'success');
                 onBack();
@@ -173,10 +175,58 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                 toast.add('Failed to save draft', 'error');
               }
             }}
-            className="px-5 py-2 text-sm font-bold text-white bg-[#6C1D5F] hover:bg-[#84117C] rounded-xl flex items-center gap-2 shadow-sm transition-colors"
+            className="px-5 py-2 text-sm font-bold text-neutral-700 bg-white hover:bg-neutral-50 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:text-neutral-300 rounded-xl flex items-center gap-2 shadow-sm transition-colors border border-neutral-200 dark:border-neutral-700"
           >
             <Save className="w-4 h-4" /> Save Draft
           </button>
+          
+          <button 
+            onClick={() => {
+              const nowStr = new Date().toISOString().split('T')[0];
+              const unallocatedAssessment = {
+                title: config.title || 'Untitled Assessment',
+                topic: config.topic || '',
+                course: config.course || '',
+                subject: config.course || config.topic,
+                description: config.description || '',
+                type: config.type === 'Mixed Types (All)' ? 'mixed' : config.type || 'mcq',
+                status: 'unallocated',
+                questions: questions.map(({ id, ...q }) => {
+                  return { id: id || `q_${Date.now()}_${Math.random()}`, ...q };
+                }),
+                duration: parseInt(config.duration) || 0,
+                marks: parseInt(config.marks) || questions.reduce((sum, q) => sum + (q.marks || 1), 0),
+                difficulty: config.difficulty || 'Easy',
+                startDate: config.startDate || nowStr,
+                startTime: config.startTime || '',
+                endDate: config.endDate || '2099-12-31',
+                endTime: config.endTime || '',
+                dueDate: config.endDate || '2099-12-31',
+                batches: [],
+                maxAttempts: parseInt(config.maxAttempts) || 1,
+                negativeMarking: config.quickSettings?.negativeMarking || false,
+                negativeMarksValue: config.quickSettings?.negativeMarksValue || 25,
+                shuffleQuestions: config.quickSettings?.shuffleQuestions || false,
+                autoSubmit: config.quickSettings?.autoSubmit || false,
+                scoreReleasePolicy: config.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION'
+              };
+              try {
+                if (initialAssessment) {
+                  editAssessment(initialAssessment.id, unallocatedAssessment);
+                } else {
+                  createAssessment(unallocatedAssessment);
+                }
+                toast.add('Assessment saved as Unallocated!', 'success');
+                onBack();
+              } catch (err) {
+                toast.add('Failed to save assessment', 'error');
+              }
+            }}
+            className="px-5 py-2 text-sm font-bold text-[#6C1D5F] bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 rounded-xl flex items-center gap-2 shadow-sm transition-colors border border-purple-200 dark:border-purple-800"
+          >
+            <Archive className="w-4 h-4" /> Unallocated
+          </button>
+          {/* Original Save Draft button replaced above */}
           <button onClick={() => {
             const isConfigComplete = config && config.title && config.topic && config.course && config.difficulty && config.duration && config.marks;
             if (!isConfigComplete) {
@@ -278,7 +328,8 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                     negativeMarking: config.quickSettings?.negativeMarking || false,
                     negativeMarksValue: config.quickSettings?.negativeMarksValue || 25,
                     shuffleQuestions: config.quickSettings?.shuffleQuestions || false,
-                    autoSubmit: config.quickSettings?.autoSubmit || false
+                    autoSubmit: config.quickSettings?.autoSubmit || false,
+                    scoreReleasePolicy: config.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION'
                   };
 
                   try {

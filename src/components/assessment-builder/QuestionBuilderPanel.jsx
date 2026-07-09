@@ -13,9 +13,12 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
   // Manual Question Draft State
   const [draftText, setDraftText] = useState('');
   const [draftOptions, setDraftOptions] = useState(['', '', '', '']);
+  const [evaluationType, setEvaluationType] = useState('AUTO');
+  const [aiRubric, setAiRubric] = useState('');
+  const [correctAnswer, setCorrectAnswer] = useState('');
   
   // Enforce configuration completeness
-  const isConfigComplete = config && config.title && config.topic && config.batches?.length > 0 && config.type && config.difficulty && config.duration && config.marks;
+  const isConfigComplete = config && config.title && config.topic && config.type && config.difficulty && config.duration && config.marks;
 
   // Filter available question types based on config
   const questionTypes = [
@@ -99,11 +102,17 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
       options: ['mcq', 'multiple_select', 'true_false'].includes(config?.type) 
         ? draftOptions.filter(o => o.trim() !== '') 
         : undefined,
+      evaluationType,
+      aiRubric: evaluationType === 'AI' ? aiRubric : undefined,
+      correctAnswer
     };
     setQuestions([...questions, newQuestion]);
     setAddingManual(false);
     setDraftText('');
     setDraftOptions(['', '', '', '']);
+    setEvaluationType('AUTO');
+    setAiRubric('');
+    setCorrectAnswer('');
     toast.add('Question added successfully', 'success');
   };
 
@@ -343,7 +352,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
               </div>
               <h3 className="font-bold text-neutral-900 dark:text-white">Configuration Required</h3>
               <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                Please complete all mandatory fields in the Configuration panel (Title, Topic, Course, Batches, Type, Difficulty, Duration, Marks) before adding questions.
+                Please complete all mandatory fields in the Configuration panel (Title, Topic, Type, Difficulty, Duration, Marks) before adding questions.
               </p>
             </div>
           </div>
@@ -478,6 +487,46 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
                         <textarea value={draftText} onChange={(e) => setDraftText(e.target.value)} rows={3} className="w-full p-3 text-sm focus:outline-none dark:bg-neutral-900" placeholder="Type your question here..."></textarea>
                       </div>
                     </div>
+
+                    <div className="flex gap-4">
+                      <div className="flex-1">
+                        <label className="block text-xs font-bold text-neutral-500 mb-1.5">Evaluation Mode</label>
+                        <select 
+                          value={evaluationType} 
+                          onChange={(e) => setEvaluationType(e.target.value)}
+                          className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm"
+                        >
+                          <option value="AUTO">Auto (Exact Match)</option>
+                          <option value="AI">AI (Semantic Grading)</option>
+                          <option value="MANUAL">Manual Review</option>
+                        </select>
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-xs font-bold text-neutral-500 mb-1.5">Correct Answer Key</label>
+                        <input 
+                          type="text" 
+                          value={correctAnswer}
+                          onChange={(e) => setCorrectAnswer(e.target.value)}
+                          className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm"
+                          placeholder="Expected answer or option text"
+                        />
+                      </div>
+                    </div>
+
+                    {evaluationType === 'AI' && (
+                      <div>
+                        <label className="block text-xs font-bold text-neutral-500 mb-1.5 flex items-center gap-1.5">
+                          <Brain className="w-4 h-4 text-purple-500" /> AI Grading Rubric
+                        </label>
+                        <textarea 
+                          value={aiRubric} 
+                          onChange={(e) => setAiRubric(e.target.value)} 
+                          rows={3} 
+                          className="w-full p-3 text-sm bg-purple-50/50 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800 rounded-xl focus:outline-none" 
+                          placeholder="Provide detailed instructions for the AI on how to score this question. Example: 'Award 5 points if they mention XYZ. Deduct 2 points for missing ABC...'"
+                        ></textarea>
+                      </div>
+                    )}
 
                     {(config?.type === 'mcq' || config?.type === 'multiple_select' || config?.type === 'true_false') && (
                       <div className="space-y-2">

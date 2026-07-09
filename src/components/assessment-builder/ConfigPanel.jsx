@@ -68,7 +68,7 @@ export const ConfigPanel = ({ config, setConfig }) => {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="flex items-center gap-1 text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1.5">
-                Course <span className="text-red-500">*</span>
+                Course
               </label>
               <select 
                 value={config.course} 
@@ -77,13 +77,13 @@ export const ConfigPanel = ({ config, setConfig }) => {
                 }} 
                 className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F] text-neutral-900 dark:text-neutral-100"
               >
-                <option value="">Select Course...</option>
+                <option value="">None (General Assessment)</option>
                 {uniqueCourses.map((c, i) => <option key={i} value={c}>{c}</option>)}
               </select>
             </div>
             <div className="relative">
               <label className="flex items-center gap-1 text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1.5">
-                Batches <span className="text-red-500">*</span>
+                Batches
               </label>
               
               <div 
@@ -405,6 +405,18 @@ export const ConfigPanel = ({ config, setConfig }) => {
                       onChange={(e) => setConfig(prev => ({...prev, passingMarks: e.target.value}))} 
                       className="w-full px-2 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#6C1D5F]" 
                     />
+                  </div>
+                  
+                  <div className="pt-2 border-t border-neutral-200 dark:border-neutral-800 mt-2">
+                    <label className="flex items-center gap-1 text-[10px] font-bold text-neutral-500 mb-1">Score Release Policy</label>
+                    <select 
+                      value={config.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION'} 
+                      onChange={(e) => setConfig(prev => ({...prev, scoreReleasePolicy: e.target.value}))} 
+                      className="w-full px-2 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#6C1D5F]"
+                    >
+                      <option value="IMMEDIATE_ON_SUBMISSION">Immediate on Submission</option>
+                      <option value="MANUAL_RELEASE_BY_TRAINER">Manual Release by Trainer</option>
+                    </select>
                   </div>
                 </div>
               </motion.div>

@@ -68,6 +68,14 @@ export const apiClient = {
     });
     return res.json();
   },
+  allocateAssessment: async (id, allocationData) => {
+    const res = await fetch(`${API_GATEWAY}/assessments/${id}/allocate`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(allocationData)
+    });
+    return res.json();
+  },
 
   // Submissions
   getSubmissions: async (studentId) => {

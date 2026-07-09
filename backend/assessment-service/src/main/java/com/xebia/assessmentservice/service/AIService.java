@@ -50,4 +50,32 @@ public class AIService {
         }
         return "AI Generation Failed.";
     }
+
+    @org.springframework.scheduling.annotation.Async
+    public void evaluateSubmissionAsync(String submissionId, String assessmentId) {
+        // Here we could implement the full AI semantic matching logic
+        // For demonstration, we simulate fetching the submission and calling the LLM
+        // In a real scenario, we would inject SubmissionRepository and AssessmentRepository here
+        System.out.println("Async AI evaluation started for submission: " + submissionId);
+        
+        // Simulating some processing time
+        try {
+            Thread.sleep(2000); // 2 seconds
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
+        // Actual implementation would:
+        // 1. Fetch submission and assessment
+        // 2. Iterate through AI tagged answers
+        // 3. Build prompt with student answer, correctAnswer, and aiRubric
+        // 4. Request scoring from Groq API
+        // 5. Parse response for points and feedback
+        // 6. Update Answer records (isGraded=true, earnedPoints, feedback)
+        // 7. Recalculate aiScore and finalScore on Submission
+        // 8. If all manual/AI questions are graded, set isEvaluated=true
+        // 9. Save submission
+        
+        System.out.println("Async AI evaluation completed for submission: " + submissionId);
+    }
 }

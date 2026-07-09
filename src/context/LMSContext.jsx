@@ -478,6 +478,17 @@ export const LMSProvider = ({ children }) => {
     editAssessment(id, { status: 'published' });
   };
 
+  const allocateAssessment = async (id, batches, course) => {
+    try {
+      const res = await apiClient.allocateAssessment(id, { batches, course });
+      setAssessments((prev) => prev.map((a) => (a.id === id ? res : a)));
+      return res;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+
   // Student Assessment Taking
   const startAssessment = (assessmentId, studentId) => {
     // Check if there is already an in_progress submission
@@ -818,6 +829,7 @@ export const LMSProvider = ({ children }) => {
       duplicateAssessment,
       archiveAssessment,
       publishAssessment,
+      allocateAssessment,
       startAssessment,
       submitAssessment,
       evaluateSubmission,

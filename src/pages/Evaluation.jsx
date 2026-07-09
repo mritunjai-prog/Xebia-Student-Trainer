@@ -49,7 +49,9 @@ export const Evaluation = () => {
     const marks = {};
     const remarks = {};
     sub.answers.forEach((ans) => {
-      marks[ans.questionId] = ans.marksAwarded || 0;
+      marks[ans.questionId] = ans.marksAwarded !== undefined && ans.marksAwarded !== null 
+        ? ans.marksAwarded 
+        : (ans.earnedPoints || 0);
       remarks[ans.questionId] = ans.remarks || '';
     });
     setQuestionMarks(marks);
@@ -357,12 +359,12 @@ export const Evaluation = () => {
                       </div>
                     </div>
 
-                    {!currentSub.isEvaluated && currentSub.aiConfidence && (
+                    {answerObj?.feedback && (
                        <div className="flex items-start gap-2 p-2 bg-blue-50 dark:bg-blue-950/30 rounded border border-blue-100 dark:border-blue-900/50">
                          <Bot className="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" />
                          <div>
-                           <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400">AI Suggestion: {Math.round(q.marks * 0.8)} / {q.marks}</p>
-                           <p className="text-[9px] text-blue-600/70 dark:text-blue-400/70">"Answer covers most key points correctly."</p>
+                           <p className="text-[10px] font-bold text-blue-700 dark:text-blue-400">AI Auto-Scored: {answerObj.earnedPoints} / {q.marks}</p>
+                           <p className="text-[9px] text-blue-600/70 dark:text-blue-400/70">{answerObj.feedback}</p>
                          </div>
                        </div>
                     )}

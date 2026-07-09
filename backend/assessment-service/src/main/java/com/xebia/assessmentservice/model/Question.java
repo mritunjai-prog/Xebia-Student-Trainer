@@ -28,4 +28,9 @@ public class Question {
     private String correctAnswer;
     @Column(columnDefinition = "TEXT")
     private String explanation;
+    
+    private String evaluationType; // AUTO, AI, MANUAL
+    
+    @Column(columnDefinition = "TEXT")
+    private String aiRubric;
 }

@@ -19,4 +19,9 @@ public class Answer {
     private Integer marksAwarded;
     @Column(columnDefinition = "TEXT")
     private String remarks;
+    
+    private Boolean isGraded;
+    private Double earnedPoints;
+    @Column(columnDefinition = "TEXT")
+    private String feedback;
 }

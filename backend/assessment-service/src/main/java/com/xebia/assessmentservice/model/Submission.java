@@ -26,6 +26,11 @@ public class Submission {
     private String remarks;
     private String evaluatedBy;
     
+    private Double autoScore;
+    private Double aiScore;
+    private Double manualScore;
+    private Double finalScore;
+    
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "submission_id")
     private List<Answer> answers;

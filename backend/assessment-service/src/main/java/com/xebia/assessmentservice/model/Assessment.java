@@ -30,17 +30,22 @@ public class Assessment {
     private Integer attemptsAllowed;
     private Boolean autoGrade;
     private Boolean manualGrade;
-    private String status; // draft, published, archived
+    @Enumerated(EnumType.STRING)
+    private AssessmentStatus status; // DRAFT, UNALLOCATED, PUBLISHED, ARCHIVED
     private String type; // mcq, assignment, mixed
     private String createdBy;
     private String createdAt;
 
     private String topic;
+    private String course;
+    private String subject;
     private Boolean shuffleQuestions;
     private Boolean randomizeOptions;
     private Boolean negativeMarking;
     private Integer negativeMarksValue;
     private Boolean autoSubmit;
+    
+    private String scoreReleasePolicy; // IMMEDIATE_ON_SUBMISSION, MANUAL_RELEASE_BY_TRAINER
 
     @ElementCollection
     private List<String> batches;
