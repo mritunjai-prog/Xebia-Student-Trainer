@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Calendar as CalendarIcon, Clock, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
-export const DateTimePicker = ({ type = 'date', value, onChange }) => {
+export const DateTimePicker = ({ type = 'date', value, onChange, align = 'left' }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   
@@ -100,7 +100,7 @@ export const DateTimePicker = ({ type = 'date', value, onChange }) => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="absolute left-0 bottom-full mb-2 z-50 bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 p-4 w-[280px]"
+              className={`absolute bottom-full mb-2 z-50 bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 p-4 w-[280px] ${align === 'right' ? 'right-0' : 'left-0'}`}
             >
               <div className="flex justify-between items-center mb-4">
                 <h4 className="font-bold text-neutral-800 dark:text-white capitalize flex items-center gap-2">

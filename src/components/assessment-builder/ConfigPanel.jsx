@@ -275,7 +275,7 @@ export const ConfigPanel = ({ config, setConfig }) => {
             </div>
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-neutral-500 pl-1">Start Time</label>
-              <DateTimePicker type="time" value={config.startTime} onChange={(val) => setConfig(prev => ({...prev, startTime: val}))} />
+              <DateTimePicker type="time" value={config.startTime} onChange={(val) => setConfig(prev => ({...prev, startTime: val}))} align="right" />
             </div>
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-neutral-500 pl-1">End Date</label>
@@ -283,7 +283,7 @@ export const ConfigPanel = ({ config, setConfig }) => {
             </div>
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-neutral-500 pl-1">End Time</label>
-              <DateTimePicker type="time" value={config.endTime} onChange={(val) => setConfig(prev => ({...prev, endTime: val}))} />
+              <DateTimePicker type="time" value={config.endTime} onChange={(val) => setConfig(prev => ({...prev, endTime: val}))} align="right" />
             </div>
           </div>
         </section>

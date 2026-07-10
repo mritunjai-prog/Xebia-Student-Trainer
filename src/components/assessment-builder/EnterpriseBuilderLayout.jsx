@@ -143,7 +143,7 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                 subject: config.course || config.topic,
                 description: config.description || '',
                 type: config.type === 'Mixed Types (All)' ? 'mixed' : config.type || 'mcq',
-                status: 'draft',
+                status: 'DRAFT',
                 questions: questions.map(({ id, ...q }) => {
                   return { id: id || `q_${Date.now()}_${Math.random()}`, ...q };
                 }),
@@ -190,7 +190,7 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                 subject: config.course || config.topic,
                 description: config.description || '',
                 type: config.type === 'Mixed Types (All)' ? 'mixed' : config.type || 'mcq',
-                status: 'unallocated',
+                status: 'UNALLOCATED',
                 questions: questions.map(({ id, ...q }) => {
                   return { id: id || `q_${Date.now()}_${Math.random()}`, ...q };
                 }),
@@ -311,7 +311,7 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                     subject: config.course || config.topic,
                     description: config.description || '',
                     type: config.type === 'Mixed Types (All)' ? 'mixed' : config.type,
-                    status: 'published',
+                    status: 'PUBLISHED',
                     questions: questions.map(({ id, ...q }) => {
                       return { id: id || `q_${Date.now()}_${Math.random()}`, ...q };
                     }),

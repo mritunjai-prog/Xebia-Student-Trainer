@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: assessment-service
+  jackson:
+    mapper:
+      accept-case-insensitive-enums: true
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
