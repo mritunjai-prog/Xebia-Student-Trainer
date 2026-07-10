@@ -68,30 +68,43 @@ export const TeacherDashboard = () => {
   }).length;
 
   // Charts data preparation
-  // 1. Submission Trend (Last 7 Days dummy dates but mapped to real submission counts)
-  const submissionTrendData = [
-  { name: 'Mon', count: 18 },
-  { name: 'Tue', count: 24 },
-  { name: 'Wed', count: 32 },
-  { name: 'Thu', count: 15 },
-  { name: 'Fri', count: 28 },
-  { name: 'Sat', count: 12 },
-  { name: 'Sun', count: 21 }];
+  // 1. Submission Trend (Last 7 Days dynamically calculated from submissions)
+  const submissionTrendData = React.useMemo(() => {
+    const data = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+      
+      const count = submissions.filter(s => {
+        if (!s.submittedAt) return false;
+        return s.submittedAt.startsWith(dateStr);
+      }).length;
+      
+      data.push({ name: dayName, count });
+    }
+    return data;
+  }, [submissions]);
 
 
   // 2. Average Scores per Top 5 Assessments (Auto or Manual Evaluated)
   const evaluatedSubs = submissions.filter((s) => s.status === 'submitted' && s.isEvaluated);
-  const assessmentsScores = assessments.slice(0, 5).map((a) => {
-    const subs = evaluatedSubs.filter((s) => s.assessmentId === a.id);
-    const avg = subs.length > 0 ?
-    Math.round(subs.reduce((sum, s) => sum + s.percentage, 0) / subs.length) :
-    75; // fallback default
-    return {
-      title: a.title.split(' [')[0].substring(0, 15) + '...',
-      average: avg,
-      passing: 60
-    };
-  });
+  const assessmentsScores = assessments
+    .map((a) => {
+      const subs = evaluatedSubs.filter((s) => s.assessmentId === a.id);
+      const avg = subs.length > 0 ?
+      Math.round(subs.reduce((sum, s) => sum + s.percentage, 0) / subs.length) : 0;
+      return {
+        title: a.title.split(' [')[0].substring(0, 15) + (a.title.length > 15 ? '...' : ''),
+        average: avg,
+        passing: 60,
+        count: subs.length
+      };
+    })
+    .filter(a => a.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 5);
 
   // 3. Batch Student count & Performance
   const batchPerformanceData = batches.slice(0, 5).map((b) => {
@@ -149,11 +162,27 @@ export const TeacherDashboard = () => {
           <h2 className="font-display font-black text-2xl md:text-4xl tracking-tight text-white flex items-center gap-3 drop-shadow-md">
             Hello, Trainer!
           </h2>
-          <p className="text-purple-100/90 text-xs md:text-sm leading-relaxed font-medium mt-2">
-            Welcome to your comprehensive LMS Assessment Command Center. Review batch milestones, evaluate pending descriptive submissions, or design multi-question exams instantly.
+          <p className="text-sm md:text-base text-white/90 font-medium">
+            Here's what's happening with your batches today.
           </p>
         </div>
       </div>
+
+      {/* Urgent Message Banner */}
+      {needsAttentionAssessments.length > 0 && (
+        <div className="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 p-4 rounded-r-2xl shadow-sm flex items-center justify-between animate-in slide-in-from-top-2 duration-300">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+            <div>
+              <h4 className="font-bold text-amber-800 dark:text-amber-300 text-sm">Action Required</h4>
+              <p className="text-xs text-amber-700 dark:text-amber-400 font-medium mt-0.5">You have {needsAttentionAssessments.length} assessment(s) that require your attention (Draft or Unallocated).</p>
+            </div>
+          </div>
+          <button onClick={() => document.getElementById('needs-attention-widget')?.scrollIntoView({ behavior: 'smooth' })} className="px-4 py-2 bg-amber-100 hover:bg-amber-200 dark:bg-amber-800/50 dark:hover:bg-amber-700/50 text-amber-700 dark:text-amber-300 text-xs font-bold rounded-xl transition-colors">
+            View Now
+          </button>
+        </div>
+      )}
 
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -341,7 +370,7 @@ export const TeacherDashboard = () => {
         </div>
 
         {/* Needs Attention (Draft / Unallocated) */}
-        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-6 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 lg:col-span-1 flex flex-col h-full">
+        <div id="needs-attention-widget" className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-6 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 lg:col-span-1 flex flex-col h-full scroll-mt-24">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="font-display font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wider">Needs Attention</h3>

@@ -76,7 +76,7 @@ export const BatchManagement = () => {
     // Sorting
     result.sort((a, b) => {
       if (sortBy === 'Newest') return new Date(b.createdAt) - new Date(a.createdAt);
-      if (sortBy === 'Oldest') return new Date(b.createdAt) - new Date(a.createdAt);
+      if (sortBy === 'Oldest') return new Date(a.createdAt) - new Date(b.createdAt);
       if (sortBy === 'A-Z') return a.name.localeCompare(b.name);
       if (sortBy === 'Z-A') return b.name.localeCompare(a.name);
       if (sortBy === 'Students') return b.studentCount - a.studentCount;

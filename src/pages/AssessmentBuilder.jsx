@@ -400,6 +400,12 @@ export const AssessmentBuilder = () => {
     toast.add(`Published "${label}" successfully! Assigned batches notified.`, 'success');
   };
 
+  const handleUnpublishNow = (e, id, label) => {
+    e.stopPropagation();
+    editAssessment(id, { status: 'draft' });
+    toast.add(`Unpublished "${label}". Reverted to Draft.`, 'info');
+  };
+
   const filteredAssessments = useMemo(() => {
     let result = [...assessments]; // copy to allow sorting
     
@@ -656,6 +662,14 @@ export const AssessmentBuilder = () => {
                                       <Send className="w-4 h-4" />
                                     </button>
                                   }
+                                  {as.status?.toLowerCase() === 'published' &&
+                                    <button
+                                      onClick={(e) => handleUnpublishNow(e, as.id, as.title)}
+                                      className="p-1.5 text-amber-600 hover:bg-amber-100 dark:hover:bg-amber-950/40 rounded-lg transition-colors cursor-pointer"
+                                      title="Unpublish (Revert to Draft)">
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  }
                                   <button
                                     onClick={(e) => { e.stopPropagation(); handleOpenEdit(as); }}
                                     className="p-1.5 text-[#01AC9F] hover:bg-[#01AC9F]/10 rounded-lg transition-colors cursor-pointer"
@@ -755,6 +769,14 @@ export const AssessmentBuilder = () => {
                               className="flex-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-600 border border-emerald-200/50 rounded-lg transition-colors font-bold text-[11px] flex items-center justify-center gap-1"
                             >
                               <Send className="w-3 h-3" /> Publish
+                            </button>
+                          }
+                          {as.status?.toLowerCase() === 'published' &&
+                            <button
+                              onClick={(e) => handleUnpublishNow(e, as.id, as.title)}
+                              className="flex-1 px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/30 dark:hover:bg-amber-900/40 text-amber-600 border border-amber-200/50 rounded-lg transition-colors font-bold text-[11px] flex items-center justify-center gap-1"
+                            >
+                              <X className="w-3 h-3" /> Unpublish
                             </button>
                           }
                           <button

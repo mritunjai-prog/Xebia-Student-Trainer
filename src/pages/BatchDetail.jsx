@@ -505,7 +505,7 @@ export const BatchDetail = () => {
                    </div>
                 ) : (
                    assignedAssessments.map(asmt => (
-                      <div key={asmt.id} className="p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800/30 hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate('/assessments')}>
+                      <div key={asmt.id} className="p-4 rounded-2xl border border-neutral-100 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800/30 hover:shadow-md transition-shadow cursor-pointer" onClick={() => navigate(`/assessment-builder/${asmt.id}`)}>
                          <div className="flex justify-between items-start mb-2">
                             <h3 className="font-bold text-neutral-800 dark:text-neutral-200 leading-tight">{asmt.title}</h3>
                             <span className="px-2 py-0.5 bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 rounded text-[10px] font-bold uppercase shrink-0">{asmt.status}</span>
