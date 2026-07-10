@@ -83,7 +83,9 @@ public class SubmissionService {
         }
 
         if (Boolean.TRUE.equals(savedSubmission.getIsEvaluated()) && assessment != null) {
-            certificateService.generateCertificate(savedSubmission, assessment);
+            if (assessment.getCertificateEnabled() != null && assessment.getCertificateEnabled()) {
+                certificateService.generateCertificate(savedSubmission, assessment);
+            }
         }
         
         return savedSubmission;

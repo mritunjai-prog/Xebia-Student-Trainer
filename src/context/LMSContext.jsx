@@ -55,6 +55,7 @@ export const LMSProvider = ({ children }) => {
   const [assessments, setAssessments] = useState([]);
   const [submissions, setSubmissions] = useState([]);
   const [certificates, setCertificates] = useState([]);
+  const [allCertificates, setAllCertificates] = useState([]);
   
   // Local coding states
   const [codingSubmissions, setCodingSubmissions] = useState(() => {
@@ -108,6 +109,11 @@ export const LMSProvider = ({ children }) => {
             const certs = await apiClient.getCertificatesByUser(currentUser.id);
             setCertificates(certs);
           } catch(e) { console.error('Failed to fetch certificates', e) }
+        } else if (currentUser && currentUser.role === 'teacher') {
+          try {
+            const certs = await apiClient.getAllCertificates();
+            setAllCertificates(certs);
+          } catch(e) { console.error('Failed to fetch all certificates', e) }
         }
       } catch (err) {
         console.error("Backend connection failed.", err);
@@ -306,6 +312,17 @@ export const LMSProvider = ({ children }) => {
       addNotification('New Batch Created', `Batch ${name} for course "${course}" has been established.`, 'system', 'all_teachers');
       return savedBatch;
     } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  };
+
+  const revokeCertificate = async (uuid, reason) => {
+    try {
+      const revokedCert = await apiClient.revokeCertificate(uuid, currentUser?.name || 'System', reason);
+      setAllCertificates(prev => prev.map(c => c.id === revokedCert.id ? revokedCert : c));
+      return revokedCert;
+    } catch(err) {
       console.error(err);
       throw err;
     }
@@ -828,6 +845,8 @@ export const LMSProvider = ({ children }) => {
       assessments,
       submissions,
       certificates,
+      allCertificates,
+      revokeCertificate,
       notifications,
       currentUser,
       theme,

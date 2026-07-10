@@ -25,7 +25,27 @@ public class CertificateService {
     private UserClient userClient;
 
     public List<Certificate> getCertificatesByUserId(String userId) {
-        return certificateRepository.findByUserId(userId);
+        return certificateRepository.findByUserId(userId).stream()
+                .filter(c -> c.getRevoked() == null || !c.getRevoked())
+                .toList();
+    }
+
+    public List<Certificate> getAllCertificates() {
+        return certificateRepository.findAll();
+    }
+
+    @Transactional
+    public Certificate revokeCertificate(String uuid, String revokedBy, String reason) {
+        Optional<Certificate> opt = certificateRepository.findByCertificateUuid(uuid);
+        if (opt.isPresent()) {
+            Certificate cert = opt.get();
+            cert.setRevoked(true);
+            cert.setRevokedBy(revokedBy);
+            cert.setRevocationReason(reason);
+            cert.setRevokedAt(LocalDateTime.now());
+            return certificateRepository.save(cert);
+        }
+        return null;
     }
 
     public Optional<Certificate> getCertificateByUuid(String uuid) {

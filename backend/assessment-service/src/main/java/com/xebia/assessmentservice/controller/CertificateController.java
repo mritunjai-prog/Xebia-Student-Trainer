@@ -22,6 +22,25 @@ public class CertificateController {
         return certificateService.getCertificatesByUserId(userId);
     }
 
+    @GetMapping
+    public List<Certificate> getAllCertificates() {
+        return certificateService.getAllCertificates();
+    }
+
+    @PutMapping("/{uuid}/revoke")
+    public ResponseEntity<Certificate> revokeCertificate(
+            @PathVariable String uuid,
+            @RequestBody Map<String, String> payload
+    ) {
+        String revokedBy = payload.get("revokedBy");
+        String reason = payload.get("reason");
+        Certificate cert = certificateService.revokeCertificate(uuid, revokedBy, reason);
+        if (cert == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(cert);
+    }
+
     @GetMapping("/{uuid}")
     public ResponseEntity<Map<String, Object>> getCertificate(@PathVariable String uuid) {
         Map<String, Object> details = certificateService.getCertificateDetails(uuid);

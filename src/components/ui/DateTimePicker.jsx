@@ -94,13 +94,13 @@ export const DateTimePicker = ({ type = 'date', value, onChange, align = 'left' 
 
       <AnimatePresence>
         {isOpen && (
-          <>
-            <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-neutral-900/20 dark:bg-black/40 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
             <motion.div 
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className={`absolute bottom-full mb-2 z-50 bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 p-4 w-[280px] ${align === 'right' ? 'right-0' : 'left-0'}`}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative z-10 bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 dark:border-neutral-800 p-4 w-[280px]"
             >
               <div className="flex justify-between items-center mb-4">
                 <h4 className="font-bold text-neutral-800 dark:text-white capitalize flex items-center gap-2">
@@ -164,7 +164,7 @@ export const DateTimePicker = ({ type = 'date', value, onChange, align = 'left' 
                 </div>
               )}
             </motion.div>
-          </>
+          </div>
         )}
       </AnimatePresence>
     </div>

@@ -37,4 +37,13 @@ public class Certificate {
 
     @Column(nullable = false)
     private Double finalScore;
+
+    @Column(nullable = false)
+    private Boolean revoked = false;
+
+    private LocalDateTime revokedAt;
+
+    private String revokedBy;
+
+    private String revocationReason;
 }

@@ -47,6 +47,10 @@ public class Assessment {
     
     private String scoreReleasePolicy; // IMMEDIATE_ON_SUBMISSION, MANUAL_RELEASE_BY_TRAINER
 
+    private Boolean certificateEnabled;
+    private String lastModifiedBy;
+    private String modificationReason;
+
     @ElementCollection
     private List<String> batches;
 

@@ -135,6 +135,20 @@ export const apiClient = {
   },
 
   // Certificates
+  getAllCertificates: async () => {
+    const res = await fetch(`${API_GATEWAY}/certificates`);
+    if (res.ok) return res.json();
+    return [];
+  },
+  revokeCertificate: async (uuid, revokedBy, reason) => {
+    const res = await fetch(`${API_GATEWAY}/certificates/${uuid}/revoke`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ revokedBy, reason })
+    });
+    if (res.ok) return res.json();
+    throw new Error('Failed to revoke certificate');
+  },
   getCertificatesByUser: async (userId) => {
     const res = await fetch(`${API_GATEWAY}/certificates/user/${userId}`);
     if (res.ok) return res.json();

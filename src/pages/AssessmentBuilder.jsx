@@ -236,7 +236,10 @@ export const AssessmentBuilder = () => {
       explanation: currentQExplanation.trim()
     };
 
-    if (currentQType === 'mcq' || currentQType === 'true_false') {
+    if (currentQType === 'true_false') {
+      newQ.options = ['True', 'False'];
+      newQ.correctAnswer = currentQCorrectIndex === 0 || String(currentQCorrectIndex) === '0' || currentQCorrectIndex === 'True' ? 'True' : 'False';
+    } else if (currentQType === 'mcq') {
       newQ.options = currentQOptions.filter((o) => o.trim() !== '');
       newQ.correctAnswer = currentQCorrectIndex;
     } else if (currentQType === 'multi_select') {
@@ -627,7 +630,7 @@ export const AssessmentBuilder = () => {
                               </div>
                             </td>
                             <td className="py-4 px-6 capitalize font-semibold text-neutral-600 dark:text-neutral-300">
-                              {as.type.replace('_', ' ')}
+                              {(as.type || '').replace('_', ' ')}
                             </td>
                             <td className="py-4 px-6">
                                <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border ${difficultyColor}`}>

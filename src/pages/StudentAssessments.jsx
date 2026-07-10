@@ -271,7 +271,7 @@ export const StudentAssessments = () => {
                         </div>
                       </td>
                       <td className="py-4 px-6 capitalize font-semibold text-neutral-600 dark:text-neutral-300">
-                        {as.type.replace('_', ' ')}
+                        {(as.type || '').replace('_', ' ')}
                       </td>
                       <td className="py-4 px-6">
                         <span className={`inline-flex px-2 py-0.5 rounded text-[10px] font-bold border ${as.difficulty === 'Easy' ? 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800' : as.difficulty === 'Medium' ? 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800' : 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-900/30 dark:text-rose-400 dark:border-rose-800'}`}>

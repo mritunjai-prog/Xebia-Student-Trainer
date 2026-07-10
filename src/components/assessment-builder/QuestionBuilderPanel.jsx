@@ -447,7 +447,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
                 {(q.type === 'mcq' || q.type === 'true_false') && q.options && (
                   <div className="space-y-1 pl-6">
                     {q.options.map((opt, oIdx) => {
-                      const isCorrect = q.correctAnswer === opt || (Array.isArray(q.correctAnswer) && q.correctAnswer.includes(opt));
+                      const isCorrect = q.correctAnswer === opt || String(q.correctAnswer) === String(oIdx) || (Array.isArray(q.correctAnswer) && q.correctAnswer.includes(opt));
                       return (
                         <div key={oIdx} className={`flex items-center gap-2 p-1.5 rounded-lg border transition-colors cursor-pointer text-sm ${isCorrect ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100 ring-1 ring-emerald-500' : 'border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900/50 hover:bg-neutral-100 dark:hover:bg-neutral-900 text-neutral-700 dark:text-neutral-300'}`}>
                           <input type="radio" disabled checked={isCorrect} className="w-4 h-4 text-emerald-600" />

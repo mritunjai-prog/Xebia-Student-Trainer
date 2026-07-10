@@ -418,6 +418,24 @@ export const ConfigPanel = ({ config, setConfig }) => {
                       <option value="MANUAL_RELEASE_BY_TRAINER">Manual Release by Trainer</option>
                     </select>
                   </div>
+                  
+                  <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 mt-2">
+                    <label className="flex items-center justify-between cursor-pointer group">
+                      <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300 group-hover:text-[#6C1D5F] transition-colors">Enable Certificate Generation</span>
+                      <button 
+                        type="button"
+                        onClick={() => {
+                           setConfig(prev => ({
+                             ...prev, 
+                             certificateEnabled: prev.certificateEnabled === false ? true : false
+                           }));
+                        }}
+                        className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none ${config.certificateEnabled !== false ? 'bg-[#6C1D5F]' : 'bg-neutral-200 dark:bg-neutral-700'}`}
+                      >
+                        <span className={`inline-block h-3 w-3 rounded-full bg-white transition-transform ${config.certificateEnabled !== false ? 'translate-x-5' : 'translate-x-1'}`} />
+                      </button>
+                    </label>
+                  </div>
                 </div>
               </motion.div>
             )}

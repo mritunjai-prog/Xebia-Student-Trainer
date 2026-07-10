@@ -226,7 +226,7 @@ export const StudentDashboard = () => {
                     <div>
                       <div className="flex justify-between items-start gap-1">
                         <span className="px-2 py-0.5 bg-emerald-50 text-[#01AC9F] font-bold rounded text-[10px] uppercase font-mono">
-                          {as.type.replace('_', ' ')}
+                          {(as.type || '').replace('_', ' ')}
                         </span>
                         <span className={`text-[10px] font-bold ${as.difficulty === 'Easy' ? 'text-green-500' : as.difficulty === 'Medium' ? 'text-amber-500' : 'text-rose-500'}`}>
                           {as.difficulty}

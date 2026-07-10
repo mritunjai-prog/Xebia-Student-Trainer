@@ -71,7 +71,7 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
               transition={{ type: 'tween', duration: 0.3 }}
               className="hidden lg:block shrink-0 border-r border-neutral-200 dark:border-neutral-800 h-full overflow-hidden"
             >
-              <div className="w-[360px] xl:w-[420px] 2xl:w-[450px] h-full">
+              <div className="w-[320px] lg:w-[340px] xl:w-[360px] h-full">
                 <ConfigPanel config={config} setConfig={setConfig} />
               </div>
             </motion.div>

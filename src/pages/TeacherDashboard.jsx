@@ -29,7 +29,11 @@ import { Link } from 'react-router-dom';
 import { toast } from '../components/Toast';
 
 export const TeacherDashboard = () => {
-  const { students, batches, assessments, submissions, notifications, editAssessment } = useLMS();
+  const { students, batches, assessments, submissions, notifications, editAssessment, allCertificates, revokeCertificate } = useLMS();
+
+  // Revoke Modal State
+  const [revokingCert, setRevokingCert] = React.useState(null);
+  const [revokeReason, setRevokeReason] = React.useState('');
 
   // Quick Allocation Modal State
   const [allocatingAssessment, setAllocatingAssessment] = React.useState(null);
@@ -392,6 +396,67 @@ export const TeacherDashboard = () => {
           </div>
         </div>
 
+        {/* Certifications Ledger */}
+        <div className="bg-white dark:bg-neutral-900/80 backdrop-blur-xl p-6 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 lg:col-span-3 flex flex-col h-full mt-6">
+          <div className="mb-6">
+            <h3 className="font-display font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wider">Certifications Ledger</h3>
+            <p className="text-[12px] text-neutral-500 dark:text-neutral-400 mt-1 font-medium">Audit generated certificates and revoke access if necessary.</p>
+          </div>
+          <div className="overflow-x-auto flex-grow max-h-[300px]">
+            <table className="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr className="border-b-2 border-neutral-200 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400 font-black uppercase tracking-wider text-[11px]">
+                  <th className="pb-4 pl-3">Certificate ID</th>
+                  <th className="pb-4">Student</th>
+                  <th className="pb-4">Assessment</th>
+                  <th className="pb-4">Status</th>
+                  <th className="pb-4 text-right pr-3">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800/50">
+                {!allCertificates || allCertificates.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-10 text-center text-neutral-500 dark:text-neutral-400 font-medium">
+                      No certificates generated yet.
+                    </td>
+                  </tr>
+                ) : (
+                  allCertificates.map(cert => (
+                    <tr key={cert.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition-colors">
+                      <td className="py-3 pl-3 font-mono text-xs text-neutral-600 dark:text-neutral-300">
+                        {cert.certificateUuid?.split('-')[0]}...
+                      </td>
+                      <td className="py-3 font-semibold text-neutral-800 dark:text-neutral-200">
+                        {students.find(s => s.id === cert.userId)?.name || 'Unknown'}
+                      </td>
+                      <td className="py-3 text-neutral-600 dark:text-neutral-300 text-xs max-w-[150px] truncate">
+                        {assessments.find(a => a.id === cert.assessmentId)?.title || 'Unknown'}
+                      </td>
+                      <td className="py-3">
+                        {cert.revoked ? (
+                           <span className="px-2 py-1 bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400 rounded text-[10px] font-bold uppercase border border-rose-200 dark:border-rose-800">Revoked</span>
+                        ) : (
+                           <span className="px-2 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 rounded text-[10px] font-bold uppercase border border-emerald-200 dark:border-emerald-800">Valid</span>
+                        )}
+                      </td>
+                      <td className="py-3 text-right pr-3">
+                        {!cert.revoked && (
+                          <button
+                            onClick={() => setRevokingCert(cert)}
+                            className="text-[10px] text-rose-500 hover:text-rose-700 font-bold uppercase tracking-wider hover:underline"
+                          >
+                            Revoke
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
 
       {/* Quick Allocation Modal */}
@@ -532,6 +597,57 @@ export const TeacherDashboard = () => {
                 className="px-6 py-2.5 rounded-xl bg-[#6C1D5F] hover:bg-[#84117C] text-white text-sm font-bold shadow-md hover:shadow-lg transition-all"
               >
                 {isSubmittingAllocation ? 'Allocating...' : 'Allocate & Publish'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Revoke Certificate Modal */}
+      {revokingCert && (
+        <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-neutral-900 rounded-[2rem] border border-neutral-200 dark:border-neutral-800 shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-6 border-b border-neutral-100 dark:border-neutral-800">
+              <h3 className="font-display font-extrabold text-lg text-neutral-900 dark:text-white uppercase tracking-wider text-rose-500 flex items-center gap-2">
+                <AlertCircle className="w-5 h-5" /> Revoke Certificate
+              </h3>
+              <p className="text-xs text-neutral-500 mt-1">This action cannot be undone and will remove the certificate from the student's portfolio.</p>
+            </div>
+            <div className="p-6">
+              <label className="block text-xs font-bold text-neutral-500 mb-2 uppercase tracking-wider">Reason for Revocation *</label>
+              <textarea
+                value={revokeReason}
+                onChange={e => setRevokeReason(e.target.value)}
+                className="w-full text-sm rounded-xl border border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 p-3 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 dark:text-white"
+                rows={4}
+                placeholder="e.g. Academic dishonesty, incorrect evaluation..."
+              />
+            </div>
+            <div className="p-6 bg-neutral-50 dark:bg-neutral-900/60 flex items-center justify-end gap-3 border-t border-neutral-100 dark:border-neutral-800">
+              <button 
+                onClick={() => { setRevokingCert(null); setRevokeReason(''); }}
+                className="px-5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm font-bold text-neutral-700 dark:text-neutral-300 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  if(!revokeReason) {
+                    toast.add('Reason is required to revoke.', 'error');
+                    return;
+                  }
+                  try {
+                    await revokeCertificate(revokingCert.certificateUuid, revokeReason);
+                    toast.add('Certificate revoked successfully.', 'success');
+                    setRevokingCert(null);
+                    setRevokeReason('');
+                  } catch(e) {
+                    toast.add('Failed to revoke certificate.', 'error');
+                  }
+                }}
+                className="px-5 py-2.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-sm font-bold shadow-md transition-colors"
+              >
+                Confirm Revocation
               </button>
             </div>
           </div>
