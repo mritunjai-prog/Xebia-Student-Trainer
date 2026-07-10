@@ -20,6 +20,7 @@ import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { ToastContainer, toast } from './components/Toast';
 import { motion, AnimatePresence } from 'motion/react';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Wrapper for role-based layouts
 const AppContent = () => {
@@ -170,10 +171,12 @@ export default function App() {
 
   return (
     <LMSProvider>
-      <Router>
-        <AppContent />
-        <ToastContainer toasts={toasts} onClose={(id) => toast.remove(id)} />
-      </Router>
+      <ErrorBoundary>
+        <Router>
+          <AppContent />
+          <ToastContainer toasts={toasts} onClose={(id) => toast.remove(id)} />
+        </Router>
+      </ErrorBoundary>
     </LMSProvider>
   );
 }

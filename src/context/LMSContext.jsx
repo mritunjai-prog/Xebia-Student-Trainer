@@ -44,11 +44,17 @@ const LMSContext = createContext(undefined);
 export const LMSProvider = ({ children }) => {
 
   // Initialize States from Backend API
+  const [currentUser, setCurrentUser] = useState(() => {
+    const data = localStorage.getItem('session');
+    return data ? JSON.parse(data) : null;
+  });
+
   const [teachers, setTeachers] = useState([]);
   const [batches, setBatches] = useState([]);
   const [students, setStudents] = useState([]);
   const [assessments, setAssessments] = useState([]);
   const [submissions, setSubmissions] = useState([]);
+  const [certificates, setCertificates] = useState([]);
   
   // Local coding states
   const [codingSubmissions, setCodingSubmissions] = useState(() => {
@@ -90,22 +96,26 @@ export const LMSProvider = ({ children }) => {
           return updated || prev;
         });
         
+        
         const a = await apiClient.getAssessments();
         setAssessments(a);
         
         const s = await apiClient.getSubmissions();
         setSubmissions(s);
+
+        if (currentUser && currentUser.role === 'student') {
+          try {
+            const certs = await apiClient.getCertificatesByUser(currentUser.id);
+            setCertificates(certs);
+          } catch(e) { console.error('Failed to fetch certificates', e) }
+        }
       } catch (err) {
         console.error("Backend connection failed.", err);
       }
     };
     fetchBackendData();
-  }, []);
+  }, [currentUser]);
 
-  const [currentUser, setCurrentUser] = useState(() => {
-    const data = localStorage.getItem('session');
-    return data ? JSON.parse(data) : null;
-  });
 
   const [theme, setTheme] = useState(() => {
     const data = localStorage.getItem('settings');
@@ -548,7 +558,10 @@ export const LMSProvider = ({ children }) => {
             const hasAnswered = ansObj.answer !== undefined && ansObj.answer !== '' && (!Array.isArray(ansObj.answer) || ansObj.answer.length > 0);
 
             if (q.type === 'mcq' || q.type === 'true_false') {
-              if (ansObj.answer === q.correctAnswer) {
+              const studentAnswerText = (q.options && q.options[Number(ansObj.answer)] ? q.options[Number(ansObj.answer)] : ansObj.answer || '').trim().toLowerCase();
+              const correctAnswerText = (q.options && q.options[Number(q.correctAnswer)] ? q.options[Number(q.correctAnswer)] : q.correctAnswer || '').trim().toLowerCase();
+              
+              if (studentAnswerText === correctAnswerText || (ansObj.answer || '').trim().toLowerCase() === (q.correctAnswer || '').trim().toLowerCase()) {
                 ansObj.marksAwarded = q.marks;
                 score += q.marks;
               } else if (hasAnswered && asObj.negativeMarking) {
@@ -814,6 +827,7 @@ export const LMSProvider = ({ children }) => {
       batches,
       assessments,
       submissions,
+      certificates,
       notifications,
       currentUser,
       theme,

@@ -180,7 +180,7 @@ export const ConfigPanel = ({ config, setConfig }) => {
             </select>
           </div>
 
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="flex items-center gap-1 text-[10px] uppercase tracking-wider font-bold text-neutral-500 mb-1.5">
                 Difficulty <span className="text-red-500">*</span>

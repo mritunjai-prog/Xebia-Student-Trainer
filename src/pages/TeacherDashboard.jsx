@@ -10,7 +10,8 @@ import {
 
   TrendingUp,
   Clock,
-  ArrowUpRight } from
+  ArrowUpRight,
+  X } from
 
 'lucide-react';
 import {
@@ -25,9 +26,19 @@ import {
   CartesianGrid } from
 'recharts';
 import { Link } from 'react-router-dom';
+import { toast } from '../components/Toast';
 
 export const TeacherDashboard = () => {
-  const { students, batches, assessments, submissions, notifications } = useLMS();
+  const { students, batches, assessments, submissions, notifications, editAssessment } = useLMS();
+
+  // Quick Allocation Modal State
+  const [allocatingAssessment, setAllocatingAssessment] = React.useState(null);
+  const [selectedBatches, setSelectedBatches] = React.useState([]);
+  const [startDate, setStartDate] = React.useState('');
+  const [startTime, setStartTime] = React.useState('09:00');
+  const [endDate, setEndDate] = React.useState('');
+  const [endTime, setEndTime] = React.useState('18:00');
+  const [isSubmittingAllocation, setIsSubmittingAllocation] = React.useState(false);
 
   // Metrics Calculations
   const totalStudents = students.length;
@@ -355,9 +366,25 @@ export const TeacherDashboard = () => {
                     <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${a.status === 'unallocated' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'}`}>
                       {a.status}
                     </span>
-                    <Link to={`/assessment-builder/${a.id}`} className="text-[10px] font-bold text-[#6C1D5F] hover:underline">
-                      {a.status === 'unallocated' ? 'Allocate Now' : 'Edit Draft'}
-                    </Link>
+                    {a.status === 'unallocated' ? (
+                      <button
+                        onClick={() => {
+                          const today = new Date().toISOString().split('T')[0];
+                          const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                          setAllocatingAssessment(a);
+                          setSelectedBatches(a.batches || []);
+                          setStartDate(today);
+                          setEndDate(nextWeek);
+                        }}
+                        className="text-[10px] font-bold text-[#01AC9F] hover:underline"
+                      >
+                        Allocate Now
+                      </button>
+                    ) : (
+                      <Link to={`/assessment-builder/${a.id}`} className="text-[10px] font-bold text-[#6C1D5F] hover:underline">
+                        Edit Draft
+                      </Link>
+                    )}
                   </div>
                 </div>
               ))
@@ -366,6 +393,150 @@ export const TeacherDashboard = () => {
         </div>
 
       </div>
+
+      {/* Quick Allocation Modal */}
+      {allocatingAssessment && (
+        <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-neutral-900 rounded-[2rem] border border-neutral-200 dark:border-neutral-800 shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200">
+            {/* Modal Header */}
+            <div className="p-6 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+              <div>
+                <h3 className="font-display font-extrabold text-lg text-neutral-900 dark:text-white uppercase tracking-wider">Allocate Assessment</h3>
+                <p className="text-xs text-neutral-500 mt-1 truncate max-w-[320px]">{allocatingAssessment.title}</p>
+              </div>
+              <button 
+                onClick={() => setAllocatingAssessment(null)}
+                className="p-2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 rounded-xl hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-4">
+              {/* Batch Selector */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Select Batches *</label>
+                <div className="max-h-32 overflow-y-auto border border-neutral-200 dark:border-neutral-800 rounded-2xl p-3 space-y-2 bg-neutral-50 dark:bg-neutral-900/50">
+                  {batches.length === 0 ? (
+                    <p className="text-xs text-neutral-400">No batches available.</p>
+                  ) : (
+                    batches.map((b) => {
+                      const isSelected = selectedBatches.includes(b.id);
+                      return (
+                        <label key={b.id} className="flex items-center gap-3 cursor-pointer group text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                          <input 
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => {
+                              if (isSelected) {
+                                setSelectedBatches(prev => prev.filter(id => id !== b.id));
+                              } else {
+                                setSelectedBatches(prev => [...prev, b.id]);
+                              }
+                            }}
+                            className="w-4 h-4 rounded text-[#6C1D5F] border-neutral-300 focus:ring-[#6C1D5F]"
+                          />
+                          <span>{b.icon} {b.name} <span className="text-[10px] text-neutral-400 font-normal">({b.course})</span></span>
+                        </label>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* Start Date / Time */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Start Date *</label>
+                  <input 
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full text-sm rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-2.5 focus:border-[#6C1D5F] focus:ring-1 focus:ring-[#6C1D5F] dark:text-white"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Start Time *</label>
+                  <input 
+                    type="time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="w-full text-sm rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-2.5 focus:border-[#6C1D5F] focus:ring-1 focus:ring-[#6C1D5F] dark:text-white"
+                  />
+                </div>
+              </div>
+
+              {/* End Date / Time */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">End Date *</label>
+                  <input 
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full text-sm rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-2.5 focus:border-[#6C1D5F] focus:ring-1 focus:ring-[#6C1D5F] dark:text-white"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">End Time *</label>
+                  <input 
+                    type="time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    className="w-full text-sm rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 p-2.5 focus:border-[#6C1D5F] focus:ring-1 focus:ring-[#6C1D5F] dark:text-white"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-6 bg-neutral-50 dark:bg-neutral-900/60 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-end gap-3">
+              <button 
+                type="button"
+                onClick={() => setAllocatingAssessment(null)}
+                className="px-5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-sm text-neutral-700 dark:text-neutral-300 font-bold transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                type="button"
+                disabled={isSubmittingAllocation}
+                onClick={async () => {
+                  if (selectedBatches.length === 0) {
+                    toast.add('Please select at least one batch to allocate.', 'error');
+                    return;
+                  }
+                  if (!startDate || !startTime || !endDate || !endTime) {
+                    toast.add('Please complete all date and time parameters.', 'error');
+                    return;
+                  }
+                  setIsSubmittingAllocation(true);
+                  try {
+                    await editAssessment(allocatingAssessment.id, {
+                      batches: selectedBatches,
+                      startDate,
+                      startTime,
+                      endDate,
+                      endTime,
+                      status: 'published'
+                    });
+                    toast.add('Assessment successfully allocated and published!', 'success');
+                    setAllocatingAssessment(null);
+                  } catch (err) {
+                    toast.add('Failed to allocate assessment.', 'error');
+                  } finally {
+                    setIsSubmittingAllocation(false);
+                  }
+                }}
+                className="px-6 py-2.5 rounded-xl bg-[#6C1D5F] hover:bg-[#84117C] text-white text-sm font-bold shadow-md hover:shadow-lg transition-all"
+              >
+                {isSubmittingAllocation ? 'Allocating...' : 'Allocate & Publish'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>);
 

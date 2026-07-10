@@ -97,10 +97,10 @@ export const DateTimePicker = ({ type = 'date', value, onChange }) => {
           <>
             <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
             <motion.div 
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className="absolute left-0 mt-2 z-50 bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 p-4 w-[280px]"
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              className="absolute left-0 bottom-full mb-2 z-50 bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800 p-4 w-[280px]"
             >
               <div className="flex justify-between items-center mb-4">
                 <h4 className="font-bold text-neutral-800 dark:text-white capitalize flex items-center gap-2">

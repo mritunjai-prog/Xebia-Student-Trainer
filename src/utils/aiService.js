@@ -77,14 +77,17 @@ Output MUST be strictly valid JSON.`;
     return parsed.questions || [];
   } catch (err) {
     console.warn("API Error, falling back to dummy questions.");
-    const dummyQuestions = Array.from({ length: count }).map((_, i) => ({
-      id: `q_dummy_${Date.now()}_${i}`,
-      type: type === 'Mixed Types (All)' ? 'mcq' : type,
-      question: `Mock AI Question ${i + 1} about ${topic} (${taxonomy})`,
-      options: ['Option A', 'Option B', 'Option C', 'Option D'],
-      correctAnswer: 'Option B',
-      marks: 2
-    }));
+    const dummyQuestions = Array.from({ length: count }).map((_, i) => {
+      const qType = type === 'Mixed Types (All)' ? 'mcq' : type;
+      return {
+        id: `q_dummy_${Date.now()}_${i}`,
+        type: qType,
+        question: `Mock AI Question ${i + 1} about ${topic} (${taxonomy})`,
+        options: qType === 'true_false' ? ['True', 'False'] : ['Option A', 'Option B', 'Option C', 'Option D'],
+        correctAnswer: qType === 'true_false' ? 'True' : 'Option B',
+        marks: 2
+      };
+    });
     return dummyQuestions;
   }
 };

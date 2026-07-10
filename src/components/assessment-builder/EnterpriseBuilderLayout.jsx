@@ -71,7 +71,7 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
               transition={{ type: 'tween', duration: 0.3 }}
               className="hidden lg:block shrink-0 border-r border-neutral-200 dark:border-neutral-800 h-full overflow-hidden"
             >
-              <div className="w-[550px] xl:w-[600px] 2xl:w-[650px] h-full">
+              <div className="w-[360px] xl:w-[420px] 2xl:w-[450px] h-full">
                 <ConfigPanel config={config} setConfig={setConfig} />
               </div>
             </motion.div>
@@ -134,7 +134,7 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
 
         <div className="flex items-center gap-3">
           <button 
-            onClick={() => {
+            onClick={async () => {
               const nowStr = new Date().toISOString().split('T')[0];
               const draftAssessment = {
                 title: config.title || 'Untitled Assessment',
@@ -165,9 +165,9 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
               };
               try {
                 if (initialAssessment) {
-                  editAssessment(initialAssessment.id, draftAssessment);
+                  await editAssessment(initialAssessment.id, draftAssessment);
                 } else {
-                  createAssessment(draftAssessment);
+                  await createAssessment(draftAssessment);
                 }
                 toast.add('Draft saved successfully!', 'success');
                 onBack();
@@ -181,7 +181,7 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
           </button>
           
           <button 
-            onClick={() => {
+            onClick={async () => {
               const nowStr = new Date().toISOString().split('T')[0];
               const unallocatedAssessment = {
                 title: config.title || 'Untitled Assessment',
@@ -212,9 +212,9 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
               };
               try {
                 if (initialAssessment) {
-                  editAssessment(initialAssessment.id, unallocatedAssessment);
+                  await editAssessment(initialAssessment.id, unallocatedAssessment);
                 } else {
-                  createAssessment(unallocatedAssessment);
+                  await createAssessment(unallocatedAssessment);
                 }
                 toast.add('Assessment saved as Unallocated!', 'success');
                 onBack();

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLMS } from '../context/LMSContext';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -27,8 +27,9 @@ import {
 
 
 export const StudentDashboard = () => {
-  const { currentUser, assessments, submissions, getLeaderboard } = useLMS();
+  const { currentUser, assessments, submissions, getLeaderboard, certificates } = useLMS();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('overview');
 
   if (!currentUser) return null;
 
@@ -127,7 +128,25 @@ export const StudentDashboard = () => {
         </div>
       </div>
 
-      {/* KPI Stats Grid */}
+      {/* Tabs */}
+      <div className="flex border-b border-gray-200 dark:border-neutral-700">
+        <button
+          className={`px-4 py-2 font-semibold text-sm ${activeTab === 'overview' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+          onClick={() => setActiveTab('overview')}
+        >
+          Overview
+        </button>
+        <button
+          className={`px-4 py-2 font-semibold text-sm ${activeTab === 'achievements' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-500 hover:text-gray-700'}`}
+          onClick={() => setActiveTab('achievements')}
+        >
+          Achievements Portfolio
+        </button>
+      </div>
+
+      {activeTab === 'overview' ? (
+        <>
+          {/* KPI Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
         {/* KPI 1 */}
@@ -296,6 +315,42 @@ export const StudentDashboard = () => {
           </div>
         </div>
       }
+        </>
+      ) : (
+        <div className="space-y-6">
+          <h3 className="font-display font-black text-xl text-neutral-800 dark:text-white tracking-wider">Your Certificates</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {certificates && certificates.length > 0 ? (
+              certificates.map((cert) => {
+                const asObj = assessments.find(a => a.id === cert.assessmentId);
+                const title = asObj ? asObj.title : 'Assessment';
+                return (
+                  <div key={cert.id} className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 p-6 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-lg transition-shadow">
+                    <div>
+                      <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4">
+                        <Trophy className="w-6 h-6" />
+                      </div>
+                      <h4 className="font-bold text-lg text-neutral-800 dark:text-white mb-2">{title}</h4>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Score: <span className="font-semibold text-indigo-600">{cert.finalScore}%</span></p>
+                      <p className="text-xs text-neutral-400">Issued: {new Date(cert.issuedAt).toLocaleDateString()}</p>
+                    </div>
+                    <button 
+                      onClick={() => navigate(`/results/${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/${cert.submissionId}`)}
+                      className="mt-4 px-4 py-2 bg-indigo-50 text-indigo-700 font-semibold rounded-lg text-sm hover:bg-indigo-100 transition-colors self-start"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="col-span-full py-12 text-center text-neutral-500">
+                You haven't earned any certificates yet. Complete assessments with a score of 60% or higher to unlock them!
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
     </div>);
 

@@ -12,8 +12,10 @@ import {
   X,
   Calendar,
   CheckCircle2,
-  Clock3
+  Clock3,
+  Award
 } from 'lucide-react';
+import CertificateViewer from '../components/CertificateViewer';
 
 export const StudentAssessments = () => {
   const { currentUser, assessments, submissions } = useLMS();
@@ -25,6 +27,9 @@ export const StudentAssessments = () => {
   const [difficultyFilter, setDifficultyFilter] = useState('All');
   const [sortBy, setSortBy] = useState('Newest');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
+
+  const { certificates } = useLMS();
 
   if (!currentUser) return null;
 
@@ -293,13 +298,23 @@ export const StudentAssessments = () => {
                             {as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Start'}
                           </button>
                         ) : as.computedStatus === 'Completed' ? (
-                          <button
-                            onClick={() => as.studentSubmission && handleViewResult(as.studentSubmission.id)}
-                            disabled={!as.studentSubmission}
-                            className={`bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                          >
-                            {as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Expired')}
-                          </button>
+                          <div className="flex flex-col gap-2">
+                            <button
+                              onClick={() => as.studentSubmission && handleViewResult(as.studentSubmission.id)}
+                              disabled={!as.studentSubmission}
+                              className={`bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                            >
+                              {as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Expired')}
+                            </button>
+                            {certificates && certificates.find(c => c.assessmentId === as.id) && (
+                              <button
+                                onClick={() => setSelectedCertificate({ cert: certificates.find(c => c.assessmentId === as.id), title: as.title })}
+                                className="bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-1"
+                              >
+                                <Award className="w-3 h-3" /> Certificate
+                              </button>
+                            )}
+                          </div>
                         ) : (
                           <span className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase">
                             Locked
@@ -381,13 +396,23 @@ export const StudentAssessments = () => {
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   ) : as.computedStatus === 'Completed' ? (
-                    <button
-                      onClick={() => as.studentSubmission && handleViewResult(as.studentSubmission.id)}
-                      disabled={!as.studentSubmission}
-                      className={`w-full py-2 rounded-lg text-xs font-black uppercase shadow-sm border tracking-wider flex items-center justify-center gap-1 transition-all bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                    >
-                      <span>{as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Expired')}</span>
-                    </button>
+                    <div className="flex flex-col gap-2 w-full">
+                      <button
+                        onClick={() => as.studentSubmission && handleViewResult(as.studentSubmission.id)}
+                        disabled={!as.studentSubmission}
+                        className={`w-full py-2 rounded-lg text-xs font-black uppercase shadow-sm border tracking-wider flex items-center justify-center gap-1 transition-all bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      >
+                        <span>{as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Expired')}</span>
+                      </button>
+                      {certificates && certificates.find(c => c.assessmentId === as.id) && (
+                        <button
+                          onClick={() => setSelectedCertificate({ cert: certificates.find(c => c.assessmentId === as.id), title: as.title })}
+                          className="w-full py-2 rounded-lg text-xs font-black uppercase shadow-sm border border-indigo-200 tracking-wider flex items-center justify-center gap-1 transition-all bg-indigo-50 hover:bg-indigo-100 text-indigo-700 cursor-pointer"
+                        >
+                          <Award className="w-4 h-4" /> <span>Certificate</span>
+                        </button>
+                      )}
+                    </div>
                   ) : (
                     <button
                       disabled
@@ -401,6 +426,15 @@ export const StudentAssessments = () => {
             );
           })}
         </div>
+      )}
+
+      {selectedCertificate && (
+        <CertificateViewer
+          certificate={selectedCertificate.cert}
+          studentName={currentUser?.name}
+          assessmentTitle={selectedCertificate.title}
+          onClose={() => setSelectedCertificate(null)}
+        />
       )}
     </div>
   );

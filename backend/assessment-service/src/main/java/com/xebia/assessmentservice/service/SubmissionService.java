@@ -23,6 +23,9 @@ public class SubmissionService {
     @Autowired
     private AIService aiService;
 
+    @Autowired
+    private CertificateService certificateService;
+
     public List<Submission> getAllSubmissions() {
         return submissionRepository.findAll();
     }
@@ -77,6 +80,10 @@ public class SubmissionService {
         
         if (hasAiQuestions && assessment != null) {
             aiService.evaluateSubmissionAsync(savedSubmission.getId(), assessment.getId());
+        }
+
+        if (Boolean.TRUE.equals(savedSubmission.getIsEvaluated()) && assessment != null) {
+            certificateService.generateCertificate(savedSubmission, assessment);
         }
         
         return savedSubmission;
@@ -147,6 +154,33 @@ public class SubmissionService {
         
         if (correct.equals(student)) {
             return question.getMarks() != null ? question.getMarks().doubleValue() : 0.0;
+        }
+        
+        List<String> options = question.getOptions();
+        if (options != null) {
+            try {
+                int studentIdx = Integer.parseInt(student);
+                if (studentIdx >= 0 && studentIdx < options.size()) {
+                    String studentOptText = options.get(studentIdx).trim().toLowerCase();
+                    if (studentOptText.equals(correct)) {
+                        return question.getMarks() != null ? question.getMarks().doubleValue() : 0.0;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Ignore
+            }
+            
+            try {
+                int correctIdx = Integer.parseInt(correct);
+                if (correctIdx >= 0 && correctIdx < options.size()) {
+                    String correctOptText = options.get(correctIdx).trim().toLowerCase();
+                    if (correctOptText.equals(student)) {
+                        return question.getMarks() != null ? question.getMarks().doubleValue() : 0.0;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Ignore
+            }
         }
         
         return 0.0;

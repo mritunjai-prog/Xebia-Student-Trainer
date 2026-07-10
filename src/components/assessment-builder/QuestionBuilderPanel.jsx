@@ -86,8 +86,12 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
     setCorrectAnswer(q.correctAnswer || '');
     setEvaluationType(q.evaluationType || 'AUTO');
     setAiRubric(q.aiRubric || '');
-    if (q.options) {
+    if (q.options && q.options.length > 0) {
       setDraftOptions(q.options.concat(['', '', '', '']).slice(0, 4));
+    } else if (q.type === 'true_false') {
+      setDraftOptions(['True', 'False']);
+    } else {
+      setDraftOptions(['', '', '', '']);
     }
     setAddingManual(true);
     handleDelete(index);
@@ -99,17 +103,51 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
       toast.add('Question text cannot be empty', 'error');
       return;
     }
+
+    const type = config?.type || 'mcq';
+    let finalOptions = undefined;
+
+    if (['mcq', 'multiple_select', 'true_false'].includes(type)) {
+      finalOptions = draftOptions.filter(o => o.trim() !== '');
+      
+      if (finalOptions.length === 0 && type !== 'true_false') {
+        toast.add('You must provide at least one valid option.', 'error');
+        return;
+      }
+      
+      if (type === 'mcq') {
+        if (!finalOptions.includes(correctAnswer.trim())) {
+          toast.add('The correct answer must exactly match one of the provided options.', 'error');
+          return;
+        }
+      } else if (type === 'multiple_select') {
+        const answers = correctAnswer.split(',').map(a => a.trim());
+        const invalidAnswers = answers.filter(a => !finalOptions.includes(a));
+        if (invalidAnswers.length > 0) {
+          toast.add(`The correct answer(s) [${invalidAnswers.join(', ')}] must exactly match the provided options. Separate multiple answers with commas.`, 'error');
+          return;
+        }
+      } else if (type === 'true_false') {
+        if (!correctAnswer || (correctAnswer.trim().toLowerCase() !== 'true' && correctAnswer.trim().toLowerCase() !== 'false')) {
+          toast.add('The correct answer for True/False must be exactly "True" or "False".', 'error');
+          return;
+        }
+      }
+    }
+
     const newQuestion = {
       id: `q_manual_${Date.now()}`,
       type: config?.type || 'mcq',
       question: draftText,
       marks: Number(draftMarks) || 1,
-      options: ['mcq', 'multiple_select', 'true_false'].includes(config?.type) 
-        ? draftOptions.filter(o => o.trim() !== '') 
-        : undefined,
+      options: config?.type === 'true_false' 
+        ? ['True', 'False'] 
+        : (['mcq', 'multiple_select'].includes(config?.type) 
+          ? draftOptions.filter(o => o.trim() !== '') 
+          : undefined),
       evaluationType,
       aiRubric: evaluationType === 'AI' ? aiRubric : undefined,
-      correctAnswer
+      correctAnswer: config?.type === 'true_false' ? (correctAnswer || 'True') : correctAnswer
     };
     setQuestions([...questions, newQuestion]);
     setAddingManual(false);
@@ -293,7 +331,17 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
           <div className="hidden sm:block h-6 w-px bg-neutral-200 dark:bg-neutral-800" />
           <div className="flex flex-wrap items-center gap-2">
             <button 
-              onClick={() => { setAddingManual(true); setTimeout(() => document.querySelector('.overflow-y-auto')?.scrollTo({top: 0, behavior: 'smooth'}), 100); }}
+              onClick={() => {
+                setAddingManual(true);
+                if (config?.type === 'true_false') {
+                  setDraftOptions(['True', 'False']);
+                  setCorrectAnswer('True');
+                } else {
+                  setDraftOptions(['', '', '', '']);
+                  setCorrectAnswer('');
+                }
+                setTimeout(() => document.querySelector('.overflow-y-auto')?.scrollTo({top: 0, behavior: 'smooth'}), 100);
+              }}
               disabled={!isConfigComplete}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#6C1D5F] hover:bg-[#84117C] text-white disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-xs font-bold transition-colors"
             >
@@ -509,13 +557,24 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
                       </div>
                       <div className="flex-1">
                         <label className="block text-xs font-bold text-neutral-500 mb-1.5">Correct Answer Key</label>
-                        <input 
-                          type="text" 
-                          value={correctAnswer}
-                          onChange={(e) => setCorrectAnswer(e.target.value)}
-                          className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm"
-                          placeholder="Expected answer or option text"
-                        />
+                        {config?.type === 'true_false' ? (
+                          <select 
+                            value={correctAnswer}
+                            onChange={(e) => setCorrectAnswer(e.target.value)}
+                            className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm font-semibold"
+                          >
+                            <option value="True">True</option>
+                            <option value="False">False</option>
+                          </select>
+                        ) : (
+                          <input 
+                            type="text" 
+                            value={correctAnswer}
+                            onChange={(e) => setCorrectAnswer(e.target.value)}
+                            className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm"
+                            placeholder="Expected answer or option text"
+                          />
+                        )}
                       </div>
                     </div>
 
@@ -537,17 +596,44 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
                     {(config?.type === 'mcq' || config?.type === 'multiple_select' || config?.type === 'true_false') && (
                       <div className="space-y-2">
                         <label className="block text-xs font-bold text-neutral-500 mb-1.5">Options</label>
-                        {draftOptions.map((opt, i) => (
-                          <div key={i} className="flex items-center gap-3">
-                            <input type={config?.type === 'multiple_select' ? 'checkbox' : 'radio'} disabled className="w-4 h-4 text-[#6C1D5F]" />
-                            <input type="text" value={opt} onChange={(e) => {
-                               const newOpts = [...draftOptions];
-                               newOpts[i] = e.target.value;
-                               setDraftOptions(newOpts);
-                            }} placeholder={`Option ${i + 1}`} className="flex-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm" />
+                        {config?.type === 'true_false' ? (
+                          <div className="flex gap-4">
+                            <label className="flex-1 flex items-center gap-3 px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors">
+                              <input 
+                                type="radio" 
+                                name="tf_answer" 
+                                checked={correctAnswer === 'True'} 
+                                onChange={() => setCorrectAnswer('True')} 
+                                className="w-4 h-4 text-[#6C1D5F]" 
+                              />
+                              <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">True</span>
+                            </label>
+                            <label className="flex-1 flex items-center gap-3 px-4 py-3 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors">
+                              <input 
+                                type="radio" 
+                                name="tf_answer" 
+                                checked={correctAnswer === 'False'} 
+                                onChange={() => setCorrectAnswer('False')} 
+                                className="w-4 h-4 text-[#6C1D5F]" 
+                              />
+                              <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">False</span>
+                            </label>
                           </div>
-                        ))}
-                        <button onClick={() => setDraftOptions([...draftOptions, ''])} className="text-xs font-bold text-[#6C1D5F] mt-2">+ Add Option</button>
+                        ) : (
+                          <>
+                            {draftOptions.map((opt, i) => (
+                              <div key={i} className="flex items-center gap-3">
+                                <input type={config?.type === 'multiple_select' ? 'checkbox' : 'radio'} disabled className="w-4 h-4 text-[#6C1D5F]" />
+                                <input type="text" value={opt} onChange={(e) => {
+                                   const newOpts = [...draftOptions];
+                                   newOpts[i] = e.target.value;
+                                   setDraftOptions(newOpts);
+                                }} placeholder={`Option ${i + 1}`} className="flex-1 px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm" />
+                              </div>
+                            ))}
+                            <button onClick={() => setDraftOptions([...draftOptions, ''])} className="text-xs font-bold text-[#6C1D5F] mt-2">+ Add Option</button>
+                          </>
+                        )}
                       </div>
                     )}
 
