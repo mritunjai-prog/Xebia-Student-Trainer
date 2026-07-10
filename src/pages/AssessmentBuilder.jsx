@@ -192,7 +192,7 @@ export const AssessmentBuilder = () => {
     setShuffleQuestions(as.shuffleQuestions);
     setRandomizeOptions(as.randomizeOptions);
     setAsType(as.type);
-    setStatus(as.status === 'archived' ? 'draft' : as.status);
+    setStatus(as.status?.toLowerCase() === 'archived' ? 'draft' : as.status);
     setNegativeMarking(as.negativeMarking || false);
     setNegativeMarksValue(as.negativeMarksValue || 25);
     setQuestions(as.questions);
@@ -648,7 +648,7 @@ export const AssessmentBuilder = () => {
                             </td>
                             <td className="py-4 px-6 text-right pr-6 shrink-0">
                                <div className="flex items-center justify-end gap-1 opacity-100 transition-opacity">
-                                  {as.status === 'draft' &&
+                                  {as.status?.toLowerCase() === 'draft' &&
                                     <button
                                       onClick={(e) => handlePublishNow(e, as.id, as.title)}
                                       className="p-1.5 text-emerald-600 hover:bg-emerald-100 dark:hover:bg-emerald-950/40 rounded-lg transition-colors cursor-pointer"
@@ -749,7 +749,7 @@ export const AssessmentBuilder = () => {
                       <div className="mt-auto pt-4 border-t border-neutral-100 dark:border-neutral-800">
                         {/* Actions Row */}
                         <div className="flex items-center gap-1.5 w-full">
-                          {as.status === 'draft' &&
+                          {as.status?.toLowerCase() === 'draft' &&
                             <button
                               onClick={(e) => handlePublishNow(e, as.id, as.title)}
                               className="flex-1 px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-600 border border-emerald-200/50 rounded-lg transition-colors font-bold text-[11px] flex items-center justify-center gap-1"

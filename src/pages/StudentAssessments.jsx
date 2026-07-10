@@ -38,7 +38,7 @@ export const StudentAssessments = () => {
 
   // All assessments assigned to the student's batch(es)
   const studentAssessments = assessments.filter((a) => {
-    return a.status === 'published' && a.batches && a.batches.some((bId) => currentUser.batches?.includes(bId));
+    return a.status?.toLowerCase() === 'published' && a.batches && a.batches.some((bId) => currentUser.batches?.includes(bId));
   });
 
   const now = new Date();

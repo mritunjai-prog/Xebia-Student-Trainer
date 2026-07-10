@@ -38,7 +38,7 @@ export const StudentDashboard = () => {
 
   // Assessments matching student's batch
   const assignedAssessments = assessments.filter((a) =>
-    a.status === 'published' && a.batches.some((bId) => studentBatchIds.includes(bId))
+    a.status?.toLowerCase() === 'published' && a.batches.some((bId) => studentBatchIds.includes(bId))
   );
 
   // Completed / Submitted submissions by student

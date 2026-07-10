@@ -129,7 +129,7 @@ export const TeacherDashboard = () => {
 
   // Draft & Unallocated Assessments
   const needsAttentionAssessments = assessments.
-  filter((a) => a.status === 'draft' || a.status === 'unallocated').
+  filter((a) => a.status?.toLowerCase() === 'draft' || a.status?.toLowerCase() === 'unallocated').
   slice(0, 4);
 
   // Core color tokens from Xebia brand
@@ -367,10 +367,10 @@ export const TeacherDashboard = () => {
                     <p className="text-[10px] text-neutral-500 mt-1 capitalize">{a.type.replace('_', ' ')} • {a.marks} pts</p>
                   </div>
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${a.status === 'unallocated' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'}`}>
+                    <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${a.status?.toLowerCase() === 'unallocated' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400'}`}>
                       {a.status}
                     </span>
-                    {a.status === 'unallocated' ? (
+                    {a.status?.toLowerCase() === 'unallocated' ? (
                       <button
                         onClick={() => {
                           const today = new Date().toISOString().split('T')[0];

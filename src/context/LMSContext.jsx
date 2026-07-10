@@ -87,22 +87,24 @@ export const LMSProvider = ({ children }) => {
           return u;
         });
 
-        setTeachers(enrichedUsers.filter(u => u.role === 'teacher'));
-        setStudents(enrichedUsers.filter(u => u.role === 'student'));
-        setBatches(b);
+        const newTeachers = enrichedUsers.filter(u => u.role === 'teacher');
+        const newStudents = enrichedUsers.filter(u => u.role === 'student');
+        
+        setTeachers(prev => JSON.stringify(prev) === JSON.stringify(newTeachers) ? prev : newTeachers);
+        setStudents(prev => JSON.stringify(prev) === JSON.stringify(newStudents) ? prev : newStudents);
+        setBatches(prev => JSON.stringify(prev) === JSON.stringify(b) ? prev : b);
 
         setCurrentUser(prev => {
           if (!prev) return prev;
           const updated = enrichedUsers.find(u => u.id === prev.id);
-          return updated || prev;
+          return updated ? (JSON.stringify(prev) === JSON.stringify(updated) ? prev : updated) : prev;
         });
         
-        
         const a = await apiClient.getAssessments();
-        setAssessments(a);
+        setAssessments(prev => JSON.stringify(prev) === JSON.stringify(a) ? prev : a);
         
         const s = await apiClient.getSubmissions();
-        setSubmissions(s);
+        setSubmissions(prev => JSON.stringify(prev) === JSON.stringify(s) ? prev : s);
 
         if (currentUser && currentUser.role === 'student') {
           try {
@@ -119,8 +121,12 @@ export const LMSProvider = ({ children }) => {
         console.error("Backend connection failed.", err);
       }
     };
+    
     fetchBackendData();
-  }, [currentUser]);
+    const interval = setInterval(fetchBackendData, 5000); // Poll every 5 seconds for instant cross-client updates
+    
+    return () => clearInterval(interval);
+  }, [currentUser?.id]); // Depend on ID to prevent re-triggering on deep updates
 
 
   const [theme, setTheme] = useState(() => {
