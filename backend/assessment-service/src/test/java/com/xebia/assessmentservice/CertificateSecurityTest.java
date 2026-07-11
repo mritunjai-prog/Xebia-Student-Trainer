@@ -3,10 +3,10 @@ package com.xebia.assessmentservice;
 import com.xebia.assessmentservice.controller.CertificateController;
 import com.xebia.assessmentservice.service.CertificateService;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class CertificateSecurityTest {
 
-    @Mock
+    @MockBean
     private CertificateService certificateService;
 
-    @InjectMocks
+    @Autowired
     private CertificateController certificateController;
 
     @Test
