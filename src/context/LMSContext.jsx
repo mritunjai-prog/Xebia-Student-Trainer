@@ -45,7 +45,11 @@ export const LMSProvider = ({ children }) => {
 
   // Initialize States from Backend API
   const [currentUser, setCurrentUser] = useState(() => {
-    const data = localStorage.getItem('session');
+    const data = sessionStorage.getItem('session') || localStorage.getItem('session');
+    if (localStorage.getItem('session')) {
+      sessionStorage.setItem('session', localStorage.getItem('session'));
+      localStorage.removeItem('session');
+    }
     return data ? JSON.parse(data) : null;
   });
 
@@ -138,10 +142,10 @@ export const LMSProvider = ({ children }) => {
     return 'light';
   });
 
-  // Write updates to LocalStorage when states change
+  // Write updates to sessionStorage when states change
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem('session', JSON.stringify(currentUser));
+      sessionStorage.setItem('session', JSON.stringify(currentUser));
     }
   }, [currentUser]);
 
@@ -237,9 +241,10 @@ export const LMSProvider = ({ children }) => {
 
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem('session', JSON.stringify(currentUser));
+      sessionStorage.setItem('session', JSON.stringify(currentUser));
     } else {
-      localStorage.removeItem('session');
+      sessionStorage.removeItem('session');
+      localStorage.removeItem('session'); // Ensure it's cleared here too
     }
   }, [currentUser]);
 
