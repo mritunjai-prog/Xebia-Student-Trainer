@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLMS } from '../context/LMSContext';
 import { useNavigate } from 'react-router-dom';
+import CertificateViewer from '../components/CertificateViewer';
 import {
   ClipboardList,
   Trophy,
@@ -8,11 +9,9 @@ import {
   Calendar as CalendarIcon,
   Clock,
   HelpCircle,
-  ArrowRight
+  ArrowRight,
+  Award
 } from
-
-
-
   'lucide-react';
 import {
   ResponsiveContainer,
@@ -30,6 +29,7 @@ export const StudentDashboard = () => {
   const { currentUser, assessments, submissions, getLeaderboard, certificates } = useLMS();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
 
   if (!currentUser) return null;
 
@@ -327,19 +327,27 @@ export const StudentDashboard = () => {
                 return (
                   <div key={cert.id} className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 p-6 rounded-2xl shadow-sm flex flex-col justify-between hover:shadow-lg transition-shadow">
                     <div>
-                      <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mb-4">
+                      <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-950/40 text-[#6C1D5F] dark:text-purple-400 rounded-full flex items-center justify-center mb-4">
                         <Trophy className="w-6 h-6" />
                       </div>
                       <h4 className="font-bold text-lg text-neutral-800 dark:text-white mb-2">{title}</h4>
-                      <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Score: <span className="font-semibold text-indigo-600">{cert.finalScore}%</span></p>
+                      <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-1">Score: <span className="font-semibold text-indigo-600 dark:text-indigo-400">{cert.finalScore}%</span></p>
                       <p className="text-xs text-neutral-400">Issued: {new Date(cert.issuedAt).toLocaleDateString()}</p>
                     </div>
-                    <button 
-                      onClick={() => navigate(`/results/${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/${cert.submissionId}`)}
-                      className="mt-4 px-4 py-2 bg-indigo-50 text-indigo-700 font-semibold rounded-lg text-sm hover:bg-indigo-100 transition-colors self-start"
-                    >
-                      View Details
-                    </button>
+                    <div className="flex gap-2 mt-4">
+                      <button 
+                        onClick={() => navigate(`/results/${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}/${cert.submissionId}`)}
+                        className="px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 font-bold rounded-lg text-xs hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+                      >
+                        Details
+                      </button>
+                      <button 
+                        onClick={() => setSelectedCertificate({ cert, title })}
+                        className="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 font-bold rounded-lg text-xs hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors flex items-center gap-1 border border-indigo-100 dark:border-indigo-900/30"
+                      >
+                        <Award className="w-3.5 h-3.5" /> View Certificate
+                      </button>
+                    </div>
                   </div>
                 );
               })
@@ -350,6 +358,15 @@ export const StudentDashboard = () => {
             )}
           </div>
         </div>
+      )}
+
+      {selectedCertificate && (
+        <CertificateViewer
+          certificate={selectedCertificate.cert}
+          studentName={currentUser?.name}
+          assessmentTitle={selectedCertificate.title}
+          onClose={() => setSelectedCertificate(null)}
+        />
       )}
 
     </div>);
