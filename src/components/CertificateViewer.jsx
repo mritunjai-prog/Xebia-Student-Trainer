@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Download, X, Layers, Image as ImageIcon } from 'lucide-react';
@@ -7,6 +7,78 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
   const certificateRef = useRef(null);
   const [currentTemplate, setCurrentTemplate] = useState('classic'); // 'classic' | 'dark' | 'gold'
   const [backgroundPattern, setBackgroundPattern] = useState('none'); // 'none' | 'mesh' | 'aura' | 'ribbons'
+
+  useEffect(() => {
+    const canvas = document.getElementById('confetti-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animationFrameId;
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const colors = ['#6C1D5F', '#01AC9F', '#F59E0B', '#3B82F6', '#EF4444', '#10B981'];
+    const particles = Array.from({ length: 120 }).map(() => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height - canvas.height,
+      r: Math.random() * 6 + 4,
+      d: Math.random() * canvas.height,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      tilt: Math.random() * 10 - 5,
+      tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+      tiltAngle: 0
+    }));
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach((p, idx) => {
+        p.tiltAngle += p.tiltAngleIncremental;
+        p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+        p.x += Math.sin(p.tiltAngle);
+        p.tilt = Math.sin(p.tiltAngle - idx/3) * 15;
+
+        if (p.y > canvas.height) {
+          particles[idx] = {
+            x: Math.random() * canvas.width,
+            y: -20,
+            r: p.r,
+            d: p.d,
+            color: p.color,
+            tilt: p.tilt,
+            tiltAngleIncremental: p.tiltAngleIncremental,
+            tiltAngle: p.tiltAngle
+          };
+        }
+
+        ctx.beginPath();
+        ctx.lineWidth = p.r;
+        ctx.strokeStyle = p.color;
+        ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+        ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+        ctx.stroke();
+      });
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    const timer = setTimeout(() => {
+      cancelAnimationFrame(animationFrameId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }, 4500);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
+    };
+  }, []);
 
   const score = certificate.finalScore || 0;
   
@@ -121,8 +193,14 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
     day: 'numeric'
   });
 
+  const verificationUrl = encodeURIComponent(`${window.location.origin}/verify/${certificate.certificateUuid}`);
+  const linkedinUrl = `https://www.linkedin.com/profile/add?startTask=CERTIFICATION_NAME&name=${encodeURIComponent(assessmentTitle)}&organizationId=10672&certUrl=${verificationUrl}&certId=${certificate.serialNumber}`;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 overflow-y-auto">
+      {/* Celebration Overlay */}
+      <canvas id="confetti-canvas" className="fixed inset-0 pointer-events-none z-50"></canvas>
+
       <div className="relative flex flex-col items-center max-w-5xl w-full my-8">
         
         {/* Advanced Styling Control Panel */}
@@ -162,7 +240,15 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
             </div>
           </div>
 
-          <div className="flex gap-3 justify-end">
+          <div className="flex gap-3 justify-end items-center">
+            <a 
+              href={linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 bg-[#0A66C2] hover:bg-[#004182] text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-blue-950/20"
+            >
+              <span className="font-sans font-bold">in</span> Share on LinkedIn
+            </a>
             <button 
               onClick={handleDownload}
               className="flex items-center gap-2 px-4 py-2 bg-[#6C1D5F] hover:bg-[#84117C] text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-purple-950/20"
@@ -243,12 +329,21 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
             {/* Footer Section */}
             <div className="mt-auto pt-6 border-t border-current border-opacity-10 flex justify-between items-end z-10">
               
-              {/* Left: Certificate ID / Date */}
-              <div className="pb-1 text-left">
-                <p className="text-[9px] uppercase font-bold tracking-wider opacity-50 mb-1">Certificate ID</p>
-                <p className="font-mono text-xs font-bold">{certificate.serialNumber}</p>
-                <p className="text-[9px] uppercase font-bold tracking-wider opacity-50 mt-3 mb-1">Date of Completion</p>
-                <p className="font-mono text-xs font-bold">{formattedDate}</p>
+              {/* Left: Certificate ID / Date & QR Code */}
+              <div className="pb-1 text-left flex items-end gap-6">
+                <div>
+                  <p className="text-[9px] uppercase font-bold tracking-wider opacity-50 mb-1">Certificate ID</p>
+                  <p className="font-mono text-xs font-bold">{certificate.serialNumber}</p>
+                  <p className="text-[9px] uppercase font-bold tracking-wider opacity-50 mt-3 mb-1">Date of Completion</p>
+                  <p className="font-mono text-xs font-bold">{formattedDate}</p>
+                </div>
+                <div className="bg-white p-1 rounded-lg border border-neutral-200 shadow-sm shrink-0">
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=${encodeURIComponent(window.location.origin + '/verify/' + certificate.certificateUuid)}`} 
+                    alt="Verification QR" 
+                    className="w-12 h-12"
+                  />
+                </div>
               </div>
 
               {/* Center: Brand Badge Seal */}
