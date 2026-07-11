@@ -16,6 +16,7 @@ import { TakeCoding } from './pages/TakeCoding';
 import { Results } from './pages/Results';
 import { Settings } from './pages/Settings';
 import { StudentAssessments } from './pages/StudentAssessments';
+import { PublicVerifyCertificate } from './pages/PublicVerifyCertificate';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { ToastContainer, toast } from './components/Toast';
@@ -36,8 +37,11 @@ const AppContent = () => {
       setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
     }
   };
+
+  const isPublicVerify = location.pathname.startsWith('/verify/');
+
   // Handle Loading/Login state
-  if (!currentUser) {
+  if (!currentUser && !isPublicVerify) {
     return (
       <div className={theme === 'dark' ? 'dark' : ''}>
         <div className="min-h-screen bg-brand-bg-light dark:bg-neutral-950 transition-colors duration-300">
@@ -48,7 +52,7 @@ const AppContent = () => {
   }
 
   // Check if we are inside the active TakeQuiz/TakeCoding screen (hide standard sidebar and header)
-  const isTakingQuiz = location.pathname.startsWith('/take/') || location.pathname.startsWith('/take-coding/');
+  const isTakingQuiz = location.pathname.startsWith('/take/') || location.pathname.startsWith('/take-coding/') || isPublicVerify;
 
   return (
     <div className={theme === 'dark' ? 'dark' : ''}>
@@ -121,7 +125,8 @@ const AppContent = () => {
                 className="min-h-full flex flex-col">
                 
                 <Routes location={location}>
-                  {currentUser.role === 'teacher' ?
+                  <Route path="/verify/:uuid" element={<PublicVerifyCertificate />} />
+                  {currentUser && currentUser.role === 'teacher' ?
                   <>
                       <Route path="/trainer-dashboard" element={<TeacherDashboard />} />
                       <Route path="/" element={<Navigate to="/trainer-dashboard" replace />} />
