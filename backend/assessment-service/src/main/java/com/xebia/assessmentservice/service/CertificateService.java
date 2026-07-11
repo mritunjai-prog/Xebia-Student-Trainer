@@ -4,6 +4,7 @@ import com.xebia.assessmentservice.model.Assessment;
 import com.xebia.assessmentservice.model.Certificate;
 import com.xebia.assessmentservice.model.Submission;
 import com.xebia.assessmentservice.repository.CertificateRepository;
+import com.xebia.assessmentservice.repository.AssessmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,9 @@ public class CertificateService {
 
     @Autowired
     private CertificateRepository certificateRepository;
+
+    @Autowired
+    private AssessmentRepository assessmentRepository;
 
     @Autowired
     private UserClient userClient;
@@ -92,10 +96,17 @@ public class CertificateService {
         if (user != null && user.containsKey("name")) {
             studentName = (String) user.get("name");
         }
+
+        String assessmentTitle = "Assessment";
+        Optional<Assessment> assessOpt = assessmentRepository.findById(cert.getAssessmentId());
+        if (assessOpt.isPresent()) {
+            assessmentTitle = assessOpt.get().getTitle();
+        }
         
         return Map.of(
             "certificate", cert,
-            "studentName", studentName
+            "studentName", studentName,
+            "assessmentTitle", assessmentTitle
         );
     }
 }
