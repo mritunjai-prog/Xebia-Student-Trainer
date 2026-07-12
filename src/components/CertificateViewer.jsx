@@ -12,6 +12,7 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
   const certificateRef = useRef(null);
   const [currentTemplate, setCurrentTemplate] = useState(initialTemplate); // 'classic' | 'dark' | 'gold'
   const [backgroundPattern, setBackgroundPattern] = useState('none'); // 'none' | 'mesh' | 'aura' | 'ribbons'
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     const canvas = document.getElementById('confetti-canvas');
@@ -201,13 +202,20 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
   };
 
   const handleDownload = async () => {
-    if (!certificateRef.current) return;
+    if (!certificateRef.current) {
+      alert("Error: Certificate element not found.");
+      return;
+    }
     
     try {
+      setIsDownloading(true);
+
       const canvas = await html2canvas(certificateRef.current, {
-        scale: 2.5,
+        scale: 2,
         useCORS: true,
-        logging: false
+        logging: true,
+        allowTaint: true,
+        backgroundColor: null
       });
       
       const imgData = canvas.toDataURL('image/png');
@@ -220,7 +228,10 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
       pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
       pdf.save(`Certificate_${certificate.serialNumber}.pdf`);
     } catch (err) {
-      console.error("Error generating PDF", err);
+      console.error("CRITICAL ERROR generating PDF:", err);
+      alert("Failed to generate PDF. Check console for CORS or rendering issues.");
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -288,9 +299,11 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
             </a>
             <button 
               onClick={handleDownload}
-              className="flex items-center gap-2 px-4 py-2 bg-[#6C1D5F] hover:bg-[#84117C] text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-purple-950/20"
+              disabled={isDownloading}
+              className={`flex items-center gap-2 px-4 py-2 ${isDownloading ? 'bg-neutral-600 cursor-wait' : 'bg-[#6C1D5F] hover:bg-[#84117C]'} text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-purple-950/20`}
             >
-              <Download size={16} /> Download PDF
+              <Download size={16} className={isDownloading ? 'animate-bounce' : ''} /> 
+              {isDownloading ? 'Generating...' : 'Download PDF'}
             </button>
             <button 
               onClick={onClose}
