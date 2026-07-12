@@ -2,10 +2,15 @@ import React, { useRef, useState, useEffect } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Download, X, Layers, Image as ImageIcon } from 'lucide-react';
+import { useLMS } from '../context/LMSContext';
 
 const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose }) => {
+  const { assessments } = useLMS();
+  const assessment = assessments?.find(a => a.id === certificate.assessmentId);
+  const initialTemplate = assessment?.certificateTemplate || 'classic';
+
   const certificateRef = useRef(null);
-  const [currentTemplate, setCurrentTemplate] = useState('classic'); // 'classic' | 'dark' | 'gold'
+  const [currentTemplate, setCurrentTemplate] = useState(initialTemplate); // 'classic' | 'dark' | 'gold'
   const [backgroundPattern, setBackgroundPattern] = useState('none'); // 'none' | 'mesh' | 'aura' | 'ribbons'
 
   useEffect(() => {
@@ -300,13 +305,15 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
 
             {/* Main Certificate Core Text */}
             <div className="flex-grow flex flex-col items-center justify-center text-center z-10 px-8 my-4">
-              <h2 className="text-5xl font-serif tracking-wider mb-5 uppercase font-medium">Certificate of Completion</h2>
+              <h2 className="text-5xl font-serif tracking-wider mb-5 uppercase font-medium">
+                {assessment?.certificateTitle || 'Certificate of Completion'}
+              </h2>
               <p className="text-base opacity-75 font-serif italic mb-5">This is to certify that</p>
               <h3 className={`text-5xl font-bold font-serif mb-6 uppercase tracking-wide border-b-2 ${currentTheme.borderColor} px-8 pb-3 ${currentTheme.nameColor}`}>
                 {studentName}
               </h3>
               <p className="text-base opacity-80 max-w-3xl leading-relaxed font-sans font-medium">
-                has successfully completed <strong className="font-bold underline decoration-[#01AC9F]">{assessmentTitle}</strong> offered by Xebia IT Architects India Pvt. Ltd., demonstrating dedication, knowledge, and a commitment to professional growth.
+                has successfully completed <strong className="font-bold underline decoration-[#01AC9F]">{assessmentTitle}</strong> offered by {assessment?.certificateCorporateLine || 'Xebia IT Architects India Pvt. Ltd.'}, demonstrating dedication, knowledge, and a commitment to professional growth.
               </p>
             </div>
 
@@ -361,11 +368,15 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
               <div className="text-center pb-1">
                 <div className="w-56 h-12 flex items-end justify-center pb-1 mb-2">
                   <span className={`font-serif text-3xl font-bold tracking-wide ${currentTheme.signatureColor} italic`}>
-                    Xebia Tech Team
+                    {assessment?.certificateSignatory || 'Xebia Tech Team'}
                   </span>
                 </div>
-                <p className="text-[9px] uppercase font-bold tracking-wider opacity-50">Authorized Signature</p>
-                <p className="text-[8px] font-semibold opacity-40 mt-1">Xebia IT Architects India Pvt. Ltd.</p>
+                <p className="text-[9px] uppercase font-bold tracking-wider opacity-50">
+                  {assessment?.certificateSignatoryTitle || 'Authorized Signature'}
+                </p>
+                <p className="text-[8px] font-semibold opacity-40 mt-1">
+                  {assessment?.certificateCorporateLine || 'Xebia IT Architects India Pvt. Ltd.'}
+                </p>
               </div>
             </div>
 
