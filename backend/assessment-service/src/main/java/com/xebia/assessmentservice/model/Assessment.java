@@ -53,6 +53,12 @@ public class Assessment {
     private String certificateSignatory;
     private String certificateSignatoryTitle;
     private String certificateCorporateLine;
+    private String certificateCustomBg;
+    private String certificateTitleColor;
+    private String certificateNameColor;
+    private String certificateBorderColor;
+    private String certificateSealColor;
+    private String certificateSealText;
     private String lastModifiedBy;
     private String modificationReason;
 

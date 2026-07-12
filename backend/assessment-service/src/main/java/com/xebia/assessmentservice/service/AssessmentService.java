@@ -109,6 +109,12 @@ public class AssessmentService {
             if (updated.getCertificateSignatory() != null) existing.setCertificateSignatory(updated.getCertificateSignatory());
             if (updated.getCertificateSignatoryTitle() != null) existing.setCertificateSignatoryTitle(updated.getCertificateSignatoryTitle());
             if (updated.getCertificateCorporateLine() != null) existing.setCertificateCorporateLine(updated.getCertificateCorporateLine());
+            if (updated.getCertificateCustomBg() != null) existing.setCertificateCustomBg(updated.getCertificateCustomBg());
+            if (updated.getCertificateTitleColor() != null) existing.setCertificateTitleColor(updated.getCertificateTitleColor());
+            if (updated.getCertificateNameColor() != null) existing.setCertificateNameColor(updated.getCertificateNameColor());
+            if (updated.getCertificateBorderColor() != null) existing.setCertificateBorderColor(updated.getCertificateBorderColor());
+            if (updated.getCertificateSealColor() != null) existing.setCertificateSealColor(updated.getCertificateSealColor());
+            if (updated.getCertificateSealText() != null) existing.setCertificateSealText(updated.getCertificateSealText());
             if (updated.getLastModifiedBy() != null) existing.setLastModifiedBy(updated.getLastModifiedBy());
             if (updated.getModificationReason() != null) existing.setModificationReason(updated.getModificationReason());
             if (updated.getBatches() != null) {
