@@ -130,8 +130,8 @@ def main():
         log("No questions found in saved assessment!", False)
         return
         
-    q1_id = next(q["id"] for q in questions if "CORS" in q.get("questionText", q.get("question", "")))
-    q2_id = next(q["id"] for q in questions if "gRPC" in q.get("questionText", q.get("question", "")))
+    q1_id = next(q["id"] for q in questions if (q.get("questionText") and "CORS" in q["questionText"]) or (q.get("question") and "CORS" in q["question"]))
+    q2_id = next(q["id"] for q in questions if (q.get("questionText") and "gRPC" in q["questionText"]) or (q.get("question") and "gRPC" in q["question"]))
 
     # 4. Create Passing Submission for the Student -> Should generate Certificate
     submission_pass_payload = {
