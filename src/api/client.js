@@ -158,5 +158,10 @@ export const apiClient = {
     const res = await fetch(`${API_GATEWAY}/certificates/${uuid}`);
     if (res.ok) return res.json();
     return null;
+  },
+  getAssessmentHistory: async (assessmentId) => {
+    const res = await fetch(`${API_GATEWAY}/assessments/${assessmentId}/history`);
+    if (res.ok) return res.json();
+    return [];
   }
 };
