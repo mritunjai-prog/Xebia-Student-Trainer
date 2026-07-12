@@ -527,6 +527,15 @@ export const LMSProvider = ({ children }) => {
     }
   };
 
+  const getAssessmentHistory = async (assessmentId) => {
+    try {
+      return await apiClient.getAssessmentHistory(assessmentId);
+    } catch (err) {
+      console.error('Failed to fetch assessment history:', err);
+      return [];
+    }
+  };
+
   // Student Assessment Taking
   const startAssessment = (assessmentId, studentId) => {
     // Check if there is already an in_progress submission
@@ -874,6 +883,7 @@ export const LMSProvider = ({ children }) => {
       archiveAssessment,
       publishAssessment,
       allocateAssessment,
+      getAssessmentHistory,
       startAssessment,
       submitAssessment,
       evaluateSubmission,
