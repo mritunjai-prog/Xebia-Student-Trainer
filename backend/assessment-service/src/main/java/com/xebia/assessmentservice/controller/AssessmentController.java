@@ -30,6 +30,11 @@ public class AssessmentController {
         return assessmentService.updateAssessment(id, assessment);
     }
 
+    @GetMapping("/{id}/history")
+    public List<com.xebia.assessmentservice.model.AssessmentHistory> getAssessmentHistory(@PathVariable String id) {
+        return assessmentService.getAssessmentHistory(id);
+    }
+
     @PutMapping("/{id}/allocate")
     public Assessment allocateAssessment(@PathVariable String id, @RequestBody java.util.Map<String, Object> payload) {
         List<String> batches = (List<String>) payload.get("batches");

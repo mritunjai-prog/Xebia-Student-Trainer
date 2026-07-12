@@ -1,6 +1,8 @@
 package com.xebia.assessmentservice.service;
 
 import com.xebia.assessmentservice.model.Assessment;
+import com.xebia.assessmentservice.model.AssessmentHistory;
+import com.xebia.assessmentservice.repository.AssessmentHistoryRepository;
 import com.xebia.assessmentservice.repository.AssessmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,9 @@ import java.util.List;
 public class AssessmentService {
     @Autowired
     private AssessmentRepository assessmentRepository;
+
+    @Autowired
+    private AssessmentHistoryRepository assessmentHistoryRepository;
 
     public List<Assessment> getAllAssessments() {
         return assessmentRepository.findAll();
@@ -51,6 +56,29 @@ public class AssessmentService {
         java.util.Optional<Assessment> existingOpt = assessmentRepository.findById(id);
         if (existingOpt.isPresent()) {
             Assessment existing = existingOpt.get();
+
+            // Create edit history snapshot of existing state before editing
+            try {
+                AssessmentHistory history = new AssessmentHistory();
+                history.setAssessmentId(existing.getId());
+                history.setTitle(existing.getTitle());
+                history.setDescription(existing.getDescription());
+                history.setTopic(existing.getTopic());
+                history.setDifficulty(existing.getDifficulty());
+                history.setMarks(existing.getMarks());
+                history.setDuration(existing.getDuration());
+                history.setLastModifiedBy(existing.getLastModifiedBy() != null ? existing.getLastModifiedBy() : "Trainer");
+                history.setModificationReason(existing.getModificationReason() != null ? existing.getModificationReason() : "Initial Configuration");
+                history.setModifiedAt(java.time.LocalDateTime.now());
+
+                int currentVersion = assessmentHistoryRepository.findByAssessmentId(existing.getId()).size() + 1;
+                history.setVersion(currentVersion);
+                assessmentHistoryRepository.save(history);
+            } catch (Exception e) {
+                System.err.println("Failed to write assessment history log: " + e.getMessage());
+            }
+
+            // Now apply updates
             if (updated.getTitle() != null) existing.setTitle(updated.getTitle());
             if (updated.getDescription() != null) existing.setDescription(updated.getDescription());
             if (updated.getInstructions() != null) existing.setInstructions(updated.getInstructions());
@@ -81,6 +109,8 @@ public class AssessmentService {
             if (updated.getCertificateSignatory() != null) existing.setCertificateSignatory(updated.getCertificateSignatory());
             if (updated.getCertificateSignatoryTitle() != null) existing.setCertificateSignatoryTitle(updated.getCertificateSignatoryTitle());
             if (updated.getCertificateCorporateLine() != null) existing.setCertificateCorporateLine(updated.getCertificateCorporateLine());
+            if (updated.getLastModifiedBy() != null) existing.setLastModifiedBy(updated.getLastModifiedBy());
+            if (updated.getModificationReason() != null) existing.setModificationReason(updated.getModificationReason());
             if (updated.getBatches() != null) {
                 if (existing.getBatches() != null) {
                     existing.getBatches().clear();
@@ -104,6 +134,10 @@ public class AssessmentService {
         sanitizeQuestionIds(updated);
         validateStateTransition(updated);
         return assessmentRepository.save(updated);
+    }
+
+    public List<AssessmentHistory> getAssessmentHistory(String id) {
+        return assessmentHistoryRepository.findByAssessmentIdOrderByVersionDesc(id);
     }
 
     @org.springframework.transaction.annotation.Transactional
