@@ -311,9 +311,6 @@ export const PublicVerifyCertificate = () => {
         </div>
       </div>
 
-        </div>
-      </div>
-
     </div>
   );
 };
