@@ -9,20 +9,53 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
       mvc:
         routes:
-          - id: user-service
-            uri: http://localhost:8081
+          - id: user-service-base
+            uri: http://127.0.0.1:8081
             predicates:
-              - Path=/api/v1/users, /api/v1/users/**
-          - id: batch-service
-            uri: http://localhost:8082
+              - Path=/api/v1/users
+          - id: user-service-sub
+            uri: http://127.0.0.1:8081
             predicates:
-              - Path=/api/v1/batches, /api/v1/batches/**
-          - id: assessment-service
-            uri: http://localhost:8083
+              - Path=/api/v1/users/**
+          - id: batch-service-base
+            uri: http://127.0.0.1:8082
             predicates:
-              - Path=/api/v1/assessments, /api/v1/assessments/**, /api/v1/questions, /api/v1/questions/**, /api/v1/submissions, /api/v1/submissions/**, /api/v1/certificates, /api/v1/certificates/**
+              - Path=/api/v1/batches
+          - id: batch-service-sub
+            uri: http://127.0.0.1:8082
+            predicates:
+              - Path=/api/v1/batches/**
+          - id: assessment-service-assessments-base
+            uri: http://127.0.0.1:8083
+            predicates:
+              - Path=/api/v1/assessments
+          - id: assessment-service-assessments-sub
+            uri: http://127.0.0.1:8083
+            predicates:
+              - Path=/api/v1/assessments/**
+          - id: assessment-service-questions-base
+            uri: http://127.0.0.1:8083
+            predicates:
+              - Path=/api/v1/questions
+          - id: assessment-service-questions-sub
+            uri: http://127.0.0.1:8083
+            predicates:
+              - Path=/api/v1/questions/**
+          - id: assessment-service-submissions-base
+            uri: http://127.0.0.1:8083
+            predicates:
+              - Path=/api/v1/submissions
+          - id: assessment-service-submissions-sub
+            uri: http://127.0.0.1:8083
+            predicates:
+              - Path=/api/v1/submissions/**
+          - id: assessment-service-certificates-base
+            uri: http://127.0.0.1:8083
+            predicates:
+              - Path=/api/v1/certificates
+          - id: assessment-service-certificates-sub
+            uri: http://127.0.0.1:8083
+            predicates:
+              - Path=/api/v1/certificates/**
