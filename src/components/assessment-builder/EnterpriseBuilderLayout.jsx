@@ -41,7 +41,13 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
       shuffleQuestions: initialAssessment?.shuffleQuestions || false,
       autoSubmit: initialAssessment?.autoSubmit || false
     },
-    scoreReleasePolicy: initialAssessment?.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION'
+    scoreReleasePolicy: initialAssessment?.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION',
+    certificateEnabled: initialAssessment?.certificateEnabled !== false,
+    certificateTemplate: initialAssessment?.certificateTemplate || 'classic',
+    certificateTitle: initialAssessment?.certificateTitle || 'Certificate of Completion',
+    certificateSignatory: initialAssessment?.certificateSignatory || 'Xebia Tech Team',
+    certificateSignatoryTitle: initialAssessment?.certificateSignatoryTitle || 'Authorized Signature',
+    certificateCorporateLine: initialAssessment?.certificateCorporateLine || 'Xebia IT Architects India Pvt. Ltd.'
   });
 
   // Dummy auto-save simulator
@@ -161,7 +167,13 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                 negativeMarksValue: config.quickSettings?.negativeMarksValue || 25,
                 shuffleQuestions: config.quickSettings?.shuffleQuestions || false,
                 autoSubmit: config.quickSettings?.autoSubmit || false,
-                scoreReleasePolicy: config.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION'
+                scoreReleasePolicy: config.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION',
+                certificateEnabled: config.certificateEnabled !== false,
+                certificateTemplate: config.certificateTemplate || 'classic',
+                certificateTitle: config.certificateTitle || 'Certificate of Completion',
+                certificateSignatory: config.certificateSignatory || 'Xebia Tech Team',
+                certificateSignatoryTitle: config.certificateSignatoryTitle || 'Authorized Signature',
+                certificateCorporateLine: config.certificateCorporateLine || 'Xebia IT Architects India Pvt. Ltd.'
               };
               try {
                 if (initialAssessment) {
@@ -208,7 +220,13 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                 negativeMarksValue: config.quickSettings?.negativeMarksValue || 25,
                 shuffleQuestions: config.quickSettings?.shuffleQuestions || false,
                 autoSubmit: config.quickSettings?.autoSubmit || false,
-                scoreReleasePolicy: config.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION'
+                scoreReleasePolicy: config.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION',
+                certificateEnabled: config.certificateEnabled !== false,
+                certificateTemplate: config.certificateTemplate || 'classic',
+                certificateTitle: config.certificateTitle || 'Certificate of Completion',
+                certificateSignatory: config.certificateSignatory || 'Xebia Tech Team',
+                certificateSignatoryTitle: config.certificateSignatoryTitle || 'Authorized Signature',
+                certificateCorporateLine: config.certificateCorporateLine || 'Xebia IT Architects India Pvt. Ltd.'
               };
               try {
                 if (initialAssessment) {
@@ -329,7 +347,13 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                     negativeMarksValue: config.quickSettings?.negativeMarksValue || 25,
                     shuffleQuestions: config.quickSettings?.shuffleQuestions || false,
                     autoSubmit: config.quickSettings?.autoSubmit || false,
-                    scoreReleasePolicy: config.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION'
+                    scoreReleasePolicy: config.scoreReleasePolicy || 'IMMEDIATE_ON_SUBMISSION',
+                    certificateEnabled: config.certificateEnabled !== false,
+                    certificateTemplate: config.certificateTemplate || 'classic',
+                    certificateTitle: config.certificateTitle || 'Certificate of Completion',
+                    certificateSignatory: config.certificateSignatory || 'Xebia Tech Team',
+                    certificateSignatoryTitle: config.certificateSignatoryTitle || 'Authorized Signature',
+                    certificateCorporateLine: config.certificateCorporateLine || 'Xebia IT Architects India Pvt. Ltd.'
                   };
 
                   try {
