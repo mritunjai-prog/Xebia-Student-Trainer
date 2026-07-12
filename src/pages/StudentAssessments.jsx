@@ -13,23 +13,27 @@ import {
   Calendar,
   CheckCircle2,
   Clock3,
-  Award
+  Award,
+  History,
+  Info
 } from 'lucide-react';
 import CertificateViewer from '../components/CertificateViewer';
 
 export const StudentAssessments = () => {
-  const { currentUser, assessments, submissions } = useLMS();
+  const { currentUser, assessments, submissions, getAssessmentHistory, batches, certificates } = useLMS();
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All'); // All, Active, Upcoming, Completed
   const [typeFilter, setTypeFilter] = useState('All');
   const [difficultyFilter, setDifficultyFilter] = useState('All');
+  const [batchFilter, setBatchFilter] = useState('All');
   const [sortBy, setSortBy] = useState('Newest');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
   const [selectedCertificate, setSelectedCertificate] = useState(null);
-
-  const { certificates } = useLMS();
+  const [historyModalAssessment, setHistoryModalAssessment] = useState(null);
+  const [assessmentHistoryList, setAssessmentHistoryList] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
 
   if (!currentUser) return null;
 
@@ -78,8 +82,9 @@ export const StudentAssessments = () => {
     const matchesStatus = statusFilter === 'All' || a.computedStatus === statusFilter;
     const matchesType = typeFilter === 'All' || a.type === typeFilter;
     const matchesDifficulty = difficultyFilter === 'All' || a.difficulty === difficultyFilter;
+    const matchesBatch = batchFilter === 'All' || (a.batches && a.batches.includes(batchFilter));
 
-    return matchesSearch && matchesStatus && matchesType && matchesDifficulty;
+    return matchesSearch && matchesStatus && matchesType && matchesDifficulty && matchesBatch;
   });
 
   filteredAssessments.sort((a, b) => {
@@ -95,7 +100,23 @@ export const StudentAssessments = () => {
     setStatusFilter('All');
     setTypeFilter('All');
     setDifficultyFilter('All');
+    setBatchFilter('All');
     setSortBy('Newest');
+  };
+
+  const handleOpenHistory = async (e, assessment) => {
+    e.stopPropagation();
+    setHistoryModalAssessment(assessment);
+    setLoadingHistory(true);
+    try {
+      const history = await getAssessmentHistory(assessment.id);
+      setAssessmentHistoryList(history || []);
+    } catch (err) {
+      console.error(err);
+      setAssessmentHistoryList([]);
+    } finally {
+      setLoadingHistory(false);
+    }
   };
 
   const handleStartAttempt = (id) => {
@@ -157,6 +178,22 @@ export const StudentAssessments = () => {
             <option value="Active">Active</option>
             <option value="Upcoming">Upcoming</option>
             <option value="Completed">Completed</option>
+          </select>
+
+          <select 
+            value={batchFilter}
+            onChange={(e) => setBatchFilter(e.target.value)}
+            className="bg-white dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 text-neutral-900 dark:text-white text-sm font-semibold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#6C1D5F] cursor-pointer shadow-sm min-w-[150px]"
+          >
+            <option value="All">Batch: All</option>
+            {(currentUser.batches || []).map((bId) => {
+              const bObj = batches?.find(b => b.id === bId);
+              return (
+                <option key={bId} value={bId}>
+                  {bObj ? bObj.name : `Batch ${bId}`}
+                </option>
+              );
+            })}
           </select>
 
           <select 
@@ -291,34 +328,56 @@ export const StudentAssessments = () => {
                       </td>
                       <td className="py-4 px-6 text-center">
                         {as.computedStatus === 'Active' ? (
-                          <button
-                            onClick={() => handleStartAttempt(as.id)}
-                            className="bg-[#01AC9F] hover:bg-[#019388] text-white px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors cursor-pointer"
-                          >
-                            {as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Start'}
-                          </button>
+                          <div className="flex flex-col gap-1.5 items-center">
+                            <button
+                              onClick={() => handleStartAttempt(as.id)}
+                              className="bg-[#01AC9F] hover:bg-[#019388] text-white px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors cursor-pointer w-full text-center"
+                            >
+                              {as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Start'}
+                            </button>
+                            <button
+                              onClick={(e) => handleOpenHistory(e, as)}
+                              className="bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 px-3 py-1 rounded-lg text-[10px] font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1 w-full"
+                            >
+                              <History className="w-3 h-3" /> History Log
+                            </button>
+                          </div>
                         ) : as.computedStatus === 'Completed' ? (
-                          <div className="flex flex-col gap-2">
+                          <div className="flex flex-col gap-1.5 items-center w-full">
                             <button
                               onClick={() => as.studentSubmission && handleViewResult(as.studentSubmission.id)}
                               disabled={!as.studentSubmission}
-                              className={`bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                              className={`w-full text-center bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors ${!as.studentSubmission ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                             >
                               {as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Expired')}
                             </button>
                             {certificates && certificates.find(c => c.assessmentId === as.id) && (
                               <button
                                 onClick={() => setSelectedCertificate({ cert: certificates.find(c => c.assessmentId === as.id), title: as.title })}
-                                className="bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-1"
+                                className="bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 px-4 py-1.5 rounded-lg text-[11px] font-bold shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-1 w-full"
                               >
                                 <Award className="w-3 h-3" /> Certificate
                               </button>
                             )}
+                            <button
+                              onClick={(e) => handleOpenHistory(e, as)}
+                              className="bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 px-3 py-1 rounded-lg text-[10px] font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1 w-full"
+                            >
+                              <History className="w-3 h-3" /> History Log
+                            </button>
                           </div>
                         ) : (
-                          <span className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase">
-                            Locked
-                          </span>
+                          <div className="flex flex-col gap-1.5 items-center">
+                            <span className="text-[11px] font-bold text-neutral-400 dark:text-neutral-500 uppercase">
+                              Upcoming
+                            </span>
+                            <button
+                              onClick={(e) => handleOpenHistory(e, as)}
+                              className="bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 px-3 py-1 rounded-lg text-[10px] font-semibold transition-colors cursor-pointer flex items-center justify-center gap-1 w-full"
+                            >
+                              <History className="w-3 h-3" /> History Log
+                            </button>
+                          </div>
                         )}
                       </td>
                     </tr>
@@ -387,14 +446,24 @@ export const StudentAssessments = () => {
 
                 <div className="mt-auto pt-4 border-t border-neutral-100 dark:border-neutral-800 relative z-10">
                   {as.computedStatus === 'Active' ? (
-                    <button
-                      onClick={() => handleStartAttempt(as.id)}
-                      disabled={as.attemptsMade >= as.maxAttempts}
-                      className={`w-full py-2 rounded-lg text-xs font-black uppercase shadow-sm tracking-wider cursor-pointer flex items-center justify-center gap-1 transition-all ${as.attemptsMade >= as.maxAttempts ? 'bg-neutral-400 text-white cursor-not-allowed' : 'bg-[#6C1D5F] hover:bg-[#84117C] text-white shadow-purple-950/10'}`}
-                    >
-                      <span>{as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Initialize Assessment'}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
+                    <div className="flex gap-2 w-full">
+                      <button
+                        onClick={() => handleStartAttempt(as.id)}
+                        disabled={as.attemptsMade >= as.maxAttempts}
+                        className={`flex-1 py-2 rounded-lg text-xs font-black uppercase shadow-sm tracking-wider cursor-pointer flex items-center justify-center gap-1 transition-all ${as.attemptsMade >= as.maxAttempts ? 'bg-neutral-400 text-white cursor-not-allowed' : 'bg-[#6C1D5F] hover:bg-[#84117C] text-white shadow-purple-950/10'}`}
+                      >
+                        <span>{as.attemptsMade >= as.maxAttempts ? 'Locked' : 'Start'}</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleOpenHistory(e, as)}
+                        className="px-3 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 border border-neutral-250 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1 shrink-0"
+                        title="View Edit History Log"
+                      >
+                        <History className="w-4 h-4" />
+                      </button>
+                    </div>
                   ) : as.computedStatus === 'Completed' ? (
                     <div className="flex flex-col gap-2 w-full">
                       <button
@@ -404,22 +473,42 @@ export const StudentAssessments = () => {
                       >
                         <span>{as.studentSubmission ? 'View Result' : (as.attemptsMade >= as.maxAttempts ? 'Assessment Locked' : 'Expired')}</span>
                       </button>
-                      {certificates && certificates.find(c => c.assessmentId === as.id) && (
+                      <div className="flex gap-2">
+                        {certificates && certificates.find(c => c.assessmentId === as.id) && (
+                          <button
+                            onClick={() => setSelectedCertificate({ cert: certificates.find(c => c.assessmentId === as.id), title: as.title })}
+                            className="flex-1 py-2 rounded-lg text-xs font-black uppercase shadow-sm border border-indigo-200 tracking-wider flex items-center justify-center gap-1 transition-all bg-indigo-50 hover:bg-indigo-100 text-indigo-700 cursor-pointer"
+                          >
+                            <Award className="w-4 h-4" /> <span>Certificate</span>
+                          </button>
+                        )}
                         <button
-                          onClick={() => setSelectedCertificate({ cert: certificates.find(c => c.assessmentId === as.id), title: as.title })}
-                          className="w-full py-2 rounded-lg text-xs font-black uppercase shadow-sm border border-indigo-200 tracking-wider flex items-center justify-center gap-1 transition-all bg-indigo-50 hover:bg-indigo-100 text-indigo-700 cursor-pointer"
+                          type="button"
+                          onClick={(e) => handleOpenHistory(e, as)}
+                          className="px-3 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 border border-neutral-250 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 shrink-0"
+                          title="View Edit History Log"
                         >
-                          <Award className="w-4 h-4" /> <span>Certificate</span>
+                          <History className="w-4 h-4" />
                         </button>
-                      )}
+                      </div>
                     </div>
                   ) : (
-                    <button
-                      disabled
-                      className="w-full py-2 rounded-lg text-xs font-black uppercase border tracking-wider flex items-center justify-center gap-1 transition-all bg-neutral-100 dark:bg-neutral-900 text-neutral-400 dark:text-neutral-600 border-neutral-200 dark:border-neutral-800 opacity-60 cursor-not-allowed"
-                    >
-                      <span>Starts on {new Date(`${as.startDate}T${as.startTime || '00:00'}`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} at {as.startTime || '00:00'}</span>
-                    </button>
+                    <div className="flex gap-2 w-full">
+                      <button
+                        disabled
+                        className="flex-1 py-2 rounded-lg text-[10px] font-black uppercase border tracking-wider flex items-center justify-center gap-1 transition-all bg-neutral-105 dark:bg-neutral-900 text-neutral-400 dark:text-neutral-600 border-neutral-200 dark:border-neutral-800 opacity-60 cursor-not-allowed"
+                      >
+                        <span>Upcoming</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleOpenHistory(e, as)}
+                        className="px-3 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 border border-neutral-250 dark:border-neutral-700 text-neutral-600 dark:text-neutral-300 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 shrink-0"
+                        title="View Edit History Log"
+                      >
+                        <History className="w-4 h-4" />
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -435,6 +524,116 @@ export const StudentAssessments = () => {
           assessmentTitle={selectedCertificate.title}
           onClose={() => setSelectedCertificate(null)}
         />
+      )}
+
+      {/* Assessment Edit History Modal */}
+      {historyModalAssessment && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-3xl w-full max-w-2xl max-h-[80vh] flex flex-col overflow-hidden shadow-2xl animate-scale-up">
+            {/* Modal Header */}
+            <div className="p-5 border-b border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-gradient-to-r from-purple-50 to-white dark:from-neutral-950 dark:to-neutral-900 shrink-0">
+              <div>
+                <h3 className="font-display font-black text-base text-neutral-900 dark:text-white flex items-center gap-2">
+                  <History className="w-5 h-5 text-[#6C1D5F] dark:text-purple-400" /> Version Revision History
+                </h3>
+                <p className="text-[11px] text-neutral-500 mt-0.5 truncate max-w-md">{historyModalAssessment.title}</p>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setHistoryModalAssessment(null)}
+                className="p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400 hover:text-neutral-600 rounded-lg transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 overflow-y-auto flex-1 space-y-6">
+              {loadingHistory ? (
+                <div className="flex flex-col items-center justify-center py-12 space-y-3">
+                  <div className="w-8 h-8 border-2 border-[#6C1D5F] border-t-transparent rounded-full animate-spin"></div>
+                  <p className="text-xs text-neutral-555 font-bold uppercase tracking-wider">Fetching version history...</p>
+                </div>
+              ) : assessmentHistoryList.length === 0 ? (
+                <div className="text-center py-10 space-y-3">
+                  <Info className="w-10 h-10 text-neutral-400 mx-auto" />
+                  <div>
+                    <p className="font-bold text-sm text-neutral-800 dark:text-neutral-250">Original Configuration</p>
+                    <p className="text-xs text-neutral-550 dark:text-neutral-450 mt-1">No previous edit history logs exist for this assessment. It is in its original state.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6 relative before:absolute before:inset-y-1 before:left-3.5 before:w-0.5 before:bg-neutral-150 dark:before:bg-neutral-800">
+                  {/* Latest Active Version */}
+                  <div className="flex gap-4 relative">
+                    <div className="w-7 h-7 bg-[#6C1D5F] dark:bg-purple-600 rounded-full flex items-center justify-center font-mono font-bold text-[10px] text-white z-10 shadow-sm shrink-0">
+                      L
+                    </div>
+                    <div className="flex-1 bg-[#6C1D5F]/5 dark:bg-purple-950/20 border border-[#6C1D5F]/25 dark:border-purple-900/50 p-4 rounded-2xl space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-neutral-850 dark:text-white uppercase">Latest Active Version</span>
+                        <span className="text-[10px] font-bold text-neutral-400">{historyModalAssessment.startDate}</span>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-[11px] text-neutral-600 dark:text-neutral-350">
+                        <div><span className="block text-[9px] font-bold text-neutral-400 uppercase">Duration</span>{historyModalAssessment.duration} mins</div>
+                        <div><span className="block text-[9px] font-bold text-neutral-400 uppercase">Total Marks</span>{historyModalAssessment.marks} pts</div>
+                        <div><span className="block text-[9px] font-bold text-neutral-400 uppercase">Difficulty</span>{historyModalAssessment.difficulty}</div>
+                        <div><span className="block text-[9px] font-bold text-neutral-400 uppercase">Topic</span>{historyModalAssessment.topic}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Previous Historical Versions */}
+                  {assessmentHistoryList.map((hist, idx) => {
+                    const formattedHistDate = new Date(hist.modifiedAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    });
+
+                    return (
+                      <div key={hist.id || idx} className="flex gap-4 relative">
+                        <div className="w-7 h-7 bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-455 rounded-full flex items-center justify-center font-mono font-bold text-[10px] z-10 shrink-0">
+                          {hist.version ? `v${hist.version}` : `v${assessmentHistoryList.length - idx}`}
+                        </div>
+                        <div className="flex-1 bg-white dark:bg-neutral-900 border border-neutral-250 dark:border-neutral-800 p-4 rounded-2xl space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200">Version {hist.version} Snapshot</span>
+                            <span className="text-[10px] text-neutral-400 font-mono">{formattedHistDate}</span>
+                          </div>
+                          
+                          <p className="text-xs text-neutral-650 dark:text-neutral-450 pt-1 leading-normal font-medium">
+                            <span className="font-bold text-neutral-400 dark:text-neutral-500">Edit Reason:</span> "{hist.modificationReason}"
+                          </p>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 border-t border-neutral-100 dark:border-neutral-800/80 mt-2 text-[10px] text-neutral-500 dark:text-neutral-400">
+                            <div><span className="block text-[8px] font-bold text-neutral-400 uppercase">Duration</span>{hist.duration} mins</div>
+                            <div><span className="block text-[8px] font-bold text-neutral-400 uppercase">Total Marks</span>{hist.marks} pts</div>
+                            <div><span className="block text-[8px] font-bold text-neutral-400 uppercase">Difficulty</span>{hist.difficulty}</div>
+                            <div><span className="block text-[8px] font-bold text-neutral-400 uppercase">Modified By</span>{hist.lastModifiedBy}</div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950/40 text-right shrink-0">
+              <button 
+                type="button"
+                onClick={() => setHistoryModalAssessment(null)}
+                className="px-5 py-2 bg-neutral-250 hover:bg-neutral-300 dark:bg-neutral-850 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 text-xs font-bold rounded-xl transition-all cursor-pointer"
+              >
+                Close Log
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
