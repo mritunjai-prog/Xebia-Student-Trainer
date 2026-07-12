@@ -2,16 +2,20 @@ import requests
 import json
 import time
 
-API_GATEWAY = "http://localhost:8080/api/v1"
+USER_SERVICE = "http://localhost:8081/api/v1"
+BATCH_SERVICE = "http://localhost:8082/api/v1"
+ASSESSMENT_SERVICE = "http://localhost:8083/api/v1"
 
 def log(msg, success=True):
-    prefix = "[✔] " if success else "[✖] "
+    prefix = "[PASS] " if success else "[FAIL] "
     print(f"{prefix}{msg}")
 
 def check_backend():
     try:
-        res = requests.get(f"{API_GATEWAY}/users", timeout=2.0)
-        return res.status_code == 200
+        res1 = requests.get(f"{USER_SERVICE}/users", timeout=2.0)
+        res2 = requests.get(f"{BATCH_SERVICE}/batches", timeout=2.0)
+        res3 = requests.get(f"{ASSESSMENT_SERVICE}/assessments", timeout=2.0)
+        return res1.status_code == 200 and res2.status_code == 200 and res3.status_code == 200
     except Exception:
         return False
 
@@ -21,7 +25,7 @@ def main():
     print("==================================================")
 
     if not check_backend():
-        log("API Gateway is not reachable on port 8080. Please make sure the backend services are running!", False)
+        log("Backend microservices are not reachable. Please make sure they are running!", False)
         return
 
     # 1. Create a Test Student
@@ -34,17 +38,17 @@ def main():
     }
     
     # Check if student exists or create
-    users = requests.get(f"{API_GATEWAY}/users").json()
+    users = requests.get(f"{USER_SERVICE}/users").json()
     student = next((u for u in users if u["email"] == student_payload["email"]), None)
     
     if not student:
-        student = requests.post(f"{API_GATEWAY}/users", json=student_payload).json()
+        student = requests.post(f"{USER_SERVICE}/users", json=student_payload).json()
         log(f"Created student user: {student['name']} ({student['id']})")
     else:
         log(f"Student user already exists: {student['name']} ({student['id']})")
 
     # 2. Create a Batch and add the Student to it
-    batches = requests.get(f"{API_GATEWAY}/batches").json()
+    batches = requests.get(f"{BATCH_SERVICE}/batches").json()
     test_batch = next((b for b in batches if b["name"] == "Cloud Native Core"), None)
     
     if not test_batch:
@@ -53,13 +57,13 @@ def main():
             "description": "Premium training for cloud microservices",
             "students": [student["id"]]
         }
-        test_batch = requests.post(f"{API_GATEWAY}/batches", json=batch_payload).json()
+        test_batch = requests.post(f"{BATCH_SERVICE}/batches", json=batch_payload).json()
         log(f"Created batch: {test_batch['name']} ({test_batch['id']})")
     else:
         # Ensure student is in batch
         if student["id"] not in test_batch.get("students", []):
             test_batch["students"].append(student["id"])
-            requests.put(f"{API_GATEWAY}/batches/{test_batch['id']}", json=test_batch)
+            requests.put(f"{BATCH_SERVICE}/batches/{test_batch['id']}", json=test_batch)
             log(f"Added student to existing batch: {test_batch['name']}")
         else:
             log(f"Student already enrolled in batch: {test_batch['name']}")
@@ -113,11 +117,11 @@ def main():
         ]
     }
     
-    assessments = requests.get(f"{API_GATEWAY}/assessments").json()
+    assessments = requests.get(f"{ASSESSMENT_SERVICE}/assessments").json()
     mcq_assessment = next((a for a in assessments if a["title"] == mcq_assessment_payload["title"]), None)
     
     if not mcq_assessment:
-        mcq_assessment = requests.post(f"{API_GATEWAY}/assessments", json=mcq_assessment_payload).json()
+        mcq_assessment = requests.post(f"{ASSESSMENT_SERVICE}/assessments", json=mcq_assessment_payload).json()
         log(f"Created MCQ assessment: '{mcq_assessment['title']}' ({mcq_assessment['id']})")
     else:
         log(f"MCQ assessment already exists: '{mcq_assessment['title']}' ({mcq_assessment['id']})")
@@ -140,8 +144,7 @@ def main():
         ]
     }
     
-    # We create a new submission
-    sub_pass = requests.post(f"{API_GATEWAY}/submissions", json=submission_pass_payload).json()
+    sub_pass = requests.post(f"{ASSESSMENT_SERVICE}/submissions", json=submission_pass_payload).json()
     log(f"Submitted PASSING attempt. Percentage: {sub_pass.get('percentage')}%")
     
     # 5. Create Failing Submission for the Student -> Should NOT generate Certificate
@@ -161,12 +164,12 @@ def main():
             }
         ]
     }
-    sub_fail = requests.post(f"{API_GATEWAY}/submissions", json=submission_fail_payload).json()
+    sub_fail = requests.post(f"{ASSESSMENT_SERVICE}/submissions", json=submission_fail_payload).json()
     log(f"Submitted FAILING attempt. Percentage: {sub_fail.get('percentage')}%")
 
     # 6. Verify Certificate Database Generation
-    time.sleep(1) # wait briefly
-    certs = requests.get(f"{API_GATEWAY}/certificates/user/{student['id']}").json()
+    time.sleep(2) # wait briefly
+    certs = requests.get(f"{ASSESSMENT_SERVICE}/certificates/user/{student['id']}").json()
     
     log("==================================================")
     log(f"Verification Results for Student {student['name']}:")
