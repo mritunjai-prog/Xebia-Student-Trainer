@@ -86,12 +86,70 @@ export const PublicVerifyCertificate = () => {
   const cert = data.certificate;
   const studentName = data.studentName;
   const assessmentTitle = data.assessmentTitle || "LMS Module Completion";
+  const assessment = data.assessment || {};
   
   const formattedDate = new Date(cert.issuedAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
+
+  const templates = {
+    classic: {
+      id: 'classic',
+      name: 'Xebia Classic Light',
+      bg: 'bg-[#FCFBFD]',
+      borderColor: 'border-[#6C1D5F]',
+      doubleBorderColor: 'border-[#01AC9F]',
+      titleColor: 'text-[#6C1D5F]',
+      textColor: 'text-neutral-800',
+      subTextColor: 'text-neutral-500',
+      nameColor: 'text-[#4A1E47]',
+      accentColor: 'text-[#01AC9F]',
+      sealBg: 'bg-[#6C1D5F]',
+      sealText: 'text-white',
+      signatureColor: 'text-[#6C1D5F]',
+      tagline: 'text-neutral-500',
+      borderStyle: 'border-[8px] border-double border-spacing-2'
+    },
+    dark: {
+      id: 'dark',
+      name: 'Elite Dark Slate',
+      bg: 'bg-gradient-to-br from-[#0F172A] to-[#020617]',
+      borderColor: 'border-indigo-500',
+      doubleBorderColor: 'border-purple-500',
+      titleColor: 'text-indigo-400',
+      textColor: 'text-neutral-200',
+      subTextColor: 'text-neutral-400',
+      nameColor: 'text-white',
+      accentColor: 'text-purple-400',
+      sealBg: 'bg-gradient-to-br from-yellow-300 to-yellow-600',
+      sealText: 'text-yellow-950',
+      signatureColor: 'text-indigo-400',
+      tagline: 'text-indigo-300',
+      borderStyle: 'border-[8px] border-solid'
+    },
+    gold: {
+      id: 'gold',
+      name: 'Minimalist Gold',
+      bg: 'bg-[#FDFBF7]',
+      borderColor: 'border-[#D97706]',
+      doubleBorderColor: 'border-[#F59E0B]',
+      titleColor: 'text-[#B45309]',
+      textColor: 'text-[#451A03]',
+      subTextColor: 'text-[#78350F]',
+      nameColor: 'text-[#92400E]',
+      accentColor: 'text-[#B45309]',
+      sealBg: 'bg-[#D97706]',
+      sealText: 'text-white',
+      signatureColor: 'text-[#78350F]',
+      tagline: 'text-[#78350F]',
+      borderStyle: 'border-[12px] border-double'
+    }
+  };
+
+  const currentTemplate = assessment.certificateTemplate || 'classic';
+  const currentTheme = templates[currentTemplate] || templates.classic;
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col items-center p-6 md:p-12 overflow-y-auto">
@@ -127,32 +185,32 @@ export const PublicVerifyCertificate = () => {
         </div>
       </div>
 
-      {/* Live Certificate Card Rendering (Classic Light) */}
+      {/* Live Certificate Card Rendering */}
       <div className="overflow-x-auto w-full flex justify-center bg-neutral-900 p-6 rounded-3xl border border-neutral-800 shadow-2xl mb-8">
         <div 
           ref={certificateRef}
-          className="w-[1120px] h-[792px] p-12 flex flex-col relative bg-[#FCFBFD] text-neutral-800 border-[8px] border-double border-spacing-2 border-[#6C1D5F] select-none shadow-xl"
+          className={`w-[1120px] h-[792px] p-12 flex flex-col relative ${currentTheme.bg} ${currentTheme.textColor} ${currentTheme.borderStyle} ${currentTheme.borderColor} select-none shadow-xl`}
           style={{ boxSizing: 'border-box' }}
         >
           {/* Double Border Offset Effect */}
-          <div className="absolute inset-3 border-2 border-[#01AC9F] opacity-20 pointer-events-none"></div>
+          <div className={`absolute inset-3 border-2 ${currentTheme.doubleBorderColor} opacity-20 pointer-events-none`}></div>
 
           {/* Decorative Corner Accents */}
-          <div className="absolute top-6 left-6 w-20 h-20 border-t-4 border-l-4 border-[#6C1D5F] opacity-60"></div>
-          <div className="absolute top-6 right-6 w-20 h-20 border-t-4 border-r-4 border-[#6C1D5F] opacity-60"></div>
-          <div className="absolute bottom-6 left-6 w-20 h-20 border-b-4 border-l-4 border-[#6C1D5F] opacity-60"></div>
-          <div className="absolute bottom-6 right-6 w-20 h-20 border-b-4 border-r-4 border-[#6C1D5F] opacity-60"></div>
+          <div className={`absolute top-6 left-6 w-20 h-20 border-t-4 border-l-4 ${currentTheme.borderColor} opacity-60`}></div>
+          <div className={`absolute top-6 right-6 w-20 h-20 border-t-4 border-r-4 ${currentTheme.borderColor} opacity-60`}></div>
+          <div className={`absolute bottom-6 left-6 w-20 h-20 border-b-4 border-l-4 ${currentTheme.borderColor} opacity-60`}></div>
+          <div className={`absolute bottom-6 right-6 w-20 h-20 border-b-4 border-r-4 ${currentTheme.borderColor} opacity-60`}></div>
 
           {/* Top Header */}
           <div className="flex justify-between items-start z-10">
             <div>
-              <h1 className="text-4xl font-extrabold tracking-widest text-[#6C1D5F] font-sans">Xebia</h1>
-              <p className="text-[10px] tracking-[0.25em] uppercase font-sans font-bold opacity-80 mt-1 text-neutral-500">
+              <h1 className={`text-4xl font-extrabold tracking-widest ${currentTheme.titleColor} font-sans`}>Xebia</h1>
+              <p className={`text-[10px] tracking-[0.25em] uppercase font-sans font-bold opacity-80 mt-1 ${currentTheme.tagline}`}>
                 Shaping Tomorrow with AI Today
               </p>
             </div>
             <div className="text-right">
-              <span className="text-[10px] font-bold tracking-widest uppercase font-sans border-b-2 border-[#6C1D5F] pb-1">
+              <span className={`text-[10px] font-bold tracking-widest uppercase font-sans border-b-2 ${currentTheme.borderColor} pb-1`}>
                 Official Achievement Certification
               </span>
             </div>
@@ -160,13 +218,15 @@ export const PublicVerifyCertificate = () => {
 
           {/* Main Certificate Core Text */}
           <div className="flex-grow flex flex-col items-center justify-center text-center z-10 px-8 my-4">
-            <h2 className="text-5xl font-serif tracking-wider mb-5 uppercase font-medium">Certificate of Completion</h2>
+            <h2 className="text-5xl font-serif tracking-wider mb-5 uppercase font-medium">
+              {assessment.certificateTitle || 'Certificate of Completion'}
+            </h2>
             <p className="text-base opacity-75 font-serif italic mb-5">This is to certify that</p>
-            <h3 className="text-5xl font-bold font-serif mb-6 uppercase tracking-wide border-b-2 border-[#6C1D5F] px-8 pb-3 text-[#4A1E47]">
+            <h3 className={`text-5xl font-bold font-serif mb-6 uppercase tracking-wide border-b-2 ${currentTheme.borderColor} px-8 pb-3 ${currentTheme.nameColor}`}>
               {studentName}
             </h3>
             <p className="text-base opacity-80 max-w-3xl leading-relaxed font-sans font-medium">
-              has successfully completed <strong className="font-bold underline decoration-[#01AC9F]">{assessmentTitle}</strong> offered by Xebia IT Architects India Pvt. Ltd., demonstrating dedication, knowledge, and a commitment to professional growth.
+              has successfully completed <strong className="font-bold underline decoration-[#01AC9F]">{assessmentTitle}</strong> offered by {assessment.certificateCorporateLine || 'Xebia IT Architects India Pvt. Ltd.'}, demonstrating dedication, knowledge, and a commitment to professional growth.
             </p>
           </div>
 
@@ -182,7 +242,7 @@ export const PublicVerifyCertificate = () => {
             </div>
             <div>
               <p className="text-[10px] uppercase font-bold tracking-wider opacity-60 mb-1">Score</p>
-              <p className="font-black text-lg text-[#01AC9F]">{cert.finalScore}%</p>
+              <p className={`font-black text-lg ${currentTheme.accentColor}`}>{cert.finalScore}%</p>
             </div>
           </div>
 
@@ -208,7 +268,7 @@ export const PublicVerifyCertificate = () => {
 
             {/* Center: Brand Badge Seal */}
             <div className="flex flex-col items-center">
-              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-[#6C1D5F] text-white shadow-lg relative transform translate-y-3 border-4 border-white/20 outline outline-2 outline-offset-[-6px] outline-white/20">
+              <div className={`w-24 h-24 rounded-full flex items-center justify-center ${currentTheme.sealBg} ${currentTheme.sealText} shadow-lg relative transform translate-y-3 border-4 border-white/20 outline outline-2 outline-offset-[-6px] outline-white/20`}>
                 <div className="text-center font-sans">
                   <span className="block text-[8px] font-bold uppercase tracking-widest opacity-80">Official</span>
                   <span className="block text-sm font-black uppercase tracking-wider my-0.5">XEBIA</span>
@@ -220,19 +280,23 @@ export const PublicVerifyCertificate = () => {
             {/* Right: Authorised Signature */}
             <div className="text-center pb-1">
               <div className="w-56 h-12 flex items-end justify-center pb-1 mb-2">
-                <span className="font-serif text-3xl font-bold tracking-wide text-[#6C1D5F] italic">
-                  Xebia Tech Team
+                <span className={`font-serif text-3xl font-bold tracking-wide ${currentTheme.signatureColor} italic`}>
+                  {assessment.certificateSignatory || 'Xebia Tech Team'}
                 </span>
               </div>
-              <p className="text-[9px] uppercase font-bold tracking-wider opacity-50">Authorized Signature</p>
-              <p className="text-[8px] font-semibold opacity-40 mt-1">Xebia IT Architects India Pvt. Ltd.</p>
+              <p className="text-[9px] uppercase font-bold tracking-wider opacity-50">
+                {assessment.certificateSignatoryTitle || 'Authorized Signature'}
+              </p>
+              <p className="text-[8px] font-semibold opacity-40 mt-1">
+                {assessment.certificateCorporateLine || 'Xebia IT Architects India Pvt. Ltd.'}
+              </p>
             </div>
           </div>
 
           {/* Bottom-most Corporate Address Footer */}
           <div className="mt-4 pt-2 border-t border-current border-opacity-5 flex justify-between text-[8px] font-semibold opacity-40 z-10 tracking-wide font-sans">
             <div>
-              <span className="font-bold">CORPORATE OFFICE:</span> Xebia IT Architects India Pvt. Ltd., Fourth Floor, Sector-59, Golf Course Extension Road, Gurugram, Haryana - 122102, India
+              <span className="font-bold">CORPORATE OFFICE:</span> {assessment.certificateCorporateLine || 'Xebia IT Architects India Pvt. Ltd.'}, Fourth Floor, Sector-59, Golf Course Extension Road, Gurugram, Haryana - 122102, India
             </div>
             <div className="flex gap-4">
               <span>+91 124 470 0200</span>
@@ -243,6 +307,9 @@ export const PublicVerifyCertificate = () => {
               <span className="font-bold">CIN:</span> U72200DL2008PTC146928
             </div>
           </div>
+
+        </div>
+      </div>
 
         </div>
       </div>
