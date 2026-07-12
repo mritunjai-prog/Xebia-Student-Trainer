@@ -16,6 +16,7 @@ import { TakeCoding } from './pages/TakeCoding';
 import { Results } from './pages/Results';
 import { Settings } from './pages/Settings';
 import { StudentAssessments } from './pages/StudentAssessments';
+import { StudentCertificates } from './pages/StudentCertificates';
 import { PublicVerifyCertificate } from './pages/PublicVerifyCertificate';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
@@ -145,6 +146,7 @@ const AppContent = () => {
                       <Route path="/student-dashboard" element={<StudentDashboard />} />
                       <Route path="/" element={<Navigate to="/student-dashboard" replace />} />
                       <Route path="/assessments" element={<StudentAssessments />} />
+                      <Route path="/certificates" element={<StudentCertificates />} />
                       <Route path="/take/:slug" element={<TakeQuiz />} />
                       <Route path="/take-coding/:slug" element={<TakeCoding />} />
                       <Route path="/results/:slug/:id" element={<Results />} />
