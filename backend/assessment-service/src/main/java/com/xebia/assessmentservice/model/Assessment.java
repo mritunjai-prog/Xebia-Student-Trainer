@@ -48,6 +48,11 @@ public class Assessment {
     private String scoreReleasePolicy; // IMMEDIATE_ON_SUBMISSION, MANUAL_RELEASE_BY_TRAINER
 
     private Boolean certificateEnabled;
+    private String certificateTemplate;
+    private String certificateTitle;
+    private String certificateSignatory;
+    private String certificateSignatoryTitle;
+    private String certificateCorporateLine;
     private String lastModifiedBy;
     private String modificationReason;
 

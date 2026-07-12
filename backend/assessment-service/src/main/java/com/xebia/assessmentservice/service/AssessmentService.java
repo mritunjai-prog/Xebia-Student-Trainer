@@ -75,6 +75,12 @@ public class AssessmentService {
             if (updated.getNegativeMarking() != null) existing.setNegativeMarking(updated.getNegativeMarking());
             if (updated.getNegativeMarksValue() != null) existing.setNegativeMarksValue(updated.getNegativeMarksValue());
             if (updated.getAutoSubmit() != null) existing.setAutoSubmit(updated.getAutoSubmit());
+            if (updated.getCertificateEnabled() != null) existing.setCertificateEnabled(updated.getCertificateEnabled());
+            if (updated.getCertificateTemplate() != null) existing.setCertificateTemplate(updated.getCertificateTemplate());
+            if (updated.getCertificateTitle() != null) existing.setCertificateTitle(updated.getCertificateTitle());
+            if (updated.getCertificateSignatory() != null) existing.setCertificateSignatory(updated.getCertificateSignatory());
+            if (updated.getCertificateSignatoryTitle() != null) existing.setCertificateSignatoryTitle(updated.getCertificateSignatoryTitle());
+            if (updated.getCertificateCorporateLine() != null) existing.setCertificateCorporateLine(updated.getCertificateCorporateLine());
             if (updated.getBatches() != null) {
                 if (existing.getBatches() != null) {
                     existing.getBatches().clear();

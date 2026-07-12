@@ -98,15 +98,20 @@ public class CertificateService {
         }
 
         String assessmentTitle = "Assessment";
+        Assessment assessment = null;
         Optional<Assessment> assessOpt = assessmentRepository.findById(cert.getAssessmentId());
         if (assessOpt.isPresent()) {
-            assessmentTitle = assessOpt.get().getTitle();
+            assessment = assessOpt.get();
+            assessmentTitle = assessment.getTitle();
         }
         
-        return Map.of(
-            "certificate", cert,
-            "studentName", studentName,
-            "assessmentTitle", assessmentTitle
-        );
+        java.util.Map<String, Object> details = new java.util.HashMap<>();
+        details.put("certificate", cert);
+        details.put("studentName", studentName);
+        details.put("assessmentTitle", assessmentTitle);
+        if (assessment != null) {
+            details.put("assessment", assessment);
+        }
+        return details;
     }
 }
