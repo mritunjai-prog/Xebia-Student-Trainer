@@ -435,6 +435,89 @@ export const ConfigPanel = ({ config, setConfig }) => {
                         <span className={`inline-block h-3 w-3 rounded-full bg-white transition-transform ${config.certificateEnabled !== false ? 'translate-x-5' : 'translate-x-1'}`} />
                       </button>
                     </label>
+
+                    <AnimatePresence>
+                      {config.certificateEnabled !== false && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25 }}
+                          className="mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-800/60 space-y-3 overflow-hidden"
+                        >
+                          <h5 className="text-[10px] font-black uppercase text-[#6C1D5F] dark:text-purple-400 tracking-wider">Customize Certificate</h5>
+                          
+                          {/* Template Selector */}
+                          <div>
+                            <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-wide mb-1.5">Certificate Template</label>
+                            <div className="grid grid-cols-3 gap-1 bg-neutral-100 dark:bg-neutral-950 p-1 rounded-xl border border-neutral-200 dark:border-neutral-800">
+                              {['classic', 'dark', 'gold'].map((themeName) => (
+                                <button
+                                  key={themeName}
+                                  type="button"
+                                  onClick={() => setConfig(prev => ({ ...prev, certificateTemplate: themeName }))}
+                                  className={`py-1 text-[10px] font-bold rounded-lg capitalize transition-all ${
+                                    (config.certificateTemplate || 'classic') === themeName
+                                      ? 'bg-[#6C1D5F] text-white shadow-sm'
+                                      : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
+                                  }`}
+                                >
+                                  {themeName}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Title */}
+                          <div>
+                            <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-wide mb-1">Certificate Title</label>
+                            <input 
+                              type="text" 
+                              value={config.certificateTitle || ''} 
+                              onChange={(e) => setConfig(prev => ({...prev, certificateTitle: e.target.value}))} 
+                              className="w-full px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#6C1D5F] dark:text-white"
+                              placeholder="Certificate of Completion"
+                            />
+                          </div>
+
+                          {/* Signatory Name */}
+                          <div>
+                            <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-wide mb-1">Signatory Name</label>
+                            <input 
+                              type="text" 
+                              value={config.certificateSignatory || ''} 
+                              onChange={(e) => setConfig(prev => ({...prev, certificateSignatory: e.target.value}))} 
+                              className="w-full px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#6C1D5F] dark:text-white"
+                              placeholder="Xebia Tech Team"
+                            />
+                          </div>
+
+                          {/* Signatory Title */}
+                          <div>
+                            <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-wide mb-1">Signatory Title</label>
+                            <input 
+                              type="text" 
+                              value={config.certificateSignatoryTitle || ''} 
+                              onChange={(e) => setConfig(prev => ({...prev, certificateSignatoryTitle: e.target.value}))} 
+                              className="w-full px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#6C1D5F] dark:text-white"
+                              placeholder="Authorized Signature"
+                            />
+                          </div>
+
+                          {/* Corporate Line */}
+                          <div>
+                            <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-wide mb-1">Organization / Corporate Line</label>
+                            <input 
+                              type="text" 
+                              value={config.certificateCorporateLine || ''} 
+                              onChange={(e) => setConfig(prev => ({...prev, certificateCorporateLine: e.target.value}))} 
+                              className="w-full px-2.5 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#6C1D5F] dark:text-white"
+                              placeholder="Xebia IT Architects India Pvt. Ltd."
+                            />
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               </motion.div>
