@@ -65,6 +65,9 @@ public class SubmissionService {
     }
 
     public Submission createSubmission(Submission submission) {
+        if (submission.getId() == null || submission.getId().trim().isEmpty()) {
+            submission.setId(java.util.UUID.randomUUID().toString());
+        }
         boolean hasAiQuestions = false;
         Assessment assessment = null;
         
