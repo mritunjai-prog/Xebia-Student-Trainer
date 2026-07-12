@@ -449,22 +449,133 @@ export const ConfigPanel = ({ config, setConfig }) => {
                           
                           {/* Template Selector */}
                           <div>
-                            <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-wide mb-1.5">Certificate Template</label>
-                            <div className="grid grid-cols-3 gap-1 bg-neutral-100 dark:bg-neutral-950 p-1 rounded-xl border border-neutral-200 dark:border-neutral-800">
-                              {['classic', 'dark', 'gold'].map((themeName) => (
-                                <button
-                                  key={themeName}
-                                  type="button"
-                                  onClick={() => setConfig(prev => ({ ...prev, certificateTemplate: themeName }))}
-                                  className={`py-1 text-[10px] font-bold rounded-lg capitalize transition-all ${
-                                    (config.certificateTemplate || 'classic') === themeName
-                                      ? 'bg-[#6C1D5F] text-white shadow-sm'
-                                      : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
-                                  }`}
+                            <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-wide mb-1.5">Template Theme Type</label>
+                            <div className="grid grid-cols-2 gap-1 bg-neutral-100 dark:bg-neutral-950 p-1 rounded-xl border border-neutral-200 dark:border-neutral-800 mb-2">
+                              <button
+                                type="button"
+                                onClick={() => setConfig(prev => ({ ...prev, certificateTemplate: prev.certificateTemplate === 'custom' ? 'classic' : prev.certificateTemplate }))}
+                                className={`py-1 text-[10px] font-bold rounded-lg capitalize transition-all ${
+                                  config.certificateTemplate !== 'custom'
+                                    ? 'bg-[#6C1D5F] text-white shadow-sm'
+                                    : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
+                                }`}
+                              >
+                                Standard Theme
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setConfig(prev => ({ ...prev, certificateTemplate: 'custom', certificateCustomBg: prev.certificateCustomBg || 'bg_tech' }))}
+                                className={`py-1 text-[10px] font-bold rounded-lg capitalize transition-all ${
+                                  config.certificateTemplate === 'custom'
+                                    ? 'bg-[#6C1D5F] text-white shadow-sm'
+                                    : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
+                                }`}
+                              >
+                                Custom AI Texture
+                              </button>
+                            </div>
+
+                            {config.certificateTemplate !== 'custom' ? (
+                              <div className="grid grid-cols-3 gap-1 bg-neutral-100 dark:bg-neutral-950 p-1 rounded-xl border border-neutral-200 dark:border-neutral-800">
+                                {['classic', 'dark', 'gold'].map((themeName) => (
+                                  <button
+                                    key={themeName}
+                                    type="button"
+                                    onClick={() => setConfig(prev => ({ ...prev, certificateTemplate: themeName }))}
+                                    className={`py-1 text-[10px] font-bold rounded-lg capitalize transition-all ${
+                                      (config.certificateTemplate || 'classic') === themeName
+                                        ? 'bg-[#6C1D5F] text-white shadow-sm'
+                                        : 'text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200'
+                                    }`}
+                                  >
+                                    {themeName}
+                                  </button>
+                                ))}
+                              </div>
+                            ) : (
+                              <div>
+                                <label className="block text-[9px] font-bold text-neutral-500 uppercase tracking-wide mb-1">AI Background Texture</label>
+                                <select 
+                                  value={config.certificateCustomBg || 'bg_tech'} 
+                                  onChange={(e) => setConfig(prev => ({...prev, certificateCustomBg: e.target.value}))} 
+                                  className="w-full px-2 py-1.5 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#6C1D5F] dark:text-white"
                                 >
-                                  {themeName}
-                                </button>
-                              ))}
+                                  <option value="bg_tech">AI Cyber Tech Network (Dark Blue)</option>
+                                  <option value="bg_luxury">AI Luxury Wave (Gold & Marble)</option>
+                                  <option value="bg_corporate">AI Corporate Minimalist (Teal & Blue)</option>
+                                  <option value="bg_abstract">AI Colorful Fluid Abstract (Purple & Pink)</option>
+                                </select>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Custom Color Overrides */}
+                          <div className="space-y-2 p-3 bg-neutral-50 dark:bg-neutral-950/50 border border-neutral-200 dark:border-neutral-800/80 rounded-xl">
+                            <h6 className="text-[9px] font-black uppercase text-neutral-400 tracking-wider">Custom Style Overrides</h6>
+                            
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="block text-[8px] font-bold text-neutral-500 uppercase mb-0.5">Title Color</label>
+                                <div className="flex items-center gap-1.5">
+                                  <input 
+                                    type="color" 
+                                    value={config.certificateTitleColor || '#6C1D5F'} 
+                                    onChange={(e) => setConfig(prev => ({...prev, certificateTitleColor: e.target.value}))} 
+                                    className="w-6 h-6 rounded border cursor-pointer bg-transparent"
+                                  />
+                                  <span className="text-[10px] font-mono text-neutral-600 dark:text-neutral-400">{config.certificateTitleColor || '#6C1D5F'}</span>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <label className="block text-[8px] font-bold text-neutral-500 uppercase mb-0.5">Name Color</label>
+                                <div className="flex items-center gap-1.5">
+                                  <input 
+                                    type="color" 
+                                    value={config.certificateNameColor || '#4A1E47'} 
+                                    onChange={(e) => setConfig(prev => ({...prev, certificateNameColor: e.target.value}))} 
+                                    className="w-6 h-6 rounded border cursor-pointer bg-transparent"
+                                  />
+                                  <span className="text-[10px] font-mono text-neutral-600 dark:text-neutral-400">{config.certificateNameColor || '#4A1E47'}</span>
+                                </div>
+                              </div>
+
+                              <div>
+                                <label className="block text-[8px] font-bold text-neutral-500 uppercase mb-0.5">Border Color</label>
+                                <div className="flex items-center gap-1.5">
+                                  <input 
+                                    type="color" 
+                                    value={config.certificateBorderColor || '#6C1D5F'} 
+                                    onChange={(e) => setConfig(prev => ({...prev, certificateBorderColor: e.target.value}))} 
+                                    className="w-6 h-6 rounded border cursor-pointer bg-transparent"
+                                  />
+                                  <span className="text-[10px] font-mono text-neutral-600 dark:text-neutral-400">{config.certificateBorderColor || '#6C1D5F'}</span>
+                                </div>
+                              </div>
+
+                              <div>
+                                <label className="block text-[8px] font-bold text-neutral-500 uppercase mb-0.5">Seal Color</label>
+                                <div className="flex items-center gap-1.5">
+                                  <input 
+                                    type="color" 
+                                    value={config.certificateSealColor || '#6C1D5F'} 
+                                    onChange={(e) => setConfig(prev => ({...prev, certificateSealColor: e.target.value}))} 
+                                    className="w-6 h-6 rounded border cursor-pointer bg-transparent"
+                                  />
+                                  <span className="text-[10px] font-mono text-neutral-600 dark:text-neutral-400">{config.certificateSealColor || '#6C1D5F'}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="block text-[8px] font-bold text-neutral-500 uppercase mb-1">Seal Stamp Text</label>
+                              <input 
+                                type="text" 
+                                value={config.certificateSealText || 'OFFICIAL'} 
+                                onChange={(e) => setConfig(prev => ({...prev, certificateSealText: e.target.value}))} 
+                                className="w-full px-2 py-1 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#6C1D5F] dark:text-white"
+                                placeholder="OFFICIAL"
+                              />
                             </div>
                           </div>
 
