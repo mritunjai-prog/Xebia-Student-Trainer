@@ -139,10 +139,42 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
       signatureColor: 'text-[#78350F]',
       tagline: 'text-[#78350F]',
       borderStyle: 'border-[12px] border-double'
+    },
+    custom: {
+      id: 'custom',
+      name: 'AI Custom Texture',
+      bg: 'bg-cover bg-center bg-no-repeat',
+      borderColor: 'border-[#6C1D5F]',
+      doubleBorderColor: 'border-[#01AC9F]',
+      titleColor: 'text-[#6C1D5F]',
+      textColor: 'text-neutral-800',
+      subTextColor: 'text-neutral-500',
+      nameColor: 'text-[#4A1E47]',
+      accentColor: 'text-[#01AC9F]',
+      sealBg: 'bg-[#6C1D5F]',
+      sealText: 'text-white',
+      signatureColor: 'text-[#6C1D5F]',
+      tagline: 'text-neutral-500',
+      borderStyle: 'border-[8px] border-solid'
     }
   };
 
-  const currentTheme = templates[currentTemplate];
+  const currentTheme = templates[currentTemplate] || templates.classic;
+
+  const customStyles = {
+    container: currentTemplate === 'custom' ? {
+      backgroundImage: `url(/assets/certificates/${assessment?.certificateCustomBg || 'bg_tech'}.png)`,
+      borderColor: assessment?.certificateBorderColor || '#6C1D5F',
+      borderStyle: 'solid',
+      borderWidth: '12px'
+    } : (assessment?.certificateBorderColor ? { borderColor: assessment.certificateBorderColor } : {}),
+    title: assessment?.certificateTitleColor ? { color: assessment.certificateTitleColor } : {},
+    name: assessment?.certificateNameColor ? { color: assessment.certificateNameColor, borderColor: assessment?.certificateBorderColor || 'inherit' } : {},
+    border: assessment?.certificateBorderColor ? { borderColor: assessment.certificateBorderColor } : {},
+    seal: assessment?.certificateSealColor ? { backgroundColor: assessment.certificateSealColor } : {},
+    signature: assessment?.certificateTitleColor ? { color: assessment.certificateTitleColor } : {},
+    badge: assessment?.certificateBorderColor ? { borderColor: assessment.certificateBorderColor } : {}
+  };
 
   // Helper for applying background patterns
   const getPatternStyle = () => {
@@ -273,31 +305,31 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
         <div className="overflow-hidden w-full overflow-x-auto flex justify-center py-2 bg-neutral-950 rounded-3xl border border-neutral-900 shadow-2xl">
           <div 
             ref={certificateRef}
-            className={`w-[1120px] h-[792px] p-12 flex flex-col relative ${currentTheme.bg} ${currentTheme.textColor} ${currentTheme.borderStyle} ${currentTheme.borderColor} select-none`}
-            style={{ boxSizing: 'border-box' }}
+            className={`w-[1120px] h-[792px] p-12 flex flex-col relative ${currentTheme.bg} ${currentTheme.textColor} ${currentTheme.borderStyle} select-none`}
+            style={{ boxSizing: 'border-box', ...customStyles.container }}
           >
             {/* Pattern Overlay */}
             <div className="absolute inset-0 pointer-events-none" style={getPatternStyle()}></div>
 
             {/* Double Border Offset Effect */}
-            <div className={`absolute inset-3 border-2 ${currentTheme.doubleBorderColor} opacity-20 pointer-events-none`}></div>
+            <div className={`absolute inset-3 border-2 ${currentTheme.doubleBorderColor} opacity-20 pointer-events-none`} style={customStyles.border}></div>
 
             {/* Decorative Corner Accents */}
-            <div className={`absolute top-6 left-6 w-20 h-20 border-t-4 border-l-4 ${currentTheme.borderColor} opacity-60`}></div>
-            <div className={`absolute top-6 right-6 w-20 h-20 border-t-4 border-r-4 ${currentTheme.borderColor} opacity-60`}></div>
-            <div className={`absolute bottom-6 left-6 w-20 h-20 border-b-4 border-l-4 ${currentTheme.borderColor} opacity-60`}></div>
-            <div className={`absolute bottom-6 right-6 w-20 h-20 border-b-4 border-r-4 ${currentTheme.borderColor} opacity-60`}></div>
+            <div className={`absolute top-6 left-6 w-20 h-20 border-t-4 border-l-4 opacity-60`} style={customStyles.border}></div>
+            <div className={`absolute top-6 right-6 w-20 h-20 border-t-4 border-r-4 opacity-60`} style={customStyles.border}></div>
+            <div className={`absolute bottom-6 left-6 w-20 h-20 border-b-4 border-l-4 opacity-60`} style={customStyles.border}></div>
+            <div className={`absolute bottom-6 right-6 w-20 h-20 border-b-4 border-r-4 opacity-60`} style={customStyles.border}></div>
 
             {/* Top Header */}
             <div className="flex justify-between items-start z-10">
               <div>
-                <h1 className={`text-4xl font-extrabold tracking-widest ${currentTheme.titleColor} font-sans`}>Xebia</h1>
-                <p className={`text-[10px] tracking-[0.25em] uppercase font-sans font-bold opacity-80 mt-1 ${currentTheme.tagline}`}>
+                <h1 className={`text-4xl font-extrabold tracking-widest ${currentTheme.titleColor} font-sans`} style={customStyles.title}>Xebia</h1>
+                <p className={`text-[10px] tracking-[0.25em] uppercase font-sans font-bold opacity-80 mt-1 ${currentTheme.tagline}`} style={customStyles.title}>
                   Shaping Tomorrow with AI Today
                 </p>
               </div>
               <div className="text-right">
-                <span className={`text-[10px] font-bold tracking-widest uppercase font-sans border-b-2 ${currentTheme.borderColor} pb-1`}>
+                <span className={`text-[10px] font-bold tracking-widest uppercase font-sans border-b-2 pb-1`} style={customStyles.border}>
                   Official Achievement Certification
                 </span>
               </div>
@@ -305,11 +337,11 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
 
             {/* Main Certificate Core Text */}
             <div className="flex-grow flex flex-col items-center justify-center text-center z-10 px-8 my-4">
-              <h2 className="text-5xl font-serif tracking-wider mb-5 uppercase font-medium">
+              <h2 className="text-5xl font-serif tracking-wider mb-5 uppercase font-medium" style={customStyles.title}>
                 {assessment?.certificateTitle || 'Certificate of Completion'}
               </h2>
               <p className="text-base opacity-75 font-serif italic mb-5">This is to certify that</p>
-              <h3 className={`text-5xl font-bold font-serif mb-6 uppercase tracking-wide border-b-2 ${currentTheme.borderColor} px-8 pb-3 ${currentTheme.nameColor}`}>
+              <h3 className={`text-5xl font-bold font-serif mb-6 uppercase tracking-wide border-b-2 px-8 pb-3 ${currentTheme.nameColor}`} style={customStyles.name}>
                 {studentName}
               </h3>
               <p className="text-base opacity-80 max-w-3xl leading-relaxed font-sans font-medium">
@@ -318,23 +350,23 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
             </div>
 
             {/* Assessment Details Box */}
-            <div className="grid grid-cols-3 gap-6 bg-neutral-500/5 border border-current border-opacity-10 rounded-2xl p-4 my-4 mx-8 text-center z-10 backdrop-blur-sm">
+            <div className="grid grid-cols-3 gap-6 bg-neutral-500/5 border border-current border-opacity-10 rounded-2xl p-4 my-4 mx-8 text-center z-10 backdrop-blur-sm" style={customStyles.border}>
               <div>
                 <p className="text-[10px] uppercase font-bold tracking-wider opacity-60 mb-1">Assessment Name</p>
                 <p className="font-bold text-base truncate px-2">{assessmentTitle}</p>
               </div>
-              <div className="border-x border-current border-opacity-10">
+              <div className="border-x border-current border-opacity-10" style={customStyles.border}>
                 <p className="text-[10px] uppercase font-bold tracking-wider opacity-60 mb-1">Date of Completion</p>
                 <p className="font-bold text-base">{formattedDate}</p>
               </div>
               <div>
                 <p className="text-[10px] uppercase font-bold tracking-wider opacity-60 mb-1">Score</p>
-                <p className={`font-black text-lg ${currentTheme.accentColor}`}>{score}%</p>
+                <p className={`font-black text-lg ${currentTheme.accentColor}`} style={customStyles.title}>{score}%</p>
               </div>
             </div>
 
             {/* Footer Section */}
-            <div className="mt-auto pt-6 border-t border-current border-opacity-10 flex justify-between items-end z-10">
+            <div className="mt-auto pt-6 border-t border-current border-opacity-10 flex justify-between items-end z-10" style={customStyles.border}>
               
               {/* Left: Certificate ID / Date & QR Code */}
               <div className="pb-1 text-left flex items-end gap-6">
@@ -355,10 +387,10 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
 
               {/* Center: Brand Badge Seal */}
               <div className="flex flex-col items-center">
-                <div className={`w-24 h-24 rounded-full flex items-center justify-center ${currentTheme.sealBg} ${currentTheme.sealText} shadow-lg relative transform translate-y-3 border-4 border-white/20 outline outline-2 outline-offset-[-6px] outline-white/20`}>
+                <div className={`w-24 h-24 rounded-full flex items-center justify-center ${currentTheme.sealText} shadow-lg relative transform translate-y-3 border-4 border-white/20 outline outline-2 outline-offset-[-6px] outline-white/20`} style={customStyles.seal}>
                   <div className="text-center font-sans">
                     <span className="block text-[8px] font-bold uppercase tracking-widest opacity-80">Official</span>
-                    <span className="block text-sm font-black uppercase tracking-wider my-0.5">XEBIA</span>
+                    <span className="block text-sm font-black uppercase tracking-wider my-0.5">{assessment?.certificateSealText || 'XEBIA'}</span>
                     <span className="block text-[9px] font-bold">★★★</span>
                   </div>
                 </div>
@@ -367,7 +399,7 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
               {/* Right: Authorised Signature */}
               <div className="text-center pb-1">
                 <div className="w-56 h-12 flex items-end justify-center pb-1 mb-2">
-                  <span className={`font-serif text-3xl font-bold tracking-wide ${currentTheme.signatureColor} italic`}>
+                  <span className={`font-serif text-3xl font-bold tracking-wide ${currentTheme.signatureColor} italic`} style={customStyles.signature}>
                     {assessment?.certificateSignatory || 'Xebia Tech Team'}
                   </span>
                 </div>
@@ -381,7 +413,7 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
             </div>
 
             {/* Bottom-most Corporate Address Footer */}
-            <div className="mt-4 pt-2 border-t border-current border-opacity-5 flex justify-between text-[8px] font-semibold opacity-40 z-10 tracking-wide font-sans">
+            <div className="mt-4 pt-2 border-t border-current border-opacity-5 flex justify-between text-[8px] font-semibold opacity-40 z-10 tracking-wide font-sans" style={customStyles.border}>
               <div>
                 <span className="font-bold">CORPORATE OFFICE:</span> Xebia IT Architects India Pvt. Ltd., Fourth Floor, Sector-59, Golf Course Extension Road, Gurugram, Haryana - 122102, India
               </div>
