@@ -99,7 +99,6 @@ def main():
         "batches": [test_batch["id"]],
         "questions": [
             {
-                "id": "q-mcq-1",
                 "questionText": "What does CORS stand for?",
                 "options": ["Cross-Origin Resource Sharing", "Centralized Object Routing System", "Client Object Request Source", "Common Object Request Structure"],
                 "correctAnswer": "Cross-Origin Resource Sharing",
@@ -107,7 +106,6 @@ def main():
                 "evaluationType": "AUTO"
             },
             {
-                "id": "q-mcq-2",
                 "questionText": "Which protocol is used by default for inter-service communication in gRPC?",
                 "options": ["HTTP/1.1", "HTTP/2", "WebSockets", "TCP Raw"],
                 "correctAnswer": "HTTP/2",
@@ -126,6 +124,15 @@ def main():
     else:
         log(f"MCQ assessment already exists: '{mcq_assessment['title']}' ({mcq_assessment['id']})")
 
+    # Extract real question IDs
+    questions = mcq_assessment.get("questions", [])
+    if len(questions) < 2:
+        log("No questions found in saved assessment!", False)
+        return
+        
+    q1_id = next(q["id"] for q in questions if "CORS" in q.get("questionText", q.get("question", "")))
+    q2_id = next(q["id"] for q in questions if "gRPC" in q.get("questionText", q.get("question", "")))
+
     # 4. Create Passing Submission for the Student -> Should generate Certificate
     submission_pass_payload = {
         "assessmentId": mcq_assessment["id"],
@@ -134,11 +141,11 @@ def main():
         "status": "submitted",
         "answers": [
             {
-                "questionId": "q-mcq-1",
+                "questionId": q1_id,
                 "answer": "Cross-Origin Resource Sharing" # Correct (10 marks)
             },
             {
-                "questionId": "q-mcq-2",
+                "questionId": q2_id,
                 "answer": "HTTP/2" # Correct (10 marks)
             }
         ]
@@ -155,11 +162,11 @@ def main():
         "status": "submitted",
         "answers": [
             {
-                "questionId": "q-mcq-1",
+                "questionId": q1_id,
                 "answer": "Centralized Object Routing System" # Incorrect (0 marks)
             },
             {
-                "questionId": "q-mcq-2",
+                "questionId": q2_id,
                 "answer": "HTTP/1.1" # Incorrect (0 marks)
             }
         ]
@@ -168,7 +175,7 @@ def main():
     log(f"Submitted FAILING attempt. Percentage: {sub_fail.get('percentage')}%")
 
     # 6. Verify Certificate Database Generation
-    time.sleep(2) # wait briefly
+    time.sleep(3) # wait briefly for async grading context
     certs = requests.get(f"{ASSESSMENT_SERVICE}/certificates/user/{student['id']}").json()
     
     log("==================================================")
@@ -177,8 +184,8 @@ def main():
     for c in certs:
         log(f"  - Certificate UUID: {c['certificateUuid']} | Serial: {c['serialNumber']} | Score: {c['finalScore']}%")
     
-    print("\n💡 Log in as Student:")
-    print(f"👉 Use Email: alex.mercer@xebia.com to test dashboard certificate viewing and PDF downloading.")
+    print("\nLog in as Student:")
+    print("Use Email: alex.mercer@xebia.com to test dashboard certificate viewing and PDF downloading.")
     print("==================================================")
 
 if __name__ == "__main__":
