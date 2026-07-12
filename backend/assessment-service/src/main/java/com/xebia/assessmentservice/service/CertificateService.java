@@ -62,7 +62,8 @@ public class CertificateService {
             return certificateRepository.findBySubmissionId(submission.getId()).get();
         }
 
-        if (submission.getPercentage() == null || submission.getPercentage() < 60) {
+        Integer passingLimit = assessment.getPassingMarks() != null ? assessment.getPassingMarks() : 60;
+        if (submission.getPercentage() == null || submission.getPercentage() < passingLimit) {
             return null; // Doesn't meet passing criteria
         }
 
@@ -75,7 +76,11 @@ public class CertificateService {
         certificate.setFinalScore(submission.getPercentage().doubleValue());
 
         // Serial ID = XEB - [Assessment Short Code] - [YYYY-MM-DD] - [Submission Hash Last 4]
-        String shortCode = assessment.getTitle().length() >= 3 ? assessment.getTitle().substring(0, 3).toUpperCase() : assessment.getTitle().toUpperCase();
+        String title = assessment.getTitle() != null ? assessment.getTitle().trim() : "AST";
+        String shortCode = title.length() >= 3 ? title.substring(0, 3).toUpperCase() : title.toUpperCase();
+        if (shortCode.isEmpty()) {
+            shortCode = "AST";
+        }
         String dateStr = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String hash = String.format("%04x", submission.getId().hashCode() & 0xFFFF);
         
