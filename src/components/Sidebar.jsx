@@ -9,12 +9,10 @@ import {
   Settings,
   BarChart3,
   LogOut,
-
   Trophy,
-
+  Award,
   ClipboardList
-} from
-  'lucide-react';
+} from 'lucide-react';
 
 
 
@@ -41,6 +39,7 @@ export const Sidebar = ({ onCloseMobile }) => {
   const studentLinks = [
     { to: '/student-dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/assessments', label: 'Assessments', icon: ClipboardList },
+    { to: '/certificates', label: 'Certificates', icon: Award },
     { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
     { to: '/settings', label: 'Settings', icon: Settings }];
 
