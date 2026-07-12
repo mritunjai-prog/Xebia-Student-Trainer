@@ -16,6 +16,7 @@ import { TakeCoding } from './pages/TakeCoding';
 import { Results } from './pages/Results';
 import { Settings } from './pages/Settings';
 import { StudentAssessments } from './pages/StudentAssessments';
+import { CertificateView } from './pages/CertificateView';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { ToastContainer, toast } from './components/Toast';
@@ -47,7 +48,8 @@ const AppContent = () => {
   }
 
   // Check if we are inside the active TakeQuiz/TakeCoding screen (hide standard sidebar and header)
-  const isTakingQuiz = location.pathname.startsWith('/take/') || location.pathname.startsWith('/take-coding/');
+  const isTakingQuiz = location.pathname.startsWith('/take/') || location.pathname.startsWith('/take-coding/') || location.pathname.startsWith('/certificate/');
+  const isCertificate = location.pathname.startsWith('/certificate/');
 
   return (
     <div className={theme === 'dark' ? 'dark' : ''}>
@@ -109,7 +111,7 @@ const AppContent = () => {
           }
 
           {/* Render Active View Canvas */}
-          <main className={isTakingQuiz ? 'p-0 h-full overflow-hidden' : 'p-6 md:p-8 flex-1 overflow-y-auto'}>
+          <main className={isCertificate ? 'p-0 flex-1 overflow-y-auto' : isTakingQuiz ? 'p-0 h-full overflow-hidden' : 'p-6 md:p-8 flex-1 overflow-y-auto'}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
@@ -142,6 +144,7 @@ const AppContent = () => {
                       <Route path="/take/:slug" element={<TakeQuiz />} />
                       <Route path="/take-coding/:slug" element={<TakeCoding />} />
                       <Route path="/results/:slug/:id" element={<Results />} />
+                      <Route path="/certificate/:submissionId" element={<CertificateView />} />
                       <Route path="/leaderboard" element={<Leaderboard />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route path="*" element={<Navigate to="/student-dashboard" replace />} />

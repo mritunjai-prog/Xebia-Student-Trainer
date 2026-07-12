@@ -15,7 +15,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
   const [draftOptions, setDraftOptions] = useState(['', '', '', '']);
   
   // Enforce configuration completeness
-  const isConfigComplete = config && config.title && config.topic && config.batches?.length > 0 && config.type && config.difficulty && config.duration && config.marks;
+  const isConfigComplete = config && config.title && config.topic && config.type && config.difficulty && config.duration && config.marks;
 
   // Filter available question types based on config
   const questionTypes = [
@@ -54,8 +54,21 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
     try {
       const generated = await generateQuestions(config.topic, remainingToGenerate, taxonomy, type);
       if (generated && generated.length > 0) {
-        const perQuestionMarks = Math.max(1, Math.round((Number(config.marks) || targetCount) / (questions.length + generated.length)));
-        const mappedQuestions = generated.map(q => ({ ...q, marks: perQuestionMarks }));
+        const totalMarksTarget = Number(config.marks) || targetCount;
+        const currentTotal = questions.reduce((s, q) => s + (q.marks || 0), 0);
+        const marksToDistribute = Math.max(generated.length, totalMarksTarget - currentTotal);
+        
+        const baseMark = Math.floor(marksToDistribute / generated.length);
+        const remainder = marksToDistribute % generated.length;
+
+        const mappedQuestions = generated.map((q, idx) => {
+          let m = baseMark;
+          if (idx < remainder) {
+            m += 1;
+          }
+          return { ...q, marks: m };
+        });
+
         setQuestions([...questions, ...mappedQuestions]);
         toast.add(`Generated ${generated.length} fresh questions successfully!`, 'success');
       } else {
@@ -343,7 +356,7 @@ export const QuestionBuilderPanel = ({ questions, setQuestions, config, isDeskto
               </div>
               <h3 className="font-bold text-neutral-900 dark:text-white">Configuration Required</h3>
               <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                Please complete all mandatory fields in the Configuration panel (Title, Topic, Course, Batches, Type, Difficulty, Duration, Marks) before adding questions.
+                Please complete all mandatory fields in the Configuration panel (Title, Topic, Course, Type, Difficulty, Duration, Marks) before adding questions.
               </p>
             </div>
           </div>
