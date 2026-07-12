@@ -40,6 +40,10 @@ export default defineConfig(() => {
           target: 'http://localhost:8083',
           changeOrigin: true,
         },
+        '/api/v1/certificates': {
+          target: 'http://localhost:8083',
+          changeOrigin: true,
+        },
       },
     },
   };
