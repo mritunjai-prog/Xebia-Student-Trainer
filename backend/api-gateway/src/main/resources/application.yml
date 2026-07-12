@@ -9,6 +9,9 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       mvc:
         routes:
           - id: user-service-base
