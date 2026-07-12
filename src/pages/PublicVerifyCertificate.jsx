@@ -221,7 +221,7 @@ export const PublicVerifyCertificate = () => {
       <div className="overflow-x-auto w-full flex justify-center bg-neutral-900 p-6 rounded-3xl border border-neutral-800 shadow-2xl mb-8">
         <div 
           ref={certificateRef}
-          className={`w-[1120px] h-[792px] p-12 flex flex-col relative ${currentTheme.bg} ${currentTheme.textColor} ${currentTheme.borderStyle} select-none shadow-xl`}
+          className={`w-[1120px] h-[792px] p-12 flex flex-col relative ${currentTheme.bg} ${currentTheme.textColor} ${currentTheme.borderStyle} ${currentTheme.borderColor} select-none shadow-xl`}
           style={{ boxSizing: 'border-box', ...customStyles.container }}
         >
           {/* Double Border Offset Effect */}

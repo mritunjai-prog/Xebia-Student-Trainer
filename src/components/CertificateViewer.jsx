@@ -305,7 +305,7 @@ const CertificateViewer = ({ certificate, studentName, assessmentTitle, onClose 
         <div className="overflow-hidden w-full overflow-x-auto flex justify-center py-2 bg-neutral-950 rounded-3xl border border-neutral-900 shadow-2xl">
           <div 
             ref={certificateRef}
-            className={`w-[1120px] h-[792px] p-12 flex flex-col relative ${currentTheme.bg} ${currentTheme.textColor} ${currentTheme.borderStyle} select-none`}
+            className={`w-[1120px] h-[792px] p-12 flex flex-col relative ${currentTheme.bg} ${currentTheme.textColor} ${currentTheme.borderStyle} ${currentTheme.borderColor} select-none`}
             style={{ boxSizing: 'border-box', ...customStyles.container }}
           >
             {/* Pattern Overlay */}
