@@ -567,7 +567,8 @@ export const LMSProvider = ({ children }) => {
           }
         }
       });
-      isEvaluated = true;
+      const needsManualGrading = asObj.manualGrade || asObj.questions.some(q => ['short_answer', 'paragraph', 'file_upload', 'coding', 'assignment'].includes(q.type));
+      isEvaluated = !needsManualGrading;
 
       const percentage = asObj.marks > 0 ? Math.round(score / asObj.marks * 100) : 0;
       const startedTime = sub.startedAt ? new Date(sub.startedAt).getTime() : Date.now();

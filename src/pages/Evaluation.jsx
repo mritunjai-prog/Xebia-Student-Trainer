@@ -5,15 +5,18 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, CheckCircle, Clock, FileText, User, ChevronRight, 
   Bot, AlertCircle, Award, MessageSquare, Send, CheckSquare, 
-  Layers, ChevronDown, Loader2
+  Layers, ChevronDown, Loader2, Download
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { evaluateSubmission as evaluateSubmissionAI } from '../utils/aiService';
 
 export const Evaluation = () => {
-  const { submissions, students, assessments, evaluateSubmission } = useLMS();
+  const { submissions, students, assessments, batches, evaluateSubmission } = useLMS();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterGraded, setFilterGraded] = useState('pending');
+  const [selectedBatchId, setSelectedBatchId] = useState('all');
+  const [selectedAssId, setSelectedAssId] = useState('all');
   const [selectedSubId, setSelectedSubId] = useState(null);
   const [isEvaluatingAi, setIsEvaluatingAi] = useState(false);
 
@@ -30,15 +33,18 @@ export const Evaluation = () => {
     const assessment = assessments.find((a) => a.id === s.assessmentId);
 
     const matchesSearch = 
-      student?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      assessment?.title.toLowerCase().includes(searchQuery.toLowerCase());
+      (student?.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (assessment?.title || '').toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesBatch = selectedBatchId === 'all' || (student && student.batches && student.batches.includes(selectedBatchId));
+    const matchesAssessment = selectedAssId === 'all' || s.assessmentId === selectedAssId;
 
     const matchesGraded = 
       filterGraded === 'all' ||
       (filterGraded === 'pending' && !s.isEvaluated) ||
       (filterGraded === 'graded' && s.isEvaluated);
 
-    return matchesSearch && matchesGraded;
+    return matchesSearch && matchesBatch && matchesAssessment && matchesGraded;
   });
 
   const handleSelectSubmission = (sub) => {
@@ -152,6 +158,84 @@ export const Evaluation = () => {
     return String(answerVal);
   };
 
+  const handleExportAssessmentResults = () => {
+    if (selectedAssId === 'all') {
+      toast.add('Please select a specific assessment to export bulk results.', 'warning');
+      return;
+    }
+
+    const currentAssessment = assessments.find(a => a.id === selectedAssId);
+    if (!currentAssessment) return;
+
+    const subsToExport = filteredSubs.filter(s => s.assessmentId === selectedAssId);
+
+    if (subsToExport.length === 0) {
+      toast.add('No submissions found for this assessment in the current filter.', 'warning');
+      return;
+    }
+
+    const rowData = subsToExport.map(sub => {
+      const student = students.find(s => s.id === sub.studentId);
+      const row = {
+        "Student Name": student?.name || 'Unknown',
+        "Batch ID": student?.batches?.join(', ') || 'N/A',
+        "Email ID": student?.email || 'N/A',
+        "Score": sub.score || 0,
+        "Percentage": sub.percentage || 0,
+        "Status": sub.isEvaluated ? 'Evaluated' : 'Pending',
+        "Submitted At": sub.submittedAt ? new Date(sub.submittedAt).toLocaleString() : 'N/A'
+      };
+
+      currentAssessment.questions.forEach((q, idx) => {
+        const answerObj = sub.answers.find(a => a.questionId === q.id);
+        let answerText = "No answer provided";
+        if (answerObj && answerObj.answer !== undefined && answerObj.answer !== null && answerObj.answer !== '') {
+            answerText = getAnswerString(q, answerObj.answer);
+        }
+        row[`Q${idx + 1}`] = answerText;
+        row[`Q${idx + 1} Marks`] = answerObj?.marksAwarded || 0;
+      });
+
+      return row;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(rowData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Assessment Results");
+    XLSX.writeFile(workbook, `${currentAssessment.title.replace(/\s+/g, '_')}_Bulk_Results.xlsx`);
+  };
+
+  const handleExportExcel = () => {
+    if (!currentSub || !currentStudent || !currentAssessment) return;
+
+    const rowData = [
+      {
+        "Student Name": currentStudent.name,
+        "Batch ID": currentStudent.batches?.join(', ') || 'N/A',
+        "Student ID": currentStudent.id,
+        "Email ID": currentStudent.email,
+        "Assessment Score": `${currentSub.score || 0} / ${currentAssessment.marks}`,
+        "Assessment Title": currentAssessment.title,
+        "Submitted At": currentSub.submittedAt ? new Date(currentSub.submittedAt).toLocaleString() : 'N/A'
+      }
+    ];
+
+    currentAssessment.questions.forEach((q, idx) => {
+      const answerObj = currentSub.answers.find(a => a.questionId === q.id);
+      let answerText = "No answer provided";
+      if (answerObj && answerObj.answer !== undefined && answerObj.answer !== null && answerObj.answer !== '') {
+          answerText = getAnswerString(q, answerObj.answer);
+      }
+      rowData[0][`Q${idx + 1}: ${q.text || q.question || 'Untitled'}`] = answerText;
+      rowData[0][`Q${idx + 1} Marks Awarded`] = answerObj?.marksAwarded || 0;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(rowData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Evaluation Data");
+    XLSX.writeFile(workbook, `${currentStudent.name.replace(/\s+/g, '_')}_${currentAssessment.title.replace(/\s+/g, '_')}_Evaluation.xlsx`);
+  };
+
   return (
     <div className="h-[calc(100vh-6rem)] -mt-6 -mx-6 bg-neutral-100 dark:bg-[#0a0a0a] flex flex-col lg:flex-row overflow-hidden">
       
@@ -174,9 +258,44 @@ export const Evaluation = () => {
               placeholder="Search student or assessment..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F]"
+              className="w-full pl-9 pr-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F] dark:text-white"
             />
           </div>
+
+          <div className="flex flex-col gap-2">
+            <select
+              value={selectedBatchId}
+              onChange={(e) => {
+                setSelectedBatchId(e.target.value);
+              }}
+              className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F] dark:text-white"
+            >
+              <option value="all">All Batches</option>
+              {batches?.map(b => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
+            </select>
+
+            <select
+              value={selectedAssId}
+              onChange={(e) => setSelectedAssId(e.target.value)}
+              className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#6C1D5F] dark:text-white"
+            >
+              <option value="all">All Assessments</option>
+              {assessments?.map(a => (
+                <option key={a.id} value={a.id}>{a.title}</option>
+              ))}
+            </select>
+          </div>
+
+          {selectedAssId !== 'all' && (
+            <button
+              onClick={handleExportAssessmentResults}
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50 rounded-xl text-sm font-bold border border-emerald-200 dark:border-emerald-800/50 transition-colors"
+            >
+              <Download className="w-4 h-4" /> Bulk Export Results
+            </button>
+          )}
 
           <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-xl">
             {['pending', 'graded', 'all'].map(mode => (
@@ -259,8 +378,18 @@ export const Evaluation = () => {
                   <FileText className="w-3.5 h-3.5" />
                   {currentAssessment.type.replace('_', ' ').toUpperCase()} Assessment
                 </div>
-                <h1 className="text-3xl font-display font-black text-neutral-900 dark:text-white mb-2">{currentAssessment.title}</h1>
-                <p className="text-sm text-neutral-500">Submitted by {currentStudent.name}</p>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h1 className="text-3xl font-display font-black text-neutral-900 dark:text-white mb-2">{currentAssessment.title}</h1>
+                    <p className="text-sm text-neutral-500">Submitted by {currentStudent.name}</p>
+                  </div>
+                  <button 
+                    onClick={handleExportExcel}
+                    className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50 rounded-xl text-sm font-bold border border-emerald-200 dark:border-emerald-800/50 transition-colors"
+                  >
+                    <Download className="w-4 h-4" /> Export Report
+                  </button>
+                </div>
               </div>
 
               {/* Answers Map */}
