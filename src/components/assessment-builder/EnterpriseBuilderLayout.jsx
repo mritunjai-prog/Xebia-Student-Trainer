@@ -159,7 +159,8 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                 negativeMarking: config.quickSettings?.negativeMarking || false,
                 negativeMarksValue: config.quickSettings?.negativeMarksValue || 25,
                 shuffleQuestions: config.quickSettings?.shuffleQuestions || false,
-                autoSubmit: config.quickSettings?.autoSubmit || false
+                autoSubmit: config.quickSettings?.autoSubmit || false,
+                passingMarks: config.passingMarks || 75
               };
               try {
                 if (initialAssessment) {
@@ -178,7 +179,7 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
             <Save className="w-4 h-4" /> Save Draft
           </button>
           <button onClick={() => {
-            const isConfigComplete = config && config.title && config.topic && config.course && config.batches?.length > 0 && config.difficulty && config.duration && config.marks;
+            const isConfigComplete = config && config.title && config.topic && config.course && config.difficulty && config.duration && config.marks;
             if (!isConfigComplete) {
               toast.add('Please fill all mandatory configuration fields before publishing.', 'error');
               return;
@@ -278,7 +279,8 @@ export const EnterpriseBuilderLayout = ({ onBack, initialAssessment }) => {
                     negativeMarking: config.quickSettings?.negativeMarking || false,
                     negativeMarksValue: config.quickSettings?.negativeMarksValue || 25,
                     shuffleQuestions: config.quickSettings?.shuffleQuestions || false,
-                    autoSubmit: config.quickSettings?.autoSubmit || false
+                    autoSubmit: config.quickSettings?.autoSubmit || false,
+                    passingMarks: config.passingMarks || 75
                   };
 
                   try {

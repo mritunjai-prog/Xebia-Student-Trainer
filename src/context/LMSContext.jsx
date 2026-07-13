@@ -530,38 +530,44 @@ export const LMSProvider = ({ children }) => {
       let score = 0;
       let isEvaluated = false;
 
-      if (asObj.autoGrade) {
-        asObj.questions.forEach((q, qidx) => {
-          const ansObj = submissionAnswers.find((sa) => sa.questionId === q.id);
-          if (ansObj) {
-            const hasAnswered = ansObj.answer !== undefined && ansObj.answer !== '' && (!Array.isArray(ansObj.answer) || ansObj.answer.length > 0);
+      // Force auto-evaluation for all assessments/quizzes
+      asObj.questions.forEach((q, qidx) => {
+        const ansObj = submissionAnswers.find((sa) => sa.questionId === q.id);
+        if (ansObj) {
+          const hasAnswered = ansObj.answer !== undefined && ansObj.answer !== '' && (!Array.isArray(ansObj.answer) || ansObj.answer.length > 0);
 
-            if (q.type === 'mcq' || q.type === 'true_false') {
-              if (ansObj.answer === q.correctAnswer) {
-                ansObj.marksAwarded = q.marks;
-                score += q.marks;
-              } else if (hasAnswered && asObj.negativeMarking) {
-                const penalty = (q.marks * (asObj.negativeMarksValue || 0)) / 100;
-                ansObj.marksAwarded = -penalty;
-                score -= penalty;
-              }
-            } else if (q.type === 'multi_select') {
-              const correctSet = new Set(q.correctAnswer);
-              const providedSet = new Set(ansObj.answer);
-              const match = correctSet.size === providedSet.size && [...correctSet].every((val) => providedSet.has(val));
-              if (match) {
-                ansObj.marksAwarded = q.marks;
-                score += q.marks;
-              } else if (hasAnswered && asObj.negativeMarking) {
-                const penalty = (q.marks * (asObj.negativeMarksValue || 0)) / 100;
-                ansObj.marksAwarded = -penalty;
-                score -= penalty;
-              }
+          if (q.type === 'mcq' || q.type === 'true_false') {
+            const studentAnsStr = String(ansObj.answer);
+            const resolvedStudentAns = (q.options && !isNaN(studentAnsStr) && studentAnsStr.trim() !== '') ? q.options[Number(studentAnsStr)] : studentAnsStr;
+
+            if (String(resolvedStudentAns).trim().toLowerCase() === String(q.correctAnswer).trim().toLowerCase()) {
+              ansObj.marksAwarded = q.marks;
+              score += q.marks;
+            } else if (hasAnswered && asObj.negativeMarking) {
+              const penalty = (q.marks * (asObj.negativeMarksValue || 0)) / 100;
+              ansObj.marksAwarded = -penalty;
+              score -= penalty;
+            }
+          } else if (q.type === 'multi_select') {
+            const correctSet = new Set((q.correctAnswer || []).map(s => String(s).trim().toLowerCase()));
+            const providedSet = new Set((ansObj.answer || []).map(s => {
+               const sStr = String(s);
+               const resolved = (q.options && !isNaN(sStr) && sStr.trim() !== '') ? q.options[Number(sStr)] : sStr;
+               return String(resolved).trim().toLowerCase();
+            }));
+            const match = correctSet.size === providedSet.size && [...correctSet].every((val) => providedSet.has(val));
+            if (match) {
+              ansObj.marksAwarded = q.marks;
+              score += q.marks;
+            } else if (hasAnswered && asObj.negativeMarking) {
+              const penalty = (q.marks * (asObj.negativeMarksValue || 0)) / 100;
+              ansObj.marksAwarded = -penalty;
+              score -= penalty;
             }
           }
-        });
-        isEvaluated = true;
-      }
+        }
+      });
+      isEvaluated = true;
 
       const percentage = asObj.marks > 0 ? Math.round(score / asObj.marks * 100) : 0;
       const startedTime = sub.startedAt ? new Date(sub.startedAt).getTime() : Date.now();

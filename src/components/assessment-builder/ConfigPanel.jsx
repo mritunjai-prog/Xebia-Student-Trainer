@@ -82,8 +82,8 @@ export const ConfigPanel = ({ config, setConfig }) => {
               </select>
             </div>
             <div className="relative">
-              <label className="flex items-center gap-1 text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1.5">
-                Batches <span className="text-red-500">*</span>
+              <label className="block text-xs font-bold text-neutral-800 dark:text-neutral-200 uppercase tracking-wider mb-2">
+                Batches <span className="text-neutral-400 font-normal ml-1">(Optional)</span>
               </label>
               
               <div 
@@ -190,7 +190,7 @@ export const ConfigPanel = ({ config, setConfig }) => {
                 value={config.marks} 
                 onChange={(e) => {
                   const val = e.target.value;
-                  setConfig(prev => ({...prev, marks: val, passingMarks: val ? Math.round(Number(val) * 0.4) : 40}));
+                  setConfig(prev => ({...prev, marks: val, passingMarks: 75}));
                 }} 
                 className="w-full px-3 py-2 bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 rounded-xl text-sm focus:outline-none" 
               />

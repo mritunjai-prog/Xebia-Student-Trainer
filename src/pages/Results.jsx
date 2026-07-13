@@ -33,6 +33,7 @@ export const Results = () => {
 
   const assessment = assessments.find((a) => a.id === submission.assessmentId);
   const student = students.find((s) => s.id === submission.studentId);
+  const passingMarks = assessment?.passingMarks || 75;
 
   if (!assessment) {
     return (
@@ -42,18 +43,28 @@ export const Results = () => {
 
   }
 
-  const isPassed = submission.percentage >= assessment.passingMarks;
+  const isPassed = submission.percentage >= passingMarks;
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6">
       
-      {/* Return Button */}
-      <button
-        onClick={() => navigate('/student-dashboard')}
-        className="text-xs font-bold text-neutral-500 hover:text-neutral-700 flex items-center gap-1.5 cursor-pointer">
-        
-        <ArrowLeft className="w-4 h-4" /> Back to Dashboard
-      </button>
+      {/* Return Button and Certificate */}
+      <div className="flex justify-between items-center">
+        <button
+          onClick={() => navigate('/student-dashboard')}
+          className="text-xs font-bold text-neutral-500 hover:text-neutral-700 flex items-center gap-1.5 cursor-pointer">
+          <ArrowLeft className="w-4 h-4" /> Back to Dashboard
+        </button>
+
+        {submission.isEvaluated && isPassed && (
+          <button
+            onClick={() => navigate(`/certificate/${submission.id}`)}
+            className="text-xs font-bold text-white bg-[#4A1E47] hover:bg-[#5C2558] px-4 py-2 rounded-lg flex items-center gap-1.5 shadow-sm transition-colors"
+          >
+            View Certificate
+          </button>
+        )}
+      </div>
 
       {/* Outcome Score Header */}
       <div className="bg-white dark:bg-neutral-900 border border-brand-border dark:border-neutral-700 dark:border-neutral-800 rounded-xl p-4 md:p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
@@ -114,7 +125,7 @@ export const Results = () => {
           </div>
 
           <p className="text-[10px] text-neutral-500 dark:text-neutral-400 font-bold mt-3 uppercase tracking-wider text-center">
-            Passing mark: {assessment.passingMarks}% ({Math.round(assessment.marks * (assessment.passingMarks / 100))} pts)
+            Passing mark: {passingMarks}% ({Math.round(assessment.marks * (passingMarks / 100))} pts)
           </p>
         </div>
 
